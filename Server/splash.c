@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <linux/kd.h>
 #include <linux/fb.h>
 
 #include "logo.c"
@@ -16,6 +17,10 @@ static unsigned char *framebuffer;
 
 int
 fb_init() {
+    int console = open("/dev/console", O_RDWR);
+    ioctl(console, KDSETMODE, KD_GRAPHICS);
+    close(console);
+
     fb = open("/dev/fb0", O_RDWR);
     ioctl(fb, FBIOGET_VSCREENINFO, &vinfo);
     ioctl(fb, FBIOGET_FSCREENINFO, &finfo);
