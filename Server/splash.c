@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "jpeglib.h"
 #include <string.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
@@ -8,7 +11,7 @@
 #include <linux/kd.h>
 #include <linux/fb.h>
 
-#include "logo.c"
+//#include "logo.c"
 
 static int fb;
 static struct fb_var_screeninfo vinfo;
@@ -29,29 +32,103 @@ fb_init() {
     return fb;
 }
 
+#include <setjmp.h>
+
+struct my_error_mgr {
+  struct jpeg_error_mgr pub;    /* "public" fields */
+
+  jmp_buf setjmp_buffer;        /* for return to caller */
+};
+
+typedef struct my_error_mgr *my_error_ptr;
+
+/*
+ * Here's the routine that will replace the standard error_exit method:
+ */
+
+METHODDEF(void)
+my_error_exit (j_common_ptr cinfo)
+{
+  /* cinfo->err really points to a my_error_mgr struct, so coerce pointer */
+  my_error_ptr myerr = (my_error_ptr) cinfo->err;
+
+  /* Always display the message. */
+  /* We could postpone this until after returning, if we chose. */
+  (*cinfo->err->output_message) (cinfo);
+
+  /* Return control to the setjmp point */
+  longjmp(myerr->setjmp_buffer, 1);
+}
+
 void
 fb_splash() {
     // Clear screen
     memset(framebuffer, 0, finfo.smem_len);
 
-    unsigned long offset;
+    long offset;
     unsigned char *ptr;
-    int x,y;
 
-    offset = (vinfo.xres_virtual - logo_data.width)/2*4;
-    offset += (vinfo.yres_virtual - logo_data.height)/2*finfo.line_length;
+  struct jpeg_decompress_struct cinfo;
+  struct my_error_mgr jerr;
+  FILE *infile;                 /* source file */
+  JSAMPARRAY buffer;            /* Output row buffer */
+  int row_stride;               /* physical row width in output buffer */
 
-    ptr = framebuffer+offset;
+  if ((infile = fopen(getenv("PROMYS_BACKGROUND"), "rb")) == NULL) {
+    return;
+  }
 
-    for(y=0; y < logo_data.height; y++) {
-	    for(x=0; x < logo_data.width; x++) {
-		    ptr[x*4  ] = logo_data.pixel_data[(x+y*logo_data.width)*4  ];
-		    ptr[x*4+1] = logo_data.pixel_data[(x+y*logo_data.width)*4+1];
-		    ptr[x*4+2] = logo_data.pixel_data[(x+y*logo_data.width)*4+2];
-		    ptr[x*4+3] = logo_data.pixel_data[(x+y*logo_data.width)*4+3];
-	    }
-	    ptr += finfo.line_length;
-    }
+  cinfo.err = jpeg_std_error(&jerr.pub);
+  jerr.pub.error_exit = my_error_exit;
+
+  if (setjmp(jerr.setjmp_buffer)) {
+    jpeg_destroy_decompress(&cinfo);
+    fclose(infile);
+    return;
+  }
+  
+  jpeg_create_decompress(&cinfo);
+
+  jpeg_stdio_src(&cinfo, infile);
+
+  (void) jpeg_read_header(&cinfo, TRUE);
+
+  cinfo.out_color_components = 4;
+  cinfo.out_color_space = JCS_EXT_BGRA;
+
+  (void) jpeg_start_decompress(&cinfo);
+  
+  offset = (vinfo.xres_virtual - cinfo.output_width)/2*4;
+  offset += (vinfo.yres_virtual - cinfo.output_height)/2*finfo.line_length;
+
+  if (offset < 0) offset = 0;
+
+  ptr = framebuffer+offset;
+
+  row_stride = cinfo.output_width * cinfo.output_components;
+ 
+  buffer = (*cinfo.mem->alloc_sarray)
+                ((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
+
+  if (row_stride > finfo.line_length) {
+	  row_stride = finfo.line_length;
+  }
+
+  if (cinfo.output_height > vinfo.yres_virtual) {
+	  cinfo.output_height = vinfo.yres_virtual;
+  }
+
+  while (cinfo.output_scanline < cinfo.output_height) {
+    (void) jpeg_read_scanlines(&cinfo, buffer, 1);
+
+    memcpy(ptr, buffer[0], row_stride);
+    ptr += finfo.line_length;
+  }
+
+  (void) jpeg_finish_decompress(&cinfo);
+  jpeg_destroy_decompress(&cinfo);
+
+  fclose(infile);
 }
 
 int

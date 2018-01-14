@@ -1,6 +1,6 @@
 OBJS=main.o video.o socket.o splash.o broadcast.o
 BIN=promys
-LDFLAGS+=-lilclient
+LDFLAGS+=-lilclient -ljpeg
 
 include Makefile.include
 
