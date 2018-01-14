@@ -1,0 +1,16 @@
+//Script de ressources généré par Microsoft Visual C++.
+//
+#include "resource.h"
+
+LANGUAGE 12, 1
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icône
+//
+
+// L'icône avec la valeur d'ID la plus basse est placée en premier afin que l'icône d'application
+// soit cohérente sur tous les systèmes.
+
+IDI_SCREENCAST       ICON         "ScreenCast.ico"
+IDI_SMALL            ICON         "small.ico"
