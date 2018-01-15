@@ -25,6 +25,16 @@ fb_init() {
     close(console);
 
     fb = open("/dev/fb0", O_RDWR);
+
+    // Force 1920x1080
+    ioctl(fb, FBIOGET_VSCREENINFO, &vinfo);
+    vinfo.xres = 1920;
+    vinfo.yres = 1080;
+    vinfo.xres_virtual = vinfo.xres;
+    vinfo.yres_virtual = vinfo.yres;
+    ioctl(fb, FBIOPUT_VSCREENINFO, &vinfo);
+
+    // Get actual settings
     ioctl(fb, FBIOGET_VSCREENINFO, &vinfo);
     ioctl(fb, FBIOGET_FSCREENINFO, &finfo);
     framebuffer = mmap(NULL, finfo.smem_len, PROT_WRITE | PROT_READ, MAP_SHARED, fb, 0);
