@@ -11,8 +11,6 @@
 #include <linux/kd.h>
 #include <linux/fb.h>
 
-//#include "logo.c"
-
 static int fb;
 static struct fb_var_screeninfo vinfo;
 static struct fb_fix_screeninfo finfo;
