@@ -66,7 +66,9 @@ DWORD promys(LPVOID) {
 	char *cast_server;
 	int cast_port;
 
-	Sleep(1000);
+	Sleep(1000); // Give GUI thread some time to setup, kludgy
+
+#ifndef FILE_DUMP
 	showMessage("Searching for PROMYS device");
 
 	cast_server = find_promys(&cast_port);
@@ -85,13 +87,17 @@ DWORD promys(LPVOID) {
 	    printf("Unable to connect to Promys\n");
 	    exit(1);
 	}
+#else
+	showMessage("File dump mode");
+	hideWindow();
+#endif
 
 	HDC hDCScreen = GetDC(NULL);
 
 	HDC hDCMem = CreateCompatibleDC(hDCScreen);
 
-	width = 1920;
-	height = 1080;
+	width = GetSystemMetrics(SM_CXSCREEN);
+	height = GetSystemMetrics(SM_CYSCREEN);
 
 	out_width = 1920;
 	out_height = 1080;
@@ -161,6 +167,8 @@ DWORD promys(LPVOID) {
 
 	int i=0;
 
+	showMessage("Broadcasting...");
+
 	while(1) {
 	    SYSTEMTIME start,stop;
 
@@ -173,9 +181,10 @@ DWORD promys(LPVOID) {
 	    ci.cbSize = sizeof(ci);
 	    GetCursorInfo(&ci);
 
-	    DrawIconEx(hDCMem, ci.ptScreenPos.x, ci.ptScreenPos.y, GetCursor(), 0, 0, 0, NULL, DI_DEFAULTSIZE);
+	    char message[256];
 
-	    printf("%p @ %d,%d\n", GetCursor(), ci.ptScreenPos.x, ci.ptScreenPos.y);
+	    sprintf(message, "%d,%d\n", ci.ptScreenPos.x, ci.ptScreenPos.y);
+	    showMessage(message);
 #endif
 
 	    // Gets the "bits" from the bitmap and copies them into a buffer 
