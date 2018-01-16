@@ -1,6 +1,6 @@
 OBJS=main.o socket.o gui.o
 CXXFLAGS=-I../Common/x264 -I../Common/ffmpeg -I../Common/Socket
-LIBRARIES:= -L../Common/x264 -lx264 -L../Common/ffmpeg/libswscale -lswscale -L../Common/ffmpeg/libavutil -lavutil -lstdc++ -lX11
+LIBRARIES:= -L../Common/x264 -lx264 -L../Common/ffmpeg/libswscale -lswscale -L../Common/ffmpeg/libavutil -lavutil -lstdc++ -lX11 -lpthread
 
 screencast: $(OBJS)
 	$(CXX) -o $@ $(OBJS) $(FRAMEWORKS) $(LIBRARIES)

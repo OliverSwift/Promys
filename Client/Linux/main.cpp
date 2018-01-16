@@ -70,8 +70,10 @@ main(int argc, char **argv) {
 	    cast_port = 9000;
 	}
 
-	//printf("Found at %s:%d\n", cast_server, cast_port);
+	printf("Found at %s:%d\n", cast_server, cast_port);
+
     showMessage("PROMYS device found");
+    hideWindow();
 
 	cast = new Socket();
 
@@ -137,6 +139,8 @@ main(int argc, char **argv) {
 				 SWS_FAST_BILINEAR, NULL, NULL, NULL);
 
 	int i=0;
+
+    showMessage("Broadcasting...");
 
 	while(1) {
 	    const unsigned char *data = (const unsigned char *)image->data;

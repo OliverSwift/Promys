@@ -15,6 +15,13 @@ static pthread_t thread;
 static char *message = "";
 
 void
+hideWindow() {
+    //XUnmapWindow(dpy, win);
+    //XIconifyWindow(dpy, win, screen);
+    //XFlush(dpy);
+}
+
+void
 showMessage(char *msg) {
     message = msg;
 
@@ -32,8 +39,6 @@ mainLoop() {
         XEvent event;
 
         XNextEvent(dpy, &event);
-
-        printf("Got event\n");
 
         if (event.type == Expose && event.xexpose.count == 0) {
             int width;
