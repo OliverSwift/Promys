@@ -125,7 +125,7 @@ video_decode(int stream)
          unsigned char *dest = buf->pBuffer;
 
          data_len = read(stream, dest, buf->nAllocLen-data_len);
-	 if (data_len < 0)
+	 if (data_len <= 0)
              break;
 
          if(port_settings_changed == 0 &&
