@@ -10,3 +10,4 @@ configure --disable-all --enable-swscale --enable-shared
 
 NASM:
 2.13.01 or 2.13.02
+https://debian.pkgs.org/sid/debian-main-amd64/nasm_2.13.02-0.1_amd64.deb.html

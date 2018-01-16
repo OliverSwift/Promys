@@ -8,6 +8,7 @@
 #include <stdint.h>
 extern "C" {
 #include <libswscale/swscale.h>
+#include "gui.h"
 }
 #include <x264.h>
 #include "socket.h"
@@ -59,15 +60,18 @@ main(int argc, char **argv) {
 	char *cast_server;
 	int cast_port;
 
+    gui_init();
+
 	if (argv[1] == NULL) {
-	    printf("Searching for PROMYS device\n");
+	    showMessage("Searching for PROMYS device");
 	    cast_server = find_promys(&cast_port);
 	} else {
 	    cast_server = argv[1];
 	    cast_port = 9000;
 	}
 
-	printf("Found at %s:%d\n", cast_server, cast_port);
+	//printf("Found at %s:%d\n", cast_server, cast_port);
+    showMessage("PROMYS device found");
 
 	cast = new Socket();
 
@@ -75,8 +79,8 @@ main(int argc, char **argv) {
 
 	gettimeofday(&start, NULL);
 
-        size_t width, height;
-        size_t out_width, out_height;
+    size_t width, height;
+    size_t out_width, out_height;
 
 	Display *dpy;
 	int screen;
