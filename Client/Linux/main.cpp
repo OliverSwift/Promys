@@ -57,17 +57,14 @@ main(int argc, char **argv) {
 	FILE *out = fopen("out.h264","wb");
 #endif
 	Socket *cast;
-	char *cast_server;
-	int cast_port;
+	const char *cast_server = argv[1];
+	int cast_port = 9000;
 
     gui_init();
 
 	if (argv[1] == NULL) {
 	    showMessage("Searching for PROMYS device");
 	    cast_server = find_promys(&cast_port);
-	} else {
-	    cast_server = argv[1];
-	    cast_port = 9000;
 	}
 
 	printf("Found at %s:%d\n", cast_server, cast_port);
