@@ -13,7 +13,22 @@ install:
 	cp ../Common/ffmpeg/libswscale/libswscale.so.* .
 	cp ../Common/ffmpeg/libavutil/libavutil.so.* .
 	strip screencast lib*.so.*
-	tar czf promys.tgz lib*.so.* screencast promys.sh
+	tar czf promys.tgz dist
+
+package:
+	mkdir -p dist/opt/promys
+	cp ../Common/x264/libx264.so.* dist/opt/promys
+	cp ../Common/ffmpeg/libswscale/libswscale.so.* dist/opt/promys
+	cp ../Common/ffmpeg/libavutil/libavutil.so.* dist/opt/promys
+	strip screencast
+	cp screencast dist/opt/promys
+	cp promys.sh dist/opt/promys
+	cp promys.png dist/opt/promys
+	mkdir -p dist/DEBIAN
+	cp deb-control dist/DEBIAN/control
+	mkdir -p dist/usr/share/applications
+	cp promys.desktop dist/usr/share/applications
+	dpkg-deb -b dist promys.deb
 
 clean:
 	-rm -f *.o lib*.so.* screencast

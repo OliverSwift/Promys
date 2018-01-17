@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Promys
+Comment=Project My Screen
+Exec="/opt/promys/promys.sh"
+Terminal=false
+Type=Application
+Icon=/opt/promys/promys.png

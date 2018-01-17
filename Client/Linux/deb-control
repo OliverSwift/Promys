@@ -1,0 +1,10 @@
+Package: Promys
+Version: 1.0
+Maintainer: Olivier DEBON <olivier@debon.net>
+Description: Project My Screen
+  Linux client to cast desktop to a Promys device
+Section: x11
+Essential: no
+Priority: extra
+Architecture: amd64
+Homepage: http://www.promys.net
