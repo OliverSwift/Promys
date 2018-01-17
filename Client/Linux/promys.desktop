@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Promys
 Comment=Project My Screen
-Exec="/opt/promys/promys.sh"
+Exec="/opt/promys/screencast"
 Terminal=false
 Type=Application
 Icon=/opt/promys/promys.png
