@@ -12,5 +12,5 @@ LANGUAGE 12, 1
 // L'icône avec la valeur d'ID la plus basse est placée en premier afin que l'icône d'application
 // soit cohérente sur tous les systèmes.
 
-IDI_SCREENCAST       ICON         "ScreenCast.ico"
-IDI_SMALL            ICON         "small.ico"
+IDI_SCREENCAST       ICON         "promys.ico"
+IDI_SMALL            ICON         "promys.ico"
