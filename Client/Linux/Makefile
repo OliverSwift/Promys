@@ -13,7 +13,7 @@ install:
 	cp ../Common/ffmpeg/libswscale/libswscale.so.* .
 	cp ../Common/ffmpeg/libavutil/libavutil.so.* .
 	strip screencast lib*.so.*
-	tar czf promys.tgz dist
+	tar czf promys.tgz screencast promys.sh lib*.so.*
 
 package:
 	mkdir -p dist/opt/promys

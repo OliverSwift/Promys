@@ -2,4 +2,6 @@
 **.dll
 **.exe
 **.res
-**.so
+**.so*
+**.tgz
+**.deb
