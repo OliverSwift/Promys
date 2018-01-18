@@ -1,4 +1,5 @@
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -88,7 +89,18 @@ gui_init(int *go) {
 
     XMapRaised(dpy, win);
 
-    XStoreName(dpy, win, "Promys");
+    // WM stuff
+    char *name = "Promys";
+
+    XStoreName(dpy, win, name);
+
+    XClassHint *classHint = XAllocClassHint();
+    if (classHint) {
+        classHint->res_name = name;
+        classHint->res_class = name;
+    }
+    XSetClassHint(dpy, win, classHint);
+    XFree(classHint);
 
     pthread_create(&thread, NULL, mainLoop, 0);
 }
