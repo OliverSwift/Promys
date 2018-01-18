@@ -59,8 +59,9 @@ main(int argc, char **argv) {
 	Socket *cast;
 	const char *cast_server = argv[1];
 	int cast_port = 9000;
+    int go;
 
-    gui_init();
+    gui_init(&go);
 
 	if (argv[1] == NULL) {
 	    showMessage("Searching for PROMYS device");
@@ -139,7 +140,7 @@ main(int argc, char **argv) {
 
     showMessage("Broadcasting...");
 
-	while(1) {
+	while(go) {
 	    const unsigned char *data = (const unsigned char *)image->data;
 
 	    sws_scale(swsCtxt,

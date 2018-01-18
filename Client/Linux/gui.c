@@ -1,5 +1,6 @@
 #include <X11/Xlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
 #include <unistd.h>
@@ -41,7 +42,9 @@ showMessage(char *msg) {
 }
 
 static void *
-mainLoop() {
+mainLoop(void *arg) {
+    int *go = arg;
+
     while(1) {
         XEvent event;
 
@@ -60,10 +63,14 @@ mainLoop() {
     }
 
     XCloseDisplay(dpy);
+    *go = 0;
+    exit(0);
 }
 
 int
-gui_init() {
+gui_init(int *go) {
+    *go = 1;
+
     XInitThreads();
 
     dpy = XOpenDisplay(NULL);
@@ -78,46 +85,6 @@ gui_init() {
     font_info = XQueryFont(dpy, font);
 
     XSetFont(dpy, gc, font);
-
-#if 0
-
-	/* pointer to the WM hints structure. */
-	XWMHints* win_hints;
-
-	/* load the given bitmap data and create an X pixmap containing it. */
-	Pixmap icon_pixmap = XCreateBitmapFromData(display,
-											   win,
-											   icon_bitmap_bits,
-											   icon_bitmap_width,
-											   icon_bitmap_height);
-	if (!icon_pixmap) {
-		fprintf(stderr, "XCreateBitmapFromData - error creating pixmap\n");
-		exit(1);
-	}
-
-	/* allocate a WM hints structure. */
-	win_hints = XAllocWMHints();
-	if (!win_hints) {
-		fprintf(stderr, "XAllocWMHints - out of memory\n");
-		exit(1);
-	}
-
-	/* initialize the structure appropriately. */
-	/* first, specify which size hints we want to fill in. */
-	/* in our case - setting the icon's pixmap. */
-	win_hints->flags = IconPixmapHint;
-	/* next, specify the desired hints data.           */
-	/* in our case - supply the icon's desired pixmap. */
-	win_hints->icon_pixmap = icon_pixmap;
-
-	/* pass the hints to the window manager. */
-	XSetWMHints(display, win, win_hints);
-
-	/* finally, we can free the WM hints structure. */
-	XFree(win_hints);
-
-#endif
-
 
     XMapRaised(dpy, win);
 
