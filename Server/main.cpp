@@ -29,8 +29,6 @@ main(int argc, char **argv) {
 
 	fb_init();
 
-	fb_splash();
-
 	ret = broadcast_init(9000);
 	if (ret < 0) {
 		printf("broadcast_init: %s (%d)\n", strerror(errno), errno);
@@ -71,6 +69,7 @@ main(int argc, char **argv) {
 						default: // Parent
 							waitpid(pid, NULL, 0);
 							close(client);
+							fb_splash();
 							break;
 					}
 				}
