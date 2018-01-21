@@ -3,6 +3,7 @@
 #include "jpeglib.h"
 #include <string.h>
 #include <unistd.h>
+#include <errno.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <sys/types.h>
@@ -18,6 +19,7 @@ static unsigned char *framebuffer;
 
 int
 fb_init() {
+    int ret;
     int console = open("/dev/console", O_RDWR);
     ioctl(console, KDSETMODE, KD_GRAPHICS);
     close(console);
@@ -25,17 +27,20 @@ fb_init() {
     fb = open("/dev/fb0", O_RDWR);
 
     // Force 1920x1080
-    ioctl(fb, FBIOGET_VSCREENINFO, &vinfo);
+    ret = ioctl(fb, FBIOGET_VSCREENINFO, &vinfo);
+    if (ret < 0) fprintf(stderr, "ioctl(%d): %d. Errno = %d\n", __LINE__, ret, errno);
     vinfo.xres = 1920;
     vinfo.yres = 1080;
     vinfo.xres_virtual = vinfo.xres;
     vinfo.yres_virtual = vinfo.yres;
-    ioctl(fb, FBIOPUT_VSCREENINFO, &vinfo);
+    ret = ioctl(fb, FBIOPUT_VSCREENINFO, &vinfo);
+    if (ret < 0) fprintf(stderr, "ioctl(%d): %d. Errno = %d\n", __LINE__, ret, errno);
 
     // Get actual settings
     ioctl(fb, FBIOGET_VSCREENINFO, &vinfo);
     ioctl(fb, FBIOGET_FSCREENINFO, &finfo);
     framebuffer = mmap(NULL, finfo.smem_len, PROT_WRITE | PROT_READ, MAP_SHARED, fb, 0);
+    fprintf(stderr, "FB MEM=%p %dx%d\n", framebuffer, vinfo.xres, vinfo.yres);
 
     return fb;
 }
