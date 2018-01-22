@@ -1,6 +1,6 @@
 X264
 http://git.videolan.org/git/x264.git
-commit ba24899b0bf23345921da022f7a51e0c57dbe73d
+commit b00bcafe53a166b63a179a2f41470cd13b59f927
 configure --disable-cli --enable-shared
 
 ffmpeg
