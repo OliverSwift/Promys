@@ -10,7 +10,7 @@ extern "C" {
 #include "socket.h"
 #include <arpa/inet.h>
 
-#undef FILE_DUMP
+#define FILE_DUMP
 
 char *
 find_promys(int *port) {
@@ -178,13 +178,20 @@ DWORD promys(LPVOID) {
 #if 0
 	    // Draw cursor
 	    CURSORINFO ci;
+	    ICONINFO ii;
+	    BITMAP bm;
+	    HDC cdc;
+
 	    ci.cbSize = sizeof(ci);
 	    GetCursorInfo(&ci);
+	    GetIconInfo(ci.hCursor, &ii);
 
-	    char message[256];
+	    cdc = CreateCompatibleDC(hDCMem);
 
-	    sprintf(message, "%d,%d\n", ci.ptScreenPos.x, ci.ptScreenPos.y);
-	    showMessage(message);
+	    SelectObject(cdc, ii.hbmColor);
+	    GetObject(ii.hbmColor, sizeof(bm), &bm);
+	    MaskBlt(hDCMem, ci.ptScreenPos.x, bmpScreen.bmHeight - ci.ptScreenPos.y, bm.bmWidth, bm.bmHeight, cdc, 0, 0, ii.hbmMask, 0,0, MAKEROP4(SRCPAINT,SRCCOPY) );
+	    DeleteDC(cdc);
 #endif
 
 	    // Gets the "bits" from the bitmap and copies them into a buffer 
