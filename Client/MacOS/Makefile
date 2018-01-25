@@ -1,3 +1,6 @@
+Promys.dmg: Promys.app
+	hdiutil create -srcfolder Promys.app -volname Promy Promys.dmg
+
 Promys.app: libs XCode/build/Release/Promys.app
 	cp -a XCode/build/Release/Promys.app .
 
@@ -14,5 +17,5 @@ libs:
 	install_name_tool -change /usr/local/lib/libavutil.56.dylib @rpath/libavutil.56.dylib libswscale.5.dylib
 
 clean:
-	-rm -f *.dylib
+	-rm -f *.dylib *.dmg
 	-rm -rf Promys.app XCode/build
