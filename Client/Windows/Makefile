@@ -10,7 +10,7 @@ socket.o: ../Common/Socket/socket.cpp
 screencast.res: ScreenCast.rc
 	windres ScreenCast.rc -o screencast.res -O coff
 
-install: screencast.exe promys.SED
+install: screencast promys.SED
 	cp ../Common/ffmpeg/libavutil/cygavutil-56.dll .
 	cp ../Common/ffmpeg/libswscale/cygswscale-5.dll .
 	cp ../Common/x264/libx264-155.dll .
