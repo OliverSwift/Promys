@@ -1,7 +1,8 @@
-#include <Cocoa/Cocoa.h>
+#include "promys.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreGraphics/CGImage.h>
 #include <unistd.h>
+#include <errno.h>
 #include <sys/time.h>
 #include <arpa/inet.h>
 #include <stdio.h>
@@ -11,12 +12,13 @@ extern "C" {
 }
 #include <x264.h>
 #include "socket.h"
+#include "AppDelegate.h"
 
 #undef FILE_DUMP
 
 char *
 find_promys(int *port) {
-    int ret;
+    long ret;
     int s;
     struct sockaddr_in promys, from;
 
@@ -27,6 +29,10 @@ find_promys(int *port) {
     promys.sin_addr.s_addr   = htonl(INADDR_ANY);
 
     ret = bind(s, (struct sockaddr *) &promys, sizeof(promys));
+    if (ret < 0) {
+        printf("Error: %d\n", errno);
+        return NULL;
+    }
 
     memset(&from, 0, sizeof(from));
 
@@ -49,24 +55,29 @@ find_promys(int *port) {
     return inet_ntoa(from.sin_addr);
 }
 
-int
-main(int argc, char **argv) {
+@implementation Promys
+
+-(void)showMessage:(NSString*)text {
+    AppDelegate *appDelegate;
+    
+    appDelegate = [[ NSApplication sharedApplication ] delegate ] ;
+    
+    [ appDelegate performSelectorOnMainThread:@selector(showMessage:) withObject:text waitUntilDone:false];
+}
+
+- (void)main {
 	struct timeval start,stop;
 #ifdef FILE_DUMP
 	FILE *out = fopen("out.h264","wb");
 #endif
 	Socket *cast;
 	char *cast_server;
-	int cast_port;
-
-	if (argv[1] == NULL) {
-	    printf("Searching for PROMYS device\n");
-	    cast_server = find_promys(&cast_port);
-	    printf("Found at %s:%d\n", cast_server, cast_port);
-	} else {
-	    cast_server = argv[1];
-	    cast_port = 9000;
-	}
+        int cast_port;
+         
+        [ self showMessage:@"Searching for PROMYS device" ];
+    
+	cast_server = find_promys(&cast_port);
+	printf("Found at %s:%d\n", cast_server, cast_port);
 
 	cast = new Socket();
 
@@ -91,7 +102,6 @@ main(int argc, char **argv) {
 	x264_picture_t pic;
 	x264_picture_t pic_out;
 	x264_t *h;
-	int i_frame = 0;
 	int i_frame_size;
 	x264_nal_t *nal;
 	int i_nal;
@@ -125,6 +135,8 @@ main(int argc, char **argv) {
 
 	int i=0;
 
+        [ self showMessage:@"Broadcasting..." ];
+    
 	while(1) {
 	    CFDataRef dataref = CGDataProviderCopyData(CGImageGetDataProvider(image_ref));
 	    const unsigned char *data = CFDataGetBytePtr(dataref);
@@ -157,7 +169,7 @@ main(int argc, char **argv) {
 	    delay = (stop.tv_sec - start.tv_sec)*1000000;
 	    delay += (stop.tv_usec - start.tv_usec);
 	    if (delay < 40000) {
-		usleep(40000 - delay);
+		usleep(40000 - (int)delay);
 	    }
 
 	    gettimeofday(&start, NULL);
@@ -188,3 +200,5 @@ main(int argc, char **argv) {
 
 	delete cast;
 }
+@end
+
