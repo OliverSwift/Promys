@@ -175,16 +175,24 @@ DWORD promys(LPVOID) {
 	    GetSystemTime(&start);
 	    StretchBlt(hDCMem, 0, bi.biHeight, bi.biWidth, -bi.biHeight, hDCScreen, 0, 0, bi.biWidth, bi.biHeight, SRCCOPY);
 
-#if 0
-	    // Draw cursor
+#if 1
+	    // Draw cursor (poorly)
 	    CURSORINFO ci;
+	    ICONINFO ii;
+	    BITMAP bm;
+	    HDC cdc;
+
 	    ci.cbSize = sizeof(ci);
 	    GetCursorInfo(&ci);
+	    GetIconInfo(ci.hCursor, &ii);
 
-	    char message[256];
+	    cdc = CreateCompatibleDC(hDCMem);
 
-	    sprintf(message, "%d,%d\n", ci.ptScreenPos.x, ci.ptScreenPos.y);
-	    showMessage(message);
+	    SelectObject(cdc, ii.hbmColor);
+	    GetObject(ii.hbmColor, sizeof(bm), &bm);
+	    //MaskBlt(hDCMem, ci.ptScreenPos.x, bmpScreen.bmHeight - ci.ptScreenPos.y, bm.bmWidth, bm.bmHeight, cdc, 0, 0, ii.hbmMask, 0,0, MAKEROP4(SRCPAINT,SRCCOPY) );
+	    StretchBlt(hDCMem, ci.ptScreenPos.x, bmpScreen.bmHeight - ci.ptScreenPos.y, bm.bmWidth, -bm.bmHeight, cdc, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
+	    DeleteDC(cdc);
 #endif
 
 	    // Gets the "bits" from the bitmap and copies them into a buffer 

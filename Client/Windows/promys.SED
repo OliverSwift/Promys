@@ -35,7 +35,7 @@ FILE1="cyggcc_s-seh-1.dll"
 FILE2="cygstdc++-6.dll"
 FILE3="cygswscale-5.dll"
 FILE4="cygwin1.dll"
-FILE5="libx264-152.dll"
+FILE5="libx264-155.dll"
 FILE6="screencast.exe"
 [SourceFiles]
 SourceFiles0=
