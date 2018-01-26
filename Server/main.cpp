@@ -33,7 +33,7 @@ main(int argc, char **argv) {
 
 	ret = broadcast_init(9000);
 	if (ret < 0) {
-		printf("broadcast_init: %s (%d)\n", strerror(errno), errno);
+		fprintf(stderr, "broadcast_init: %s (%d)\n", strerror(errno), errno);
 	}
 
 	while (1) {
@@ -52,7 +52,7 @@ main(int argc, char **argv) {
 		switch(ret) {
 			case 0:
 				if (broadcast_send() < 0) {
-					printf("Error: %s (%d)\n", strerror(errno), errno);
+					fprintf(stderr, "Error: %s (%d)\n", strerror(errno), errno);
 				}
 				break;
 			case 1:
@@ -71,6 +71,7 @@ main(int argc, char **argv) {
 						default: // Parent
 							waitpid(pid, NULL, 0);
 							close(client);
+							fb_splash();
 							break;
 					}
 				}
