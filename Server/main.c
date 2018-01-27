@@ -17,8 +17,6 @@ main(int argc, char **argv) {
 	int connection;
 	int discover;
 
-	socket_create();
-
 	connection = socket_listen(9000);
 
 	printf("\033[2J\033[?25l\033[9;0]\n"); // Clear Screen, Cursor Off, Blanking Off
