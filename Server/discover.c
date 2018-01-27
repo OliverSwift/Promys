@@ -17,7 +17,6 @@ static int s;
 
 int
 promys_listen() {
-    int ret;
     struct sockaddr_in promys;
 
     s = socket(AF_INET, SOCK_DGRAM, 0);
@@ -26,7 +25,7 @@ promys_listen() {
     promys.sin_port   = htons(9999);
     promys.sin_addr.s_addr   = htonl(INADDR_ANY);
 
-    ret = bind(s, (struct sockaddr *) &promys, sizeof(promys));
+    bind(s, (struct sockaddr *) &promys, sizeof(promys));
 
     return s;
 }
@@ -43,8 +42,6 @@ promys_reply() {
     unsigned int from_len = sizeof(from);
 
     memset(&query, 0, sizeof(query));
-
-    printf("Waiting for query\n");
 
     ret = recvfrom(s, &query, sizeof(query), 0, (struct sockaddr *)&from, &from_len);
 
@@ -65,15 +62,5 @@ promys_reply() {
     if (ret < 0) {
 	printf("sendto: %d (%d)\n", ret, errno);
 	return;
-    }
-}
-
-int
-main(int argc, char **argv) {
-
-    promys_listen();
-
-    while(1) {
-	promys_reply();
     }
 }

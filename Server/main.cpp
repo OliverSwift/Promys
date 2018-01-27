@@ -32,7 +32,7 @@ main(int argc, char **argv) {
 
 	fb_splash();
 
-	discover = promys_init();
+	discover = promys_listen();
 	if (discover < 0) {
 		fprintf(stderr, "promys_init: %s (%d)\n", strerror(errno), errno);
 	}
