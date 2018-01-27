@@ -1,0 +1,22 @@
+dependencies: \
+  /Users/olivier/Projects/Promys/Client/MacOS/XCode/Promys/promys.mm \
+  /Users/olivier/Projects/Promys/Client/MacOS/XCode/Promys/promys.h \
+  /Users/olivier/Projects/Promys/Client/MacOS/XCode/../../Common/ffmpeg/libswscale/swscale.h \
+  /Users/olivier/Projects/Promys/Client/MacOS/XCode/../../Common/ffmpeg/libavutil/avutil.h \
+  /Users/olivier/Projects/Promys/Client/MacOS/XCode/../../Common/ffmpeg/libavutil/common.h \
+  /Users/olivier/Projects/Promys/Client/MacOS/XCode/../../Common/ffmpeg/libavutil/attributes.h \
+  /Users/olivier/Projects/Promys/Client/MacOS/XCode/../../Common/ffmpeg/libavutil/macros.h \
+  /Users/olivier/Projects/Promys/Client/MacOS/XCode/../../Common/ffmpeg/libavutil/version.h \
+  /Users/olivier/Projects/Promys/Client/MacOS/XCode/../../Common/ffmpeg/libavutil/avconfig.h \
+  /Users/olivier/Projects/Promys/Client/MacOS/XCode/../../Common/ffmpeg/libavutil/mem.h \
+  /Users/olivier/Projects/Promys/Client/MacOS/XCode/../../Common/ffmpeg/libavutil/error.h \
+  /Users/olivier/Projects/Promys/Client/MacOS/XCode/../../Common/ffmpeg/libavutil/rational.h \
+  /Users/olivier/Projects/Promys/Client/MacOS/XCode/../../Common/ffmpeg/libavutil/mathematics.h \
+  /Users/olivier/Projects/Promys/Client/MacOS/XCode/../../Common/ffmpeg/libavutil/intfloat.h \
+  /Users/olivier/Projects/Promys/Client/MacOS/XCode/../../Common/ffmpeg/libavutil/log.h \
+  /Users/olivier/Projects/Promys/Client/MacOS/XCode/../../Common/ffmpeg/libavutil/pixfmt.h \
+  /Users/olivier/Projects/Promys/Client/MacOS/XCode/../../Common/ffmpeg/libswscale/version.h \
+  /Users/olivier/Projects/Promys/Client/MacOS/XCode/../../Common/x264/x264.h \
+  /Users/olivier/Projects/Promys/Client/MacOS/XCode/../../Common/x264/x264_config.h \
+  /Users/olivier/Projects/Promys/Client/MacOS/XCode/Promys/socket.h \
+  /Users/olivier/Projects/Promys/Client/MacOS/XCode/Promys/AppDelegate.h

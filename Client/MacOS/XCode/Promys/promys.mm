@@ -65,6 +65,10 @@ find_promys(int *port) {
     [ appDelegate performSelectorOnMainThread:@selector(showMessage:) withObject:text waitUntilDone:false];
 }
 
+-(void)hideWindow {
+    [[ NSApplication sharedApplication ] hide:nil ];
+}
+
 - (void)main {
 	struct timeval start,stop;
 #ifdef FILE_DUMP
@@ -136,6 +140,7 @@ find_promys(int *port) {
 	int i=0;
 
         [ self showMessage:@"Broadcasting..." ];
+	[ self hideWindow ];
     
 	while(1) {
 	    CFDataRef dataref = CGDataProviderCopyData(CGImageGetDataProvider(image_ref));
