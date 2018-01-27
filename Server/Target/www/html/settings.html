@@ -61,11 +61,12 @@
     border-color: #fff;
 }
 h3 {
-    font-size: 70%;
+    font-size: 80%;
     border-style: solid;
     border-width: 0 0 0.5pt 0;
     border-color: #888;
     text-align: right;
+    color: #f85;
 }
 		</style>
 	</head>
@@ -80,21 +81,27 @@ function apply() {
 }
 function updateFields(status) {
 	var el;
-	// Image name
-       	el = document.getElementById('image');
-	el.innerHTML = status.image;
+	// Info
+       	el = document.getElementById('info');
+	el.textContent = status.info;
+	// Eth MAC
+       	el = document.getElementById('mac');
+	el.textContent = status.mac.toUpperCase();
+	// IP
+       	el = document.getElementById('ip');
+	el.textContent = status.ip;
 	// NAT status
        	el = document.getElementById('nat');
-	el.innerHTML = status.nat?"On":"Off";
+	el.textContent = status.nat?"On":"Off";
 	// SSID
        	el = document.getElementById('ssid');
-	el.innerHTML = status.ssid;
+	el.textContent = status.ssid;
 	// Channel
        	el = document.getElementById('channel');
-	el.innerHTML = status.channel;
+	el.textContent = status.channel;
 	// Wifi Password
        	el = document.getElementById('wifi_pass');
-	el.innerHTML = status.wpa_passphrase;
+	el.textContent = status.wpa_passphrase;
 }
 function getStatus() {
 	var xmlhttp = new XMLHttpRequest();
@@ -121,7 +128,11 @@ function getStatus() {
 	    	<h2>Settings</h2>
         </header>
 		<div class="parameter">
-			<h3 id="image">Promys - 2018-02-24</h3>
+			<h3>
+				<span id="info">Promys - 2018-02-24</span> -
+				MAC:<span id="mac"></span> -
+				LAN:<span id="ip"></span>
+			</h3>
 		</div>
 		<div class="parameter">
 			<div class="label">NAT: </div>
