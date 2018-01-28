@@ -34,12 +34,120 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "bcm_host.h"
 #include "ilclient.h"
 
+static COMPONENT_T *video_render = NULL;
+
+// ######### OVERSCAN PART ###########
+static int current_overscan = 0;
+
+static void set_overscan(int overscan) {
+	OMX_CONFIG_DISPLAYREGIONTYPE disp_teg_type;
+	int ret;
+
+	memset(&disp_teg_type, 0, sizeof(OMX_CONFIG_DISPLAYREGIONTYPE));
+	disp_teg_type.nSize = sizeof(OMX_CONFIG_DISPLAYREGIONTYPE);
+	disp_teg_type.nVersion.nVersion = OMX_VERSION;
+	disp_teg_type.nPortIndex = 90;
+	disp_teg_type.fullscreen = 0;
+	disp_teg_type.set = OMX_DISPLAY_SET_FULLSCREEN | OMX_DISPLAY_SET_DEST_RECT;
+	disp_teg_type.dest_rect.x_offset = overscan;
+	disp_teg_type.dest_rect.y_offset = overscan;
+	disp_teg_type.dest_rect.width = 1920 - overscan*2;
+	disp_teg_type.dest_rect.height = 1080 - overscan*2;
+
+	ret = OMX_SetParameter(ILC_GET_HANDLE(video_render), OMX_IndexConfigDisplayRegion, &disp_teg_type);
+	if (ret != OMX_ErrorNone) {
+	        printf("Set Ret: %x\n", ret);
+	}
+}
+
+static void change_overscan(int dir) {
+	current_overscan += dir;
+	set_overscan(current_overscan);
+}
+
+// ######### CEC PART ###########
+static unsigned char image_view_on[] = { 0x04 };
+static unsigned char active_source[] = { 0x82, 0xff, 0xff }; // Last two must be updated with physical address
+static unsigned char allow_source[]  = { 0x8e, 0x00 };
+
+struct CecMessage {
+	unsigned length;
+	unsigned char dest;
+	const unsigned char *buffer;
+} cec_commands[] = {
+	{ sizeof(image_view_on), 0x0, image_view_on },
+	{ sizeof(active_source), 0xf, active_source },
+	{ sizeof(allow_source), 0x0, allow_source },
+	{ 0, 0, NULL }
+
+};
+
+int next_cmd = 0;
+
+static void send_next_cmd() {
+	if (cec_commands[next_cmd].length == 0) return;
+
+	vc_cec_send_message(cec_commands[next_cmd].dest, cec_commands[next_cmd].buffer, cec_commands[next_cmd].length, VCOS_FALSE);
+	next_cmd++;
+}
+
+static void rpi_cec_callback(void *callback_data, uint32_t p0, uint32_t p1, uint32_t p2, uint32_t p3, uint32_t p4)
+{
+	VC_CEC_NOTIFY_T reason = (VC_CEC_NOTIFY_T)CEC_CB_REASON(p0);
+	unsigned button;
+
+	switch (reason) {
+		case VC_CEC_BUTTON_PRESSED:
+		case VC_CEC_REMOTE_PRESSED:
+		  button = (p1>>16)&0xff;
+		  if (button == 1) {
+			  // Up
+			  change_overscan(1);
+		  } else if (button == 2) {
+			  // Down
+			  change_overscan(-1);
+		  }
+		  break;
+		case VC_CEC_LOGICAL_ADDR:
+		  send_next_cmd();
+		  break;
+		case VC_CEC_TX:
+		  send_next_cmd();
+		  break;
+		default:
+		  break;
+	}
+}
+
+static void cec_init() {
+	unsigned short physical_address;
+
+	bcm_host_init();
+
+	vc_cec_set_passive(VCOS_TRUE);
+
+	vc_cec_register_callback(rpi_cec_callback, NULL);
+
+	vc_cec_get_physical_address(&physical_address);
+
+	// Update physical address in active source cec command buffer
+	active_source[1] = physical_address >> 8;
+	active_source[2] = physical_address & 0xff;
+
+	printf("PHYADD: %04x\n", physical_address);
+	printf("Claiming logical address: %xh\n", 8);
+
+	vc_cec_set_logical_address(8, CEC_DeviceType_Playback, CEC_VENDOR_ID_BROADCOM);
+}
+
+// ############ VIDEO DECODING PART ############
+
 int
 video_decode(int stream, int overscan)
 {
    OMX_VIDEO_PARAM_PORTFORMATTYPE format;
    OMX_TIME_CONFIG_CLOCKSTATETYPE cstate;
-   COMPONENT_T *video_decode = NULL, *video_scheduler = NULL, *video_render = NULL, *clock = NULL;
+   COMPONENT_T *video_decode = NULL, *video_scheduler = NULL, *clock = NULL;
    COMPONENT_T *list[5];
    TUNNEL_T tunnel[4];
    ILCLIENT_T *client;
@@ -47,6 +155,8 @@ video_decode(int stream, int overscan)
    unsigned int data_len = 0;
 
    bcm_host_init();
+
+   cec_init();
 
    memset(list, 0, sizeof(list));
    memset(tunnel, 0, sizeof(tunnel));
@@ -153,24 +263,7 @@ video_decode(int stream, int overscan)
             ilclient_change_component_state(video_render, OMX_StateExecuting);
 
 	    if (overscan) {
-		   OMX_CONFIG_DISPLAYREGIONTYPE disp_teg_type;
-		   int ret;
-
-		   memset(&disp_teg_type, 0, sizeof(OMX_CONFIG_DISPLAYREGIONTYPE));
-		   disp_teg_type.nSize = sizeof(OMX_CONFIG_DISPLAYREGIONTYPE);
-		   disp_teg_type.nVersion.nVersion = OMX_VERSION;
-		   disp_teg_type.nPortIndex = 90;
-		   disp_teg_type.fullscreen = 0;
-		   disp_teg_type.set = OMX_DISPLAY_SET_FULLSCREEN | OMX_DISPLAY_SET_DEST_RECT;
-		   disp_teg_type.dest_rect.x_offset = overscan;
-		   disp_teg_type.dest_rect.y_offset = overscan;
-		   disp_teg_type.dest_rect.width = 1920 - overscan*2;
-		   disp_teg_type.dest_rect.height = 1080 - overscan*2;
-
-	           ret = OMX_SetParameter(ILC_GET_HANDLE(video_render), OMX_IndexConfigDisplayRegion, &disp_teg_type);
-		   if (ret != OMX_ErrorNone) {
-			   printf("Set Ret: %x\n", ret);
-		   }
+		   set_overscan(overscan);
 	    }
          }
          if(!data_len)
