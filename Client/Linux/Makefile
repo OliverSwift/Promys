@@ -27,9 +27,11 @@ package:
 	cp promys.png dist/opt/promys
 	mkdir -p dist/DEBIAN
 	cp deb-control dist/DEBIAN/control
+	echo Installed-Size: `du -sk dist | awk -- '{print $$1}'` >> dist/DEBIAN/control
 	mkdir -p dist/usr/share/applications
 	cp promys.desktop dist/usr/share/applications
 	dpkg-deb -b dist promys.deb
+	rm -rf dist
 
 clean:
 	-rm -f *.o lib*.so.* screencast
