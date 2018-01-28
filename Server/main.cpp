@@ -9,13 +9,14 @@
 extern "C" {
 #include <video.h>
 #include <splash.h>
-#include <broadcast.h>
+#include <discover.h>
 }
 
 int
 main(int argc, char **argv) {
 	int ret;
 	int connection;
+	int discover;
 
 	Socket *cast;
 
@@ -31,54 +32,47 @@ main(int argc, char **argv) {
 
 	fb_splash();
 
-	ret = broadcast_init(9000);
-	if (ret < 0) {
-		fprintf(stderr, "broadcast_init: %s (%d)\n", strerror(errno), errno);
+	discover = promys_init();
+	if (discover < 0) {
+		fprintf(stderr, "promys_init: %s (%d)\n", strerror(errno), errno);
 	}
 
 	while (1) {
 		fd_set rset;
-		struct timeval timeout = {
-			.tv_sec = 2,
-			.tv_usec = 0
-		};
 
 		FD_ZERO(&rset);
 		FD_SET(connection, &rset);
+		FD_SET(discover, &rset);
 		int client;
 
-		ret = select(connection+1, &rset, NULL, NULL, &timeout);
+		ret = select(discover+1, &rset, NULL, NULL, NULL);
 
-		switch(ret) {
-			case 0:
-				if (broadcast_send() < 0) {
-					fprintf(stderr, "Error: %s (%d)\n", strerror(errno), errno);
+		if (ret < 0) break;
+
+		if (FD_ISSET(discover, &rset)) {
+			promys_reply();
+		}
+
+		if (FD_ISSET(connection, &rset)) {
+			client = cast->accept();
+
+			if (client > 0) {
+				pid_t pid;
+
+				pid = fork();
+				switch (pid) {
+					case 0: // Child
+						video_decode(client);
+						exit(0);
+					case -1: // Error
+						break;
+					default: // Parent
+						waitpid(pid, NULL, 0);
+						close(client);
+						fb_splash();
+						break;
 				}
-				break;
-			case 1:
-				client = cast->accept();
-
-				if (client > 0) {
-					pid_t pid;
-
-					pid = fork();
-					switch (pid) {
-						case 0: // Child
-							video_decode(client);
-							exit(0);
-						case -1: // Error
-							break;
-						default: // Parent
-							waitpid(pid, NULL, 0);
-							close(client);
-							fb_splash();
-							break;
-					}
-				}
-				break;
-			default:
-				break;
-		} 
-
+			}
+		}
 	}
 }
