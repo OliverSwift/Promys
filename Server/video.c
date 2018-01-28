@@ -233,6 +233,8 @@ video_decode(int stream, int overscan)
       OMX_BUFFERHEADERTYPE *buf;
       int port_settings_changed = 0;
       int first_packet = 1;
+      struct timeval to;
+      fd_set fdset;
 
       ilclient_change_component_state(video_decode, OMX_StateExecuting);
 
@@ -240,6 +242,15 @@ video_decode(int stream, int overscan)
       {
          // feed data and wait until we get port settings changed
          unsigned char *dest = buf->pBuffer;
+	 int ret;
+
+         FD_ZERO(&fdset);
+         FD_SET(stream, &fdset);
+         to.tv_sec = 2,
+         to.tv_usec = 0;
+
+	 ret = select(stream+1, &fdset, NULL, NULL, &to);
+	 if (ret == 0) break; // Timeout
 
          data_len = read(stream, dest, buf->nAllocLen-data_len);
 	 if (data_len <= 0)
