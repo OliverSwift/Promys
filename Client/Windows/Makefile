@@ -1,7 +1,7 @@
-OBJS=main.o socket.o gui.o screencast.res
+OBJS=main.o socket.o gui.o discover.o screencast.res
 CXXFLAGS=-I../Common/x264 -I../Common/ffmpeg -I../Common/Socket
 
-screencast: $(OBJS)
+screencast.exe: $(OBJS)
 	$(CXX) -o $@ $(OBJS) -mwindows -L../Common/x264 -lx264 -L../Common/ffmpeg/libswscale -lswscale
 
 socket.o: ../Common/Socket/socket.cpp
