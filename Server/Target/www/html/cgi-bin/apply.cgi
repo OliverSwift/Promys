@@ -1,7 +1,7 @@
 #!/bin/bash
 export TMPDIR=/var/run/lighttpd
 
-error() {
+function error {
     echo "Content-Type: text/html"
     echo ""
     echo "<html>"
@@ -13,21 +13,21 @@ error() {
 # POST vars parsing
 read -N $CONTENT_LENGTH query
 echo $query > $TMPDIR/apply.log
-# TODO: escape dangerous values. Attacker can exploit easily the eval part
-eval `echo $query | tr '`$' "__" | sed -e 's:&:\n:g'`
+# Escape dangerous values. Attacker can exploit easily the eval part
+eval `echo $query | tr '\`\$' "__" | sed -e 's:&:\n:g'`
 
 # Password checking
 if [ -e /boot/password.txt ]; then
     hash=$(echo $password | md5sum)
-    if [ $hash != `cat /boot/password.txt`]; then
-        error("Wrong password");
+    if [ "$hash" != "`cat /boot/password.txt`" ]; then
+        error "Wrong password";
     fi
 else
     if [ "$new_password" = "" ]; then
-        error("Password must bet set");
+        error "Password must bet set";
     fi
 fi
-if [ "$new_password" != "$password" && "$new_password" != "" ]; then
+if [ "$new_password" != "$password" -a "$new_password" != "" ]; then
     echo $new_password | md5sum > /boot/password.txt
 fi
 

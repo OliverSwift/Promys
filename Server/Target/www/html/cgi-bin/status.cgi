@@ -2,9 +2,9 @@
 echo "Content-Type: application/json;"
 echo ""
 echo "{"
-if [ -e /boot/passwd.txt ]; then
+if [ -e /boot/password.txt ]; then
     hash=$(echo $QUERY_STRING | md5sum)
-    if [ $hash = `cat /boot/passwd.txt ]; then
+    if [ "$hash" = "`cat /boot/password.txt`" ]; then
         echo '"access_granted": true,'
     else
         echo '"access_granted": false,'

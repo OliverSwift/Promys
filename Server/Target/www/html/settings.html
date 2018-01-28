@@ -82,11 +82,15 @@ function updateFields(status) {
 	var el;
 
         el = document.getElementById('parameters');
+
         if (status.access_granted != true) {
             el.style.display = "none";
+	    if (password != "") {
+	        alert("Wrong password");
+	    }
         } else {
             el.style.display = "block";
-            el = document.getElementById('valiate');
+            el = document.getElementById('validate');
             el.style.display = "none";
         }
 
@@ -101,6 +105,7 @@ function updateFields(status) {
 	el.textContent = status.ip;
 	// NAT status
 	document.forms[0].elements['nat'].value = status.nat?"On":"Off";
+	//document.forms[0].elements['nat'].checked = status.nat;
 	// SSID
 	document.forms[0].elements['ssid'].value = status.ssid;
 	// Channel
@@ -140,23 +145,25 @@ function authenticate() {
 			</h3>
 		</div>
 
-                <div class="parameter">
-                        <div class="label" style="color: red;">Password: </div>
-                        <input class="field" type="password" name= "password" spellcheck="false">
-                </div>
-                <div class="parameter" id="validate">
-                    <div class="button" onclick="authenticate();">Validate</div>
+		<div id="validate">
+			<div class="parameter">
+				<div class="label" style="color: red;">Password: </div>
+				<input class="field" type="password" name= "password" spellcheck="false">
+			</div>
+			<div class="parameter">
+			    <div class="button" onclick="authenticate();">Validate</div>
+			</div>
                 </div>
 
 
                 <div id="parameters" style="display: none;">
                     <div class="parameter">
-                            <div class="label" style="color: red;">Confirm: </div>
+                            <div class="label" style="color: red;">New password: </div>
                             <input class="field" type="text" name= "new_password" spellcheck="false">
                     </div>
                     <div class="parameter">
                             <div class="label">NAT: </div>
-                            <input class="field" type="checkbox" name= "nat">
+                            <input class="field" type="text" name= "nat">
                     </div>
                     <div class="parameter">
                             <div class="label">SSID: </div>
