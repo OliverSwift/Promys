@@ -60,12 +60,12 @@ fb_init() {
     if (error) {
         printf("Failed to init Freetype lib\n");
     } else {
-        error = FT_New_Face(library, "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf", 0, &face);
+        error = FT_New_Face(library, getenv("PROMYS_TTF_FONT"), 0, &face);
 
         if (error) {
             printf("Failed to load font\n");
         } else {
-            FT_Set_Pixel_Sizes( face, 0, 32);
+            FT_Set_Pixel_Sizes( face, 0, 22);
         }
     }
 
@@ -174,7 +174,7 @@ static unsigned char
 blend(unsigned char selector, unsigned char color, unsigned char source) {
     unsigned short value;
 
-    value = selector * color + source * (~selector);
+    value = selector * color + source * (~selector & 0xff);
 
     return (unsigned char)(value >> 8);
 }
@@ -209,13 +209,13 @@ fb_print(int x, int y, const char *format, ...) {
 	pen_x = x;
 	pen_y = y;
 
-    char text[256];
+	char text[256];
 
-    va_list ap;
+	va_list ap;
 
-    va_start(ap, format);
-    vsnprintf(text, sizeof(text), format, ap);
-    va_end(ap);
+	va_start(ap, format);
+	vsnprintf(text, sizeof(text), format, ap);
+	va_end(ap);
 
 	int num_chars = strlen(text);
 
@@ -235,4 +235,27 @@ fb_print(int x, int y, const char *format, ...) {
 	  pen_x += face->glyph->advance.x >> 6;
 	}
 
+}
+
+void
+fb_info() {
+	const char *infoPath;
+	FILE *info;
+	int y;
+
+	infoPath = getenv("PROMYS_INFO_FILE");
+	if (infoPath == NULL) return;
+
+	info = fopen(infoPath, "r");
+	if (info == NULL) return;
+
+	y = 940;
+	while(1) {
+		char line[256];
+
+		if (fgets(line, sizeof(line), info) == NULL) break;
+		line[strlen(line)-1] = 0; // remove eol
+		fb_print(32, y, "%s", line);
+		y += 24;
+	}
 }

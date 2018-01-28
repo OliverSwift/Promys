@@ -31,7 +31,7 @@ main(int argc, char **argv) {
 
 	fb_splash();
 
-    //fb_print(100, 800, "Message: %s", "Hello World!!!");
+	fb_info();
 
 	discover = promys_listen();
 	if (discover < 0) {
