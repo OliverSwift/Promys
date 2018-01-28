@@ -113,7 +113,8 @@ static void rpi_cec_callback(void *callback_data, uint32_t p0, uint32_t p1, uint
 			  case 4: // RIGHT
 				  change_overscan(-4);
 				  break;
-			  case 44: // EXIT
+			  case 13: // Return
+			  case 44: // EXIT (Panasonic)
 				  exit(2);
 				  break;
 			  default:
