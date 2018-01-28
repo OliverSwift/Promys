@@ -56,7 +56,7 @@ static void set_overscan(int overscan) {
 
 	ret = OMX_SetParameter(ILC_GET_HANDLE(video_render), OMX_IndexConfigDisplayRegion, &disp_teg_type);
 	if (ret != OMX_ErrorNone) {
-	        printf("Set Ret: %x\n", ret);
+	        fprintf(stderr, "Set Ret: %x\n", ret);
 	}
 }
 
@@ -115,6 +115,9 @@ static void rpi_cec_callback(void *callback_data, uint32_t p0, uint32_t p1, uint
 				  break;
 			  case 44: // EXIT
 				  exit(2);
+				  break;
+			  default:
+				  fprintf(stderr, "CEC: button %d\n", button);
 				  break;
 		  }
 		  break;
@@ -246,15 +249,20 @@ video_decode(int stream, int overscan)
 
          FD_ZERO(&fdset);
          FD_SET(stream, &fdset);
-         to.tv_sec = 2,
+         to.tv_sec = 10;
          to.tv_usec = 0;
 
 	 ret = select(stream+1, &fdset, NULL, NULL, &to);
-	 if (ret == 0) break; // Timeout
+	 if (ret == 0) {
+		 status = -8;
+		 break; // Timeout
+	 }
 
          data_len = read(stream, dest, buf->nAllocLen-data_len);
-	 if (data_len <= 0)
+	 if (data_len <= 0) {
+	     status = -9;
              break;
+	 }
 
          if(port_settings_changed == 0 &&
             ((data_len > 0 && ilclient_remove_event(video_decode, OMX_EventPortSettingsChanged, 131, 0, 0, 1) == 0) ||
@@ -263,8 +271,7 @@ video_decode(int stream, int overscan)
          {
             port_settings_changed = 1;
 
-            if(ilclient_setup_tunnel(tunnel, 0, 0) != 0)
-            {
+            if(ilclient_setup_tunnel(tunnel, 0, 0) != 0) {
                status = -7;
                break;
             }
@@ -284,8 +291,10 @@ video_decode(int stream, int overscan)
 		   set_overscan(overscan);
 	    }
          }
-         if(!data_len)
+         if(!data_len) {
+	    status = -10;
             break;
+	 }
 
          buf->nFilledLen = data_len;
          data_len = 0;
