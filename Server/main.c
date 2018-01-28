@@ -15,15 +15,13 @@
 #include "video.h"
 #include "splash.h"
 #include "discover.h"
-#include "cec.h"
-
-extern int overscan;
 
 int
 main(int argc, char **argv) {
 	int ret;
 	int connection;
 	int discover;
+	int overscan = 0;
 
 	connection = socket_listen(9000);
 
@@ -34,9 +32,6 @@ main(int argc, char **argv) {
 	fb_splash();
 
 	fb_info();
-
-	//cec_init();
-	overscan = 0;
 
 	discover = promys_listen();
 	if (discover < 0) {
@@ -66,7 +61,6 @@ main(int argc, char **argv) {
 				pid_t pid;
 
 				pid = fork();
-				cec_close();
 
 				switch (pid) {
 					case 0: // Child
@@ -78,7 +72,7 @@ main(int argc, char **argv) {
 						waitpid(pid, NULL, 0);
 						close(client);
 						fb_splash();
-                        fb_info();
+						fb_info();
 						break;
 				}
 			}
