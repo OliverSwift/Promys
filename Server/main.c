@@ -15,6 +15,7 @@
 #include "video.h"
 #include "splash.h"
 #include "discover.h"
+#include "cec.h"
 
 int
 main(int argc, char **argv) {
@@ -32,6 +33,8 @@ main(int argc, char **argv) {
 	fb_splash();
 
 	fb_info();
+
+	cec_init();
 
 	discover = promys_listen();
 	if (discover < 0) {
