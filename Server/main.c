@@ -17,12 +17,13 @@
 #include "discover.h"
 #include "cec.h"
 
+extern int overscan;
+
 int
 main(int argc, char **argv) {
 	int ret;
 	int connection;
 	int discover;
-	int overscan = 0;
 
 	connection = socket_listen(9000);
 
@@ -34,7 +35,8 @@ main(int argc, char **argv) {
 
 	fb_info();
 
-	cec_init();
+	//cec_init();
+	overscan = 0;
 
 	discover = promys_listen();
 	if (discover < 0) {
@@ -64,6 +66,8 @@ main(int argc, char **argv) {
 				pid_t pid;
 
 				pid = fork();
+				cec_close();
+
 				switch (pid) {
 					case 0: // Child
 						video_decode(client, overscan);
