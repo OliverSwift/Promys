@@ -9,46 +9,12 @@
 extern "C" {
 #include <libswscale/swscale.h>
 #include "gui.h"
+#include "discover.h"
 }
 #include <x264.h>
 #include "socket.h"
 
 #undef FILE_DUMP
-
-char *
-find_promys(int *port) {
-    int ret;
-    int s;
-    struct sockaddr_in promys, from;
-
-    s = socket(AF_INET, SOCK_DGRAM, 0);
-
-    promys.sin_family = AF_INET;
-    promys.sin_port   = htons(9999);
-    promys.sin_addr.s_addr   = htonl(INADDR_ANY);
-
-    ret = bind(s, (struct sockaddr *) &promys, sizeof(promys));
-
-    memset(&from, 0, sizeof(from));
-
-    struct {
-	char  title[8];
-	short port;
-    } announce;
-
-    unsigned int from_len = sizeof(from);
-
-    memset(&announce, 0, sizeof(announce));
-
-    ret = recvfrom(s, &announce, sizeof(announce), 0, (struct sockaddr *)&from, &from_len);
-    if (ret < 0) {
-	return NULL;
-    }
-
-    *port = ntohs(announce.port);
-
-    return inet_ntoa(from.sin_addr);
-}
 
 int
 main(int argc, char **argv) {
@@ -59,19 +25,19 @@ main(int argc, char **argv) {
 	Socket *cast;
 	const char *cast_server = argv[1];
 	int cast_port = 9000;
-    int go;
+	int go;
 
-    gui_init(&go);
+	gui_init(&go);
 
 	if (argv[1] == NULL) {
 	    showMessage("Searching for PROMYS device");
-	    cast_server = find_promys(&cast_port);
+	    cast_server = promys_discover(&cast_port);
 	}
 
 	printf("Found at %s:%d\n", cast_server, cast_port);
 
-    showMessage("PROMYS device found");
-    hideWindow();
+	showMessage("PROMYS device found");
+	hideWindow();
 
 	cast = new Socket();
 
@@ -79,8 +45,8 @@ main(int argc, char **argv) {
 
 	gettimeofday(&start, NULL);
 
-    size_t width, height;
-    size_t out_width, out_height;
+	size_t width, height;
+	size_t out_width, out_height;
 
 	Display *dpy;
 	int screen;

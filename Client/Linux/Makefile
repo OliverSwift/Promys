@@ -1,4 +1,4 @@
-OBJS=main.o socket.o gui.o
+OBJS=main.o socket.o gui.o discover.o
 DEBUG=-O
 CXXFLAGS=$(DEBUG) -I../Common/x264 -I../Common/ffmpeg -I../Common/Socket
 CFLAGS=$(CXXFLAGS)
