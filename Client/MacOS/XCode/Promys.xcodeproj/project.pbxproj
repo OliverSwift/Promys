@@ -10,6 +10,7 @@
 		091EDD532018FACF00788924 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 091EDD522018FACF00788924 /* Foundation.framework */; };
 		091EDD552018FB0B00788924 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 091EDD542018FB0B00788924 /* CoreFoundation.framework */; };
 		091EDD572018FB1700788924 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 091EDD562018FB1700788924 /* CoreGraphics.framework */; };
+		095EA4F3201DD95E002CD5E0 /* discover.c in Sources */ = {isa = PBXBuildFile; fileRef = 095EA4F1201DD95E002CD5E0 /* discover.c */; };
 		096032D420138545009E1E3B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 096032D320138545009E1E3B /* AppDelegate.m */; };
 		096032D620138545009E1E3B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 096032D520138545009E1E3B /* Assets.xcassets */; };
 		096032D920138545009E1E3B /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 096032D720138545009E1E3B /* MainMenu.xib */; };
@@ -24,6 +25,8 @@
 		091EDD522018FACF00788924 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		091EDD542018FB0B00788924 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		091EDD562018FB1700788924 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		095EA4F1201DD95E002CD5E0 /* discover.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = discover.c; sourceTree = "<group>"; };
+		095EA4F2201DD95E002CD5E0 /* discover.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = discover.h; sourceTree = "<group>"; };
 		096032CF20138544009E1E3B /* Promys.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Promys.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		096032D220138544009E1E3B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		096032D320138545009E1E3B /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -77,6 +80,8 @@
 			isa = PBXGroup;
 			children = (
 				0994007A2016794C00E214E7 /* promys.h */,
+				095EA4F1201DD95E002CD5E0 /* discover.c */,
+				095EA4F2201DD95E002CD5E0 /* discover.h */,
 				096032E32014EEF3009E1E3B /* promys.mm */,
 				096032E42014EEF3009E1E3B /* socket.cpp */,
 				096032E52014EEF3009E1E3B /* socket.h */,
@@ -138,7 +143,7 @@
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
-								enabled = 0;
+								enabled = 1;
 							};
 						};
 					};
@@ -198,6 +203,7 @@
 			files = (
 				096032E72014EEF3009E1E3B /* socket.cpp in Sources */,
 				096032DC20138545009E1E3B /* main.m in Sources */,
+				095EA4F3201DD95E002CD5E0 /* discover.c in Sources */,
 				096032D420138545009E1E3B /* AppDelegate.m in Sources */,
 				096032E62014EEF3009E1E3B /* promys.mm in Sources */,
 			);
@@ -324,6 +330,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Promys/Promys.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -346,6 +353,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Promys/Promys.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
