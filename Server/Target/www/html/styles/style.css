@@ -1,0 +1,117 @@
+@font-face {
+  font-family: 'Gruppo';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Gruppo'), url('fonts/Gruppo-Regular.ttf') format('truetype');
+}
+
+@keyframes main-header-appear {
+	from {
+		transform: scale(0,1) translate(-50%,0pt);
+		opacity: 0;
+	}
+	to {
+		transform: scale(1,1) translate(0pt,0pt);
+		opacity: 1;
+	}
+}
+
+@keyframes main-menu-appear {
+	0% {
+		opacity: 0;
+		transform: scale(-1,1);
+	}
+	70% {
+		opacity: 0.5;
+	}
+	100% {
+		opacity: 1;
+		transform: scale(1,1);
+	}
+}
+
+html * {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-family: Gruppo;
+	background: url('../images/bg.jpg');
+	color: white;
+}
+
+main header {
+	padding: 5%;
+	font-size: 150%;
+	height: 4rem;
+
+	animation: main-header-appear 1s ease-out;
+}
+
+main menu {
+	animation: main-menu-appear 0.5s ease-out;
+}
+
+menuitem {
+	border-radius: 5pt;
+}
+
+#platforms {
+	display: flex;
+}
+
+.platform {
+	display: none;
+	position: relative;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 25px;
+	padding-bottom: 55px;
+	text-align: center;
+	line-height: 2;
+	transition: 0.25s;
+}
+
+.platform:hover {
+	background-color: grey;
+}
+
+.platform img {
+	width: 140px;
+	height: 140px;
+}
+
+.platform h2 {
+	font-size: 200%;
+}
+
+.platform p {
+	max-width: 25vw;
+	text-align: center;
+	line-height: 1.6;
+}
+
+.platform p code {
+	display: block;
+	background-color: black;
+	color: lime;
+}
+
+.download {
+	position: absolute;
+	bottom: 0;
+	left: 5%;
+	width: 90%;
+	height: 40pt;
+	font-size: 18pt;
+	text-decoration: none;
+	color: yellow;
+	background-color: #3A3A3A;
+	transition: 0.25s;
+	border-radius: 5pt;
+}
+
+.platform a:hover {
+	background-color: #606060;
+}

@@ -7,6 +7,5 @@ Section: x11
 Essential: no
 Priority: extra
 Architecture: amd64
-Homepage: http://www.promys.net
+Homepage: http://www.promys.me
 Source:
-

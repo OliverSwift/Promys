@@ -1,38 +1,16 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-
-    <style>
-    @import url(fonts/gruppo.css);
-    BODY {
-        background: url("images/bg.jpg") no-repeat center fixed;
-        background-size: cover;
-        color: #FFF;
-    }
-	.jumbotron {
-		margin-top: 2em;
-		background-color: rgba(32,32,64, 0.2);
-		border-radius: 1rem;
-        font-family: 'Gruppo';
-        font-size: 1.5em;
-	}
-    H2 {
-        font-family: 'Gruppo';
-    }
-    </style>
-
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> -->
     <title>Promys</title>
+	<link rel="stylesheet" type="text/css" href="styles/style.css">
+	<script src="scripts/platform.js"></script>
   </head>
-  <body>
+  <body onload="platform()">
 
     <header>
-      <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+      <nav>
         <!--
         <a class="navbar-brand" href="#">Carousel</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,45 +33,33 @@
       </nav>
     </header>
 
-    <main role="main">
-
-      <div class="container">
-		<div class="jumbotron">
-		  <h1 class="display-4">Promys</h1>
-		  <p class="lead">Simply cast your desktop screen to a Promys device.</p>
-		</div>
-      </div>
-
-      <div class="container marketing">
-        <div class="row">
-          <div class="col-lg-4">
-            <img class="rounded-0" src="images/Windows.png" alt="Generic placeholder image" width="140" height="140">
-            <h2>Windows</h2>
-            <p>Get the executable, double-click it. There you go.</p>
-            <p><a class="btn btn-secondary" href="dl/promys.exe" role="button">Download</a></p>
-          </div><!-- /.col-lg-4 -->
-          <div class="col-lg-4">
-            <img class="rounded-0" src="images/Apple.png" alt="Generic placeholder image" width="140" height="140">
-            <h2>MacOSX</h2>
-            <p>Get the DMG file. Open it, double click the application. You can also drag and drop it anywhere on your Mac.</p>
-            <p><a class="btn btn-secondary" href="dl/promys.dmg" role="button">Download</a></p>
-          </div><!-- /.col-lg-4 -->
-          <div class="col-lg-4">
-            <img class="rounded-0" src="images/ubuntu.png" alt="Generic placeholder image" width="140" height="140">
-            <h2>Ubuntu</h2>
-            <p>Get the deb package. Install it with:
-            <div class="d-inline-flex p-2"><strong><code># sudo dpkg -i promys.deb</code></strong></div>
-            </p>
-            <p><a class="btn btn-secondary" href="dl/promys.deb" role="button">Download</a></p>
-          </div><!-- /.col-lg-4 -->
-        </div><!-- /.row -->
-      </div><!-- container -->
-
+    <main>
+      <header>
+	    <h1>Promys</h1>
+	    <p>Simply cast your desktop screen to a Promys device.</p>
+      </header>
+      <menu id="platforms">
+        <menuitem class="platform" id="windows">
+          <img src="images/Windows.png" alt="Windows platform">
+          <h2>Windows</h2>
+          <p>Get the executable, double-click it. There you go.</p>
+          <a class="download" href="downloads/promys.exe" download>Download</a>
+        </menuitem>
+        <menuitem class="platform" id="macos">
+          <img src="images/Apple.png" alt="Apple platform">
+          <h2>macOS</h2>
+          <p>Get the DMG file. Open it, double click the application. You can also drag and drop it anywhere on your Mac.</p>
+          <a class="download" href="downloads/promys.dmg" download>Download</a>
+        </menuitem>
+        <menuitem class="platform" id="linux">
+          <img src="images/ubuntu.png" alt="Linux platform">
+          <h2>Ubuntu</h2>
+          <p>Get the deb package. Install it with:
+          <code><strong># sudo dpkg -i promys.deb</strong></code>
+          </p>
+          <a class="download" href="downloads/promys.deb" download>Download</a>
+        </menuitem>
+      </menu>
     </main>
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="js/jquery-3.2.1.slim.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
   </body>
 </html>
