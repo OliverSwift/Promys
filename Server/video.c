@@ -100,12 +100,22 @@ static void rpi_cec_callback(void *callback_data, uint32_t p0, uint32_t p1, uint
 		case VC_CEC_BUTTON_PRESSED:
 		case VC_CEC_REMOTE_PRESSED:
 		  button = (p1>>16)&0xff;
-		  if (button == 1) {
-			  // Up
-			  change_overscan(1);
-		  } else if (button == 2) {
-			  // Down
-			  change_overscan(-1);
+		  switch (button) {
+			  case 1: // UP
+				  change_overscan(-1);
+				  break;
+			  case 2: // DOWN
+				  change_overscan(1);
+				  break;
+			  case 3: // LEFT
+				  change_overscan(4);
+				  break;
+			  case 4: // RIGHT
+				  change_overscan(-4);
+				  break;
+			  case 44: // EXIT
+				  exit(2);
+				  break;
 		  }
 		  break;
 		case VC_CEC_LOGICAL_ADDR:
@@ -133,9 +143,6 @@ static void cec_init() {
 	// Update physical address in active source cec command buffer
 	active_source[1] = physical_address >> 8;
 	active_source[2] = physical_address & 0xff;
-
-	printf("PHYADD: %04x\n", physical_address);
-	printf("Claiming logical address: %xh\n", 8);
 
 	vc_cec_set_logical_address(8, CEC_DeviceType_Playback, CEC_VENDOR_ID_BROADCOM);
 }
