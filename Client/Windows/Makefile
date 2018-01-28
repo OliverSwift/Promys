@@ -1,7 +1,7 @@
-OBJS=main.o socket.o gui.o screencast.res
+OBJS=main.o socket.o gui.o discover.o screencast.res
 CXXFLAGS=-I../Common/x264 -I../Common/ffmpeg -I../Common/Socket
 
-screencast: $(OBJS)
+screencast.exe: $(OBJS)
 	$(CXX) -o $@ $(OBJS) -mwindows -L../Common/x264 -lx264 -L../Common/ffmpeg/libswscale -lswscale
 
 socket.o: ../Common/Socket/socket.cpp
@@ -10,7 +10,7 @@ socket.o: ../Common/Socket/socket.cpp
 screencast.res: ScreenCast.rc
 	windres ScreenCast.rc -o screencast.res -O coff
 
-install: screencast promys.SED
+install: screencast.exe promys.SED
 	cp ../Common/ffmpeg/libavutil/cygavutil-56.dll .
 	cp ../Common/ffmpeg/libswscale/cygswscale-5.dll .
 	cp ../Common/x264/libx264-155.dll .

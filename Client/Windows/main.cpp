@@ -5,47 +5,13 @@
 #include <stdint.h>
 extern "C" {
 #include <libswscale/swscale.h>
+#include "discover.h"
 }
 #include <x264.h>
 #include "socket.h"
 #include <arpa/inet.h>
 
 #undef FILE_DUMP
-
-char *
-find_promys(int *port) {
-    int ret;
-    int s;
-    struct sockaddr_in promys, from;
-
-    s = socket(AF_INET, SOCK_DGRAM, 0);
-
-    promys.sin_family = AF_INET;
-    promys.sin_port   = htons(9999);
-    promys.sin_addr.s_addr   = htonl(INADDR_ANY);
-
-    ret = bind(s, (struct sockaddr *) &promys, sizeof(promys));
-
-    memset(&from, 0, sizeof(from));
-
-    struct {
-	char  title[8];
-	short port;
-    } announce;
-
-    int from_len = sizeof(from);
-
-    memset(&announce, 0, sizeof(announce));
-
-    ret = recvfrom(s, &announce, sizeof(announce), 0, (struct sockaddr *)&from, &from_len);
-    if (ret < 0) {
-	return NULL;
-    }
-
-    *port = ntohs(announce.port);
-
-    return inet_ntoa(from.sin_addr);
-}
 
 DWORD promys(LPVOID);
 
@@ -71,7 +37,7 @@ DWORD promys(LPVOID) {
 #ifndef FILE_DUMP
 	showMessage("Searching for PROMYS device");
 
-	cast_server = find_promys(&cast_port);
+	cast_server = promys_discover(&cast_port);
 
 	if (cast_server == NULL) {
 	    exit(1);
