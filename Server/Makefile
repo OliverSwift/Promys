@@ -15,4 +15,3 @@ install: promys
 	mkdir -p /opt/promys
 	rm -f /opt/promys/promys
 	cp promys /opt/promys
-	cp Target/opt/promys/splash.jpg /opt/promys
