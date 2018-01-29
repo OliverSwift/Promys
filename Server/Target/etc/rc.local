@@ -24,7 +24,7 @@ echo 1 > /proc/sys/net/ipv4/ip_forward
 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 
 # Start PROMYS
-export PROMYS_BACKGROUND=/home/pi/bg.jpg
-/home/pi/Promys/Server/promys 2> /var/run/promys.log
+export PROMYS_BACKGROUND=/opt/promys/splash.jpg
+/opt/promys/promys 2> /var/run/promys.log
 
 exit 0
