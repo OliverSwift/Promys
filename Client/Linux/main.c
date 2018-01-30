@@ -6,11 +6,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-extern "C" {
 #include <libswscale/swscale.h>
 #include "gui.h"
 #include "discover.h"
-}
 #include <x264.h>
 #include "socket.h"
 
@@ -22,7 +20,6 @@ main(int argc, char **argv) {
 #ifdef FILE_DUMP
 	FILE *out = fopen("out.h264","wb");
 #endif
-	Socket *cast;
 	const char *cast_server = argv[1];
 	int cast_port = 9000;
 	int go;
@@ -39,9 +36,7 @@ main(int argc, char **argv) {
 	showMessage("PROMYS device found");
 	hideWindow();
 
-	cast = new Socket();
-
-	cast->connect(cast_server, cast_port);
+	socket_connect(cast_server, cast_port);
 
 	gettimeofday(&start, NULL);
 
@@ -96,7 +91,7 @@ main(int argc, char **argv) {
 
 	h = x264_encoder_open( &param );
 
-	SwsContext *swsCtxt;
+	struct SwsContext *swsCtxt;
 
 	swsCtxt = sws_getContext(width, height, AV_PIX_FMT_BGRA,
 	                         param.i_width, param.i_height, AV_PIX_FMT_YUV420P,
@@ -125,7 +120,7 @@ main(int argc, char **argv) {
 #ifdef FILE_DUMP
 		fwrite(nal->p_payload, 1, i_frame_size, out);
 #else
-		if (cast->send(nal->p_payload, i_frame_size) < 0) break;
+		if (socket_send(nal->p_payload, i_frame_size) < 0) break;
 #endif
 	    }
 
@@ -155,7 +150,7 @@ main(int argc, char **argv) {
 #ifdef FILE_DUMP
 		fwrite(nal->p_payload, 1, i_frame_size, out);
 #else
-		if (cast->send(nal->p_payload, i_frame_size) < 0) break;
+		if (socket_send(nal->p_payload, i_frame_size) < 0) break;
 #endif
 	    }
 	}
@@ -165,7 +160,7 @@ main(int argc, char **argv) {
 
 	sws_freeContext(swsCtxt);
 
-	delete cast;
+	socket_close();
 
 	XCloseDisplay(dpy);
 

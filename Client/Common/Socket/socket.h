@@ -1,37 +1,21 @@
 #ifndef _SOCKET_H_
 #define _SOCKET_H_
 
-extern "C" {
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <netdb.h>
 #include <netinet/in.h>
-};
 
-class Socket {
-public:
-    Socket();
-    ~Socket();
+// Client
+int socket_connect(const char *server, in_port_t port);
 
-    // Client
-    int connect(const char *server, in_port_t port);
+// Server
+int socket_listen(in_port_t port);
+int socket_accept();
 
-    // Server
-    int listen(in_port_t port);
-    int accept();
+// read/write helpers
+int socket_receive(void *dst, unsigned int size);
+int socket_send(void *dst, unsigned int size);
 
-    // read/write helpers
-    int receive(void *dst, unsigned int size);
-    int send(void *dst, unsigned int size);
-
-    int verbose;
-
-private:
-    int socket_server;
-    int socket_client;
-    struct sockaddr_in sock_desc; // Description of either server or client
-
-    void error(const char *s);
-};
+void socket_close();
 
 #endif // _SOCKET_H_

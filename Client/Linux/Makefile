@@ -1,14 +1,13 @@
 OBJS=main.o socket.o gui.o discover.o
 DEBUG=-O
-CXXFLAGS=$(DEBUG) -I../Common/x264 -I../Common/ffmpeg -I../Common/Socket
-CFLAGS=$(CXXFLAGS)
+CFLAGS=$(DEBUG) -I../Common/x264 -I../Common/ffmpeg -I../Common/Socket
 LIBRARIES:= -L../Common/x264 -lx264 -L../Common/ffmpeg/libswscale -lswscale -L../Common/ffmpeg/libavutil -lavutil -lstdc++ -lX11 -lpthread
 
 screencast: $(OBJS)
-	$(CXX) $(DEBUG) -o $@ $(OBJS) $(FRAMEWORKS) -Wl,-rpath=./:/opt/promys $(LIBRARIES)
+	$(CC) $(DEBUG) -o $@ $(OBJS) $(FRAMEWORKS) -Wl,-rpath=./:/opt/promys $(LIBRARIES)
 
-socket.o: ../Common/Socket/socket.cpp
-	$(CXX) -c -o $@ $(CXXFLAGS) $<
+socket.o: ../Common/Socket/socket.c
+	$(CC) -c -o $@ $(CFLAGS) $<
 
 install:
 	cp ../Common/x264/libx264.so.* .
