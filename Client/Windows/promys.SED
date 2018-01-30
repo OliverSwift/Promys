@@ -23,7 +23,7 @@ SourceFiles=SourceFiles
 [Strings]
 InstallPrompt=
 DisplayLicense=
-FinishMessage=End of broadcast
+FinishMessage=
 TargetName=promys.exe
 FriendlyName=Promys
 AppLaunched=screencast.exe
@@ -31,12 +31,10 @@ PostInstallCmd=<None>
 AdminQuietInstCmd=
 UserQuietInstCmd=
 FILE0="cygavutil-56.dll"
-FILE1="cyggcc_s-seh-1.dll"
-FILE2="cygstdc++-6.dll"
-FILE3="cygswscale-5.dll"
-FILE4="cygwin1.dll"
-FILE5="libx264-152.dll"
-FILE6="screencast.exe"
+FILE1="cygswscale-5.dll"
+FILE2="cygwin1.dll"
+FILE3="libx264-155.dll"
+FILE4="screencast.exe"
 [SourceFiles]
 SourceFiles0=
 [SourceFiles0]
@@ -45,5 +43,3 @@ SourceFiles0=
 %FILE2%=
 %FILE3%=
 %FILE4%=
-%FILE5%=
-%FILE6%=

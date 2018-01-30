@@ -1,53 +1,18 @@
-#include <Cocoa/Cocoa.h>
-#include <CoreFoundation/CoreFoundation.h>
-#include <CoreGraphics/CGImage.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
 #include <unistd.h>
 #include <sys/time.h>
 #include <arpa/inet.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
-extern "C" {
 #include <libswscale/swscale.h>
-}
+#include "gui.h"
+#include "discover.h"
 #include <x264.h>
 #include "socket.h"
 
 #undef FILE_DUMP
-
-char *
-find_promys(int *port) {
-    int ret;
-    int s;
-    struct sockaddr_in promys, from;
-
-    s = socket(AF_INET, SOCK_DGRAM, 0);
-
-    promys.sin_family = AF_INET;
-    promys.sin_port   = htons(9999);
-    promys.sin_addr.s_addr   = htonl(INADDR_ANY);
-
-    ret = bind(s, (struct sockaddr *) &promys, sizeof(promys));
-
-    memset(&from, 0, sizeof(from));
-
-    struct {
-	char  title[8];
-	short port;
-    } announce;
-
-    unsigned int from_len = sizeof(from);
-
-    memset(&announce, 0, sizeof(announce));
-
-    ret = recvfrom(s, &announce, sizeof(announce), 0, (struct sockaddr *)&from, &from_len);
-    if (ret < 0) {
-	return NULL;
-    }
-
-    *port = ntohs(announce.port);
-
-    return inet_ntoa(from.sin_addr);
-}
 
 int
 main(int argc, char **argv) {
@@ -55,37 +20,46 @@ main(int argc, char **argv) {
 #ifdef FILE_DUMP
 	FILE *out = fopen("out.h264","wb");
 #endif
-	Socket *cast;
-	char *cast_server;
-	int cast_port;
+	const char *cast_server = argv[1];
+	int cast_port = 9000;
+	int go;
+
+	gui_init(&go);
 
 	if (argv[1] == NULL) {
-	    printf("Searching for PROMYS device\n");
-	    cast_server = find_promys(&cast_port);
-	    printf("Found at %s:%d\n", cast_server, cast_port);
-	} else {
-	    cast_server = argv[1];
-	    cast_port = 9000;
+	    showMessage("Searching for PROMYS device");
+	    cast_server = promys_discover(&cast_port);
 	}
 
-	cast = new Socket();
+	printf("Found at %s:%d\n", cast_server, cast_port);
 
-	cast->connect(cast_server, cast_port);
+	showMessage("PROMYS device found");
+	hideWindow();
+
+	socket_connect(cast_server, cast_port);
 
 	gettimeofday(&start, NULL);
 
-        CGImageRef image_ref = CGDisplayCreateImage(CGMainDisplayID());
+	size_t width, height;
+	size_t out_width, out_height;
 
-        size_t width, height;
-        size_t out_width, out_height;
+	Display *dpy;
+	int screen;
+	XImage *image;
+	Window root;
 
-        width = CGImageGetWidth(image_ref);
-        height = CGImageGetHeight(image_ref);
+	dpy = XOpenDisplay(getenv("DISPLAY"));
+	screen = DefaultScreen(dpy);
+	root = RootWindow(dpy, screen);
+	width = DisplayWidth (dpy, screen);
+	height = DisplayHeight (dpy, screen);
+
+	image = XGetImage(dpy, root, 0, 0, width, height, AllPlanes, ZPixmap);
 
 	out_width = 1920;
 	out_height = 1080;
 
-	int linesize = width *4;
+	int linesize = image->bytes_per_line;
 
 	x264_param_t param;
 	x264_picture_t pic;
@@ -117,7 +91,7 @@ main(int argc, char **argv) {
 
 	h = x264_encoder_open( &param );
 
-	SwsContext *swsCtxt;
+	struct SwsContext *swsCtxt;
 
 	swsCtxt = sws_getContext(width, height, AV_PIX_FMT_BGRA,
 	                         param.i_width, param.i_height, AV_PIX_FMT_YUV420P,
@@ -125,17 +99,17 @@ main(int argc, char **argv) {
 
 	int i=0;
 
-	while(1) {
-	    CFDataRef dataref = CGDataProviderCopyData(CGImageGetDataProvider(image_ref));
-	    const unsigned char *data = CFDataGetBytePtr(dataref);
+    showMessage("Broadcasting...");
+
+	while(go) {
+	    const unsigned char *data = (const unsigned char *)image->data;
 
 	    sws_scale(swsCtxt,
 	              &data, &linesize,
 		      0, height,
 		      pic.img.plane,  pic.img.i_stride);
 
-	    CFRelease(dataref);
-	    CGImageRelease(image_ref);
+	    XDestroyImage(image);
 
 	    pic.i_pts = i++;
 	    i_frame_size = x264_encoder_encode( h, &nal, &i_nal, &pic, &pic_out );
@@ -146,7 +120,7 @@ main(int argc, char **argv) {
 #ifdef FILE_DUMP
 		fwrite(nal->p_payload, 1, i_frame_size, out);
 #else
-		if (cast->send(nal->p_payload, i_frame_size) < 0) break;
+		if (socket_send(nal->p_payload, i_frame_size) < 0) break;
 #endif
 	    }
 
@@ -162,7 +136,7 @@ main(int argc, char **argv) {
 
 	    gettimeofday(&start, NULL);
 	    // Capture a new image
-	    image_ref = CGDisplayCreateImage(CGMainDisplayID());
+	    image = XGetImage(dpy, root, 0, 0, width, height, AllPlanes, ZPixmap);
 	}
 
 	/* Flush delayed frames */
@@ -176,7 +150,7 @@ main(int argc, char **argv) {
 #ifdef FILE_DUMP
 		fwrite(nal->p_payload, 1, i_frame_size, out);
 #else
-		if (cast->send(nal->p_payload, i_frame_size) < 0) break;
+		if (socket_send(nal->p_payload, i_frame_size) < 0) break;
 #endif
 	    }
 	}
@@ -186,5 +160,8 @@ main(int argc, char **argv) {
 
 	sws_freeContext(swsCtxt);
 
-	delete cast;
+	socket_close();
+
+	XCloseDisplay(dpy);
+
 }

@@ -5,7 +5,7 @@ LDFLAGS+=-lilclient -ljpeg
 include Makefile.include
 
 promys: $(OBJS)
-	$(CXX) -o $@ $(OBJS) $(LDFLAGS)
+	$(CC) -o $@ $(OBJS) $(LDFLAGS)
 
 install: promys
 	mkdir -p /opt/promys

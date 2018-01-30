@@ -1,23 +1,21 @@
-OBJS=main.o socket.o
-CFLAGS=-I../Common/x264 -I../Common/ffmpeg -I../Common/Socket
-FRAMEWORKS:= -framework Foundation -framework CoreVideo -framework CoreGraphics
-LIBRARIES:= -L../Common/x264 -lx264.152 -L../Common/ffmpeg/libswscale -lswscale.5 -lobjc -lstdc++
+promys.dmg: Promys.app
+	hdiutil create -srcfolder Promys.app -volname Promys promys.dmg
 
-screencast: $(OBJS)
-	$(CC) -o $@ $(OBJS) $(FRAMEWORKS) $(LIBRARIES)
+Promys.app: libs XCode/build/Release/Promys.app
+	cp -a XCode/build/Release/Promys.app .
 
-main.o: main.mm
-	$(CC) -c -o $@ $(CFLAGS) $<
-
-socket.o: ../Common/Socket/socket.cpp
-	$(CXX) -c -o $@ $(CFLAGS) $<
-
-install:
+XCode/build/Release/Promys.app:
+	xcodebuild -project XCode/Promys.xcodeproj -configuration Release
+	
+libs:
 	cp ../Common/x264/libx264.*.dylib .
 	cp ../Common/ffmpeg/libswscale/libswscale.*.dylib .
 	cp ../Common/ffmpeg/libavutil/libavutil.*.dylib .
-	strip screencast
-	tar czf promys.tgz lib*.dylib screencast promys.sh
+	install_name_tool -id @rpath/libswscale.5.dylib ./libswscale.5.dylib
+	install_name_tool -id @rpath/libx264.155.dylib ./libx264.155.dylib
+	install_name_tool -id @rpath/libavutil.56.dylib ./libavutil.56.dylib
+	install_name_tool -change /usr/local/lib/libavutil.56.dylib @rpath/libavutil.56.dylib libswscale.5.dylib
 
 clean:
-	-rm -f *.o *.dylib screencast
+	-rm -f *.dylib *.dmg
+	-rm -rf Promys.app XCode/build

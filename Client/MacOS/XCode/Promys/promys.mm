@@ -1,77 +1,49 @@
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
+#include "promys.h"
+#include <CoreFoundation/CoreFoundation.h>
+#include <CoreGraphics/CGImage.h>
 #include <unistd.h>
+#include <errno.h>
 #include <sys/time.h>
 #include <arpa/inet.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <stdint.h>
 extern "C" {
 #include <libswscale/swscale.h>
-#include "gui.h"
+#include "discover.h"
 }
 #include <x264.h>
 #include "socket.h"
+#include "AppDelegate.h"
 
 #undef FILE_DUMP
 
-char *
-find_promys(int *port) {
-    int ret;
-    int s;
-    struct sockaddr_in promys, from;
+@implementation Promys
 
-    s = socket(AF_INET, SOCK_DGRAM, 0);
-
-    promys.sin_family = AF_INET;
-    promys.sin_port   = htons(9999);
-    promys.sin_addr.s_addr   = htonl(INADDR_ANY);
-
-    ret = bind(s, (struct sockaddr *) &promys, sizeof(promys));
-
-    memset(&from, 0, sizeof(from));
-
-    struct {
-	char  title[8];
-	short port;
-    } announce;
-
-    unsigned int from_len = sizeof(from);
-
-    memset(&announce, 0, sizeof(announce));
-
-    ret = recvfrom(s, &announce, sizeof(announce), 0, (struct sockaddr *)&from, &from_len);
-    if (ret < 0) {
-	return NULL;
-    }
-
-    *port = ntohs(announce.port);
-
-    return inet_ntoa(from.sin_addr);
+-(void)showMessage:(NSString*)text {
+    AppDelegate *appDelegate;
+    
+    appDelegate = [[ NSApplication sharedApplication ] delegate ] ;
+    
+    [ appDelegate performSelectorOnMainThread:@selector(showMessage:) withObject:text waitUntilDone:false];
 }
 
-int
-main(int argc, char **argv) {
+-(void)hideWindow {
+    [[ NSApplication sharedApplication ] hide:nil ];
+}
+
+- (void)main {
 	struct timeval start,stop;
 #ifdef FILE_DUMP
 	FILE *out = fopen("out.h264","wb");
 #endif
 	Socket *cast;
-	const char *cast_server = argv[1];
-	int cast_port = 9000;
-    int go;
-
-    gui_init(&go);
-
-	if (argv[1] == NULL) {
-	    showMessage("Searching for PROMYS device");
-	    cast_server = find_promys(&cast_port);
-	}
-
+	char *cast_server;
+        int cast_port;
+         
+        [ self showMessage:@"Searching for PROMYS device" ];
+    
+	cast_server = promys_discover(&cast_port);
 	printf("Found at %s:%d\n", cast_server, cast_port);
-
-    showMessage("PROMYS device found");
-    hideWindow();
 
 	cast = new Socket();
 
@@ -79,32 +51,23 @@ main(int argc, char **argv) {
 
 	gettimeofday(&start, NULL);
 
-    size_t width, height;
-    size_t out_width, out_height;
+        CGImageRef image_ref = CGDisplayCreateImage(CGMainDisplayID());
 
-	Display *dpy;
-	int screen;
-	XImage *image;
-	Window root;
+        size_t width, height;
+        size_t out_width, out_height;
 
-	dpy = XOpenDisplay(getenv("DISPLAY"));
-	screen = DefaultScreen(dpy);
-	root = RootWindow(dpy, screen);
-	width = DisplayWidth (dpy, screen);
-	height = DisplayHeight (dpy, screen);
-
-	image = XGetImage(dpy, root, 0, 0, width, height, AllPlanes, ZPixmap);
+        width = CGImageGetWidth(image_ref);
+        height = CGImageGetHeight(image_ref);
 
 	out_width = 1920;
 	out_height = 1080;
 
-	int linesize = image->bytes_per_line;
+	int linesize = width *4;
 
 	x264_param_t param;
 	x264_picture_t pic;
 	x264_picture_t pic_out;
 	x264_t *h;
-	int i_frame = 0;
 	int i_frame_size;
 	x264_nal_t *nal;
 	int i_nal;
@@ -138,17 +101,20 @@ main(int argc, char **argv) {
 
 	int i=0;
 
-    showMessage("Broadcasting...");
-
-	while(go) {
-	    const unsigned char *data = (const unsigned char *)image->data;
+        [ self showMessage:@"Broadcasting..." ];
+	[ self hideWindow ];
+    
+	while(1) {
+	    CFDataRef dataref = CGDataProviderCopyData(CGImageGetDataProvider(image_ref));
+	    const unsigned char *data = CFDataGetBytePtr(dataref);
 
 	    sws_scale(swsCtxt,
 	              &data, &linesize,
 		      0, height,
 		      pic.img.plane,  pic.img.i_stride);
 
-	    XDestroyImage(image);
+	    CFRelease(dataref);
+	    CGImageRelease(image_ref);
 
 	    pic.i_pts = i++;
 	    i_frame_size = x264_encoder_encode( h, &nal, &i_nal, &pic, &pic_out );
@@ -170,12 +136,12 @@ main(int argc, char **argv) {
 	    delay = (stop.tv_sec - start.tv_sec)*1000000;
 	    delay += (stop.tv_usec - start.tv_usec);
 	    if (delay < 40000) {
-		usleep(40000 - delay);
+		usleep(40000 - (int)delay);
 	    }
 
 	    gettimeofday(&start, NULL);
 	    // Capture a new image
-	    image = XGetImage(dpy, root, 0, 0, width, height, AllPlanes, ZPixmap);
+	    image_ref = CGDisplayCreateImage(CGMainDisplayID());
 	}
 
 	/* Flush delayed frames */
@@ -200,7 +166,6 @@ main(int argc, char **argv) {
 	sws_freeContext(swsCtxt);
 
 	delete cast;
-
-	XCloseDisplay(dpy);
-
 }
+@end
+

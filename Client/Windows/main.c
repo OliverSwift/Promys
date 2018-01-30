@@ -3,49 +3,13 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdint.h>
-extern "C" {
 #include <libswscale/swscale.h>
-}
+#include "discover.h"
 #include <x264.h>
 #include "socket.h"
 #include <arpa/inet.h>
 
 #undef FILE_DUMP
-
-char *
-find_promys(int *port) {
-    int ret;
-    int s;
-    struct sockaddr_in promys, from;
-
-    s = socket(AF_INET, SOCK_DGRAM, 0);
-
-    promys.sin_family = AF_INET;
-    promys.sin_port   = htons(9999);
-    promys.sin_addr.s_addr   = htonl(INADDR_ANY);
-
-    ret = bind(s, (struct sockaddr *) &promys, sizeof(promys));
-
-    memset(&from, 0, sizeof(from));
-
-    struct {
-	char  title[8];
-	short port;
-    } announce;
-
-    int from_len = sizeof(from);
-
-    memset(&announce, 0, sizeof(announce));
-
-    ret = recvfrom(s, &announce, sizeof(announce), 0, (struct sockaddr *)&from, &from_len);
-    if (ret < 0) {
-	return NULL;
-    }
-
-    *port = ntohs(announce.port);
-
-    return inet_ntoa(from.sin_addr);
-}
 
 DWORD promys(LPVOID);
 
@@ -55,14 +19,13 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow)
     guiMain(hInstance, hPrevInst, lpCmdLine, nCmdShow);
 }
 
-DWORD promys(LPVOID) {
+DWORD promys(LPVOID arg) {
 #ifdef FILE_DUMP
 	FILE *out = fopen("out.h264","wb");
 #endif
 	unsigned int height, width;
 	unsigned int out_width, out_height;
 
-	Socket *cast;
 	char *cast_server;
 	int cast_port;
 
@@ -71,7 +34,7 @@ DWORD promys(LPVOID) {
 #ifndef FILE_DUMP
 	showMessage("Searching for PROMYS device");
 
-	cast_server = find_promys(&cast_port);
+	cast_server = promys_discover(&cast_port);
 
 	if (cast_server == NULL) {
 	    exit(1);
@@ -81,9 +44,7 @@ DWORD promys(LPVOID) {
 	    hideWindow();
 	}
 
-	cast = new Socket();
-
-	if (cast->connect(cast_server, cast_port) < 0) {
+	if (socket_connect(cast_server, cast_port) < 0) {
 	    printf("Unable to connect to Promys\n");
 	    exit(1);
 	}
@@ -159,7 +120,7 @@ DWORD promys(LPVOID) {
 
 	h = x264_encoder_open( &param );
 
-	SwsContext *swsCtxt;
+	struct SwsContext *swsCtxt;
 
 	swsCtxt = sws_getContext(width, height, AV_PIX_FMT_BGRA,
 	                         param.i_width, param.i_height, AV_PIX_FMT_YUV420P,
@@ -175,16 +136,24 @@ DWORD promys(LPVOID) {
 	    GetSystemTime(&start);
 	    StretchBlt(hDCMem, 0, bi.biHeight, bi.biWidth, -bi.biHeight, hDCScreen, 0, 0, bi.biWidth, bi.biHeight, SRCCOPY);
 
-#if 0
-	    // Draw cursor
+#if 1
+	    // Draw cursor (poorly)
 	    CURSORINFO ci;
+	    ICONINFO ii;
+	    BITMAP bm;
+	    HDC cdc;
+
 	    ci.cbSize = sizeof(ci);
 	    GetCursorInfo(&ci);
+	    GetIconInfo(ci.hCursor, &ii);
 
-	    char message[256];
+	    cdc = CreateCompatibleDC(hDCMem);
 
-	    sprintf(message, "%d,%d\n", ci.ptScreenPos.x, ci.ptScreenPos.y);
-	    showMessage(message);
+	    SelectObject(cdc, ii.hbmColor);
+	    GetObject(ii.hbmColor, sizeof(bm), &bm);
+	    //MaskBlt(hDCMem, ci.ptScreenPos.x, bmpScreen.bmHeight - ci.ptScreenPos.y, bm.bmWidth, bm.bmHeight, cdc, 0, 0, ii.hbmMask, 0,0, MAKEROP4(SRCPAINT,SRCCOPY) );
+	    StretchBlt(hDCMem, ci.ptScreenPos.x, bmpScreen.bmHeight - ci.ptScreenPos.y, bm.bmWidth, -bm.bmHeight, cdc, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
+	    DeleteDC(cdc);
 #endif
 
 	    // Gets the "bits" from the bitmap and copies them into a buffer 
@@ -195,7 +164,7 @@ DWORD promys(LPVOID) {
 		(BITMAPINFO *)&bi, DIB_RGB_COLORS);
 
 	    sws_scale(swsCtxt,
-	              &lpbitmap, &linesize,
+	              (const uint8_t * const*)&lpbitmap, &linesize,
 		      0, height,
 		      pic.img.plane,  pic.img.i_stride);
 
@@ -208,7 +177,7 @@ DWORD promys(LPVOID) {
 #ifdef FILE_DUMP
 		fwrite(nal->p_payload, 1, i_frame_size, out);
 #else
-		if (cast->send(nal->p_payload, i_frame_size) < 0) break;
+		if (socket_send(nal->p_payload, i_frame_size) < 0) break;
 #endif
 	    }
 	    GetSystemTime(&stop);
@@ -233,7 +202,7 @@ DWORD promys(LPVOID) {
 #ifdef FILE_DUMP
 		fwrite(nal->p_payload, 1, i_frame_size, out);
 #else
-		if (cast->send(nal->p_payload, i_frame_size) < 0) break;
+		if (socket_send(nal->p_payload, i_frame_size) < 0) break;
 #endif
 	    }
 	}
@@ -245,7 +214,7 @@ DWORD promys(LPVOID) {
 
 	free(lpbitmap);
 
-	delete cast;
+	socket_close();
 
 	return 0;
 }

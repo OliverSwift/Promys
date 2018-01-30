@@ -83,10 +83,6 @@ Socket::listen(unsigned short port) {
     setsockopt(socket_server,SOL_SOCKET, SO_REUSEADDR,&v, sizeof(v));
     ::listen(socket_server,1);
 
-    if (verbose) {
-	printf("Listening on: %d\n", port);
-    }
-
     return socket_server;
 }
 
@@ -110,18 +106,15 @@ Socket::accept() {
 }
 
 int
-Socket::receive(void *data, unsigned int size, bool asap) {
+Socket::receive(void *data, unsigned int size) {
     int n;
     unsigned char *dst = (unsigned char *)data;
 
     while(size) {
-	n = read(socket_client, dst, size);
+	n = (int)read(socket_client, dst, size);
 	if (n<0) {
 	    error("Receive");
 	    return n;
-	}
-	if (asap) {
-	   return n;
 	}
 	size -= n;
 	dst += n;
@@ -135,7 +128,7 @@ Socket::send(void *data, unsigned int size) {
     unsigned char *dst = (unsigned char *)data;
 
     while(size) {
-	n = write(socket_client, dst, size);
+	n = (int)write(socket_client, dst, size);
 	if (n<0) {
 	    error("Send");
 	    return n;

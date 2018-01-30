@@ -1,0 +1,399 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 48;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		091EDD532018FACF00788924 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 091EDD522018FACF00788924 /* Foundation.framework */; };
+		091EDD552018FB0B00788924 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 091EDD542018FB0B00788924 /* CoreFoundation.framework */; };
+		091EDD572018FB1700788924 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 091EDD562018FB1700788924 /* CoreGraphics.framework */; };
+		095EA4F3201DD95E002CD5E0 /* discover.c in Sources */ = {isa = PBXBuildFile; fileRef = 095EA4F1201DD95E002CD5E0 /* discover.c */; };
+		096032D420138545009E1E3B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 096032D320138545009E1E3B /* AppDelegate.m */; };
+		096032D620138545009E1E3B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 096032D520138545009E1E3B /* Assets.xcassets */; };
+		096032D920138545009E1E3B /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 096032D720138545009E1E3B /* MainMenu.xib */; };
+		096032DC20138545009E1E3B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 096032DB20138545009E1E3B /* main.m */; };
+		096032E62014EEF3009E1E3B /* promys.mm in Sources */ = {isa = PBXBuildFile; fileRef = 096032E32014EEF3009E1E3B /* promys.mm */; };
+		096032E72014EEF3009E1E3B /* socket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 096032E42014EEF3009E1E3B /* socket.cpp */; };
+		0994007E2017B38A00E214E7 /* libswscale.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0994007B2017B38A00E214E7 /* libswscale.5.dylib */; };
+		0994007F2017B38A00E214E7 /* libx264.155.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0994007C2017B38A00E214E7 /* libx264.155.dylib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		091EDD522018FACF00788924 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		091EDD542018FB0B00788924 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		091EDD562018FB1700788924 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		095EA4F1201DD95E002CD5E0 /* discover.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = discover.c; sourceTree = "<group>"; };
+		095EA4F2201DD95E002CD5E0 /* discover.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = discover.h; sourceTree = "<group>"; };
+		096032CF20138544009E1E3B /* Promys.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Promys.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		096032D220138544009E1E3B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		096032D320138545009E1E3B /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		096032D520138545009E1E3B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		096032D820138545009E1E3B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		096032DA20138545009E1E3B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		096032DB20138545009E1E3B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		096032DD20138545009E1E3B /* Promys.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Promys.entitlements; sourceTree = "<group>"; };
+		096032E32014EEF3009E1E3B /* promys.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = promys.mm; sourceTree = "<group>"; };
+		096032E42014EEF3009E1E3B /* socket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = socket.cpp; sourceTree = "<group>"; };
+		096032E52014EEF3009E1E3B /* socket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = socket.h; sourceTree = "<group>"; };
+		0994007A2016794C00E214E7 /* promys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = promys.h; sourceTree = "<group>"; };
+		0994007B2017B38A00E214E7 /* libswscale.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libswscale.5.dylib; path = ../libswscale.5.dylib; sourceTree = "<group>"; };
+		0994007C2017B38A00E214E7 /* libx264.155.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libx264.155.dylib; path = ../libx264.155.dylib; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		096032CC20138544009E1E3B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				091EDD572018FB1700788924 /* CoreGraphics.framework in Frameworks */,
+				091EDD552018FB0B00788924 /* CoreFoundation.framework in Frameworks */,
+				091EDD532018FACF00788924 /* Foundation.framework in Frameworks */,
+				0994007E2017B38A00E214E7 /* libswscale.5.dylib in Frameworks */,
+				0994007F2017B38A00E214E7 /* libx264.155.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		096032C620138544009E1E3B = {
+			isa = PBXGroup;
+			children = (
+				096032D120138544009E1E3B /* Promys */,
+				096032D020138544009E1E3B /* Products */,
+				096032E82014F11E009E1E3B /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		096032D020138544009E1E3B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				096032CF20138544009E1E3B /* Promys.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		096032D120138544009E1E3B /* Promys */ = {
+			isa = PBXGroup;
+			children = (
+				0994007A2016794C00E214E7 /* promys.h */,
+				095EA4F1201DD95E002CD5E0 /* discover.c */,
+				095EA4F2201DD95E002CD5E0 /* discover.h */,
+				096032E32014EEF3009E1E3B /* promys.mm */,
+				096032E42014EEF3009E1E3B /* socket.cpp */,
+				096032E52014EEF3009E1E3B /* socket.h */,
+				096032D220138544009E1E3B /* AppDelegate.h */,
+				096032D320138545009E1E3B /* AppDelegate.m */,
+				096032D520138545009E1E3B /* Assets.xcassets */,
+				096032D720138545009E1E3B /* MainMenu.xib */,
+				096032DA20138545009E1E3B /* Info.plist */,
+				096032DB20138545009E1E3B /* main.m */,
+				096032DD20138545009E1E3B /* Promys.entitlements */,
+			);
+			path = Promys;
+			sourceTree = "<group>";
+		};
+		096032E82014F11E009E1E3B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				091EDD562018FB1700788924 /* CoreGraphics.framework */,
+				091EDD542018FB0B00788924 /* CoreFoundation.framework */,
+				091EDD522018FACF00788924 /* Foundation.framework */,
+				0994007B2017B38A00E214E7 /* libswscale.5.dylib */,
+				0994007C2017B38A00E214E7 /* libx264.155.dylib */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		096032CE20138544009E1E3B /* Promys */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 096032E020138545009E1E3B /* Build configuration list for PBXNativeTarget "Promys" */;
+			buildPhases = (
+				091EDD58201A4B5F00788924 /* ShellScript */,
+				096032CB20138544009E1E3B /* Sources */,
+				096032CC20138544009E1E3B /* Frameworks */,
+				096032CD20138544009E1E3B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Promys;
+			productName = Promys;
+			productReference = 096032CF20138544009E1E3B /* Promys.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		096032C720138544009E1E3B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0920;
+				ORGANIZATIONNAME = "Olivier DEBON";
+				TargetAttributes = {
+					096032CE20138544009E1E3B = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Sandbox = {
+								enabled = 1;
+							};
+						};
+					};
+				};
+			};
+			buildConfigurationList = 096032CA20138544009E1E3B /* Build configuration list for PBXProject "Promys" */;
+			compatibilityVersion = "Xcode 8.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 096032C620138544009E1E3B;
+			productRefGroup = 096032D020138544009E1E3B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				096032CE20138544009E1E3B /* Promys */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		096032CD20138544009E1E3B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				096032D620138545009E1E3B /* Assets.xcassets in Resources */,
+				096032D920138545009E1E3B /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		091EDD58201A4B5F00788924 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p $BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Lib\ncp $SRCROOT/../lib*.dylib $BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Lib";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		096032CB20138544009E1E3B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				096032E72014EEF3009E1E3B /* socket.cpp in Sources */,
+				096032DC20138545009E1E3B /* main.m in Sources */,
+				095EA4F3201DD95E002CD5E0 /* discover.c in Sources */,
+				096032D420138545009E1E3B /* AppDelegate.m in Sources */,
+				096032E62014EEF3009E1E3B /* promys.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		096032D720138545009E1E3B /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				096032D820138545009E1E3B /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		096032DE20138545009E1E3B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		096032DF20138545009E1E3B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		096032E120138545009E1E3B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Promys/Promys.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = DLC5X76PCG;
+				"HEADER_SEARCH_PATHS[arch=*]" = (
+					"$(SRCROOT)/../../Common/x264",
+					"$(SRCROOT)/../../Common/ffmpeg",
+				);
+				INFOPLIST_FILE = Promys/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Lib";
+				"LIBRARY_SEARCH_PATHS[arch=*]" = "$(SRCROOT)/..";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = net.debon.Promys;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = Debug;
+		};
+		096032E220138545009E1E3B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Promys/Promys.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = DLC5X76PCG;
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../../Common/x264",
+					"$(SRCROOT)/../../Common/ffmpeg",
+				);
+				INFOPLIST_FILE = Promys/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Lib";
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/..";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = net.debon.Promys;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		096032CA20138544009E1E3B /* Build configuration list for PBXProject "Promys" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				096032DE20138545009E1E3B /* Debug */,
+				096032DF20138545009E1E3B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		096032E020138545009E1E3B /* Build configuration list for PBXNativeTarget "Promys" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				096032E120138545009E1E3B /* Debug */,
+				096032E220138545009E1E3B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 096032C720138544009E1E3B /* Project object */;
+}

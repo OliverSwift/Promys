@@ -5,12 +5,11 @@
 #include <sys/wait.h>
 #include <errno.h>
 #include <string.h>
+
 #include <socket.h>
-extern "C" {
 #include <video.h>
 #include <splash.h>
 #include <discover.h>
-}
 
 int
 main(int argc, char **argv) {
@@ -18,13 +17,9 @@ main(int argc, char **argv) {
 	int connection;
 	int discover;
 
-	Socket *cast;
+	socket_create();
 
-	cast = new Socket();
-
-	//cast->verbose = true;
-
-	connection = cast->listen(9000);
+	connection = socket_listen(9000);
 
 	printf("\033[2J\033[?25l\033[9;0]\n"); // Clear Screen, Cursor Off, Blanking Off
 
@@ -54,7 +49,7 @@ main(int argc, char **argv) {
 		}
 
 		if (FD_ISSET(connection, &rset)) {
-			client = cast->accept();
+			client = socket_accept();
 
 			if (client > 0) {
 				pid_t pid;
