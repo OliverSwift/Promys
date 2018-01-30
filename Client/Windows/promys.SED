@@ -31,11 +31,10 @@ PostInstallCmd=<None>
 AdminQuietInstCmd=
 UserQuietInstCmd=
 FILE0="cygavutil-56.dll"
-FILE1="cyggcc_s-seh-1.dll"
-FILE2="cygswscale-5.dll"
-FILE3="cygwin1.dll"
-FILE4="libx264-155.dll"
-FILE5="screencast.exe"
+FILE1="cygswscale-5.dll"
+FILE2="cygwin1.dll"
+FILE3="libx264-155.dll"
+FILE4="screencast.exe"
 [SourceFiles]
 SourceFiles0=
 [SourceFiles0]
@@ -44,4 +43,3 @@ SourceFiles0=
 %FILE2%=
 %FILE3%=
 %FILE4%=
-%FILE5%=
