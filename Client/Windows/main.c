@@ -3,10 +3,8 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdint.h>
-extern "C" {
 #include <libswscale/swscale.h>
 #include "discover.h"
-}
 #include <x264.h>
 #include "socket.h"
 #include <arpa/inet.h>
@@ -21,14 +19,13 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow)
     guiMain(hInstance, hPrevInst, lpCmdLine, nCmdShow);
 }
 
-DWORD promys(LPVOID) {
+DWORD promys(LPVOID arg) {
 #ifdef FILE_DUMP
 	FILE *out = fopen("out.h264","wb");
 #endif
 	unsigned int height, width;
 	unsigned int out_width, out_height;
 
-	Socket *cast;
 	char *cast_server;
 	int cast_port;
 
@@ -47,9 +44,7 @@ DWORD promys(LPVOID) {
 	    hideWindow();
 	}
 
-	cast = new Socket();
-
-	if (cast->connect(cast_server, cast_port) < 0) {
+	if (socket_connect(cast_server, cast_port) < 0) {
 	    printf("Unable to connect to Promys\n");
 	    exit(1);
 	}
@@ -125,7 +120,7 @@ DWORD promys(LPVOID) {
 
 	h = x264_encoder_open( &param );
 
-	SwsContext *swsCtxt;
+	struct SwsContext *swsCtxt;
 
 	swsCtxt = sws_getContext(width, height, AV_PIX_FMT_BGRA,
 	                         param.i_width, param.i_height, AV_PIX_FMT_YUV420P,
@@ -169,7 +164,7 @@ DWORD promys(LPVOID) {
 		(BITMAPINFO *)&bi, DIB_RGB_COLORS);
 
 	    sws_scale(swsCtxt,
-	              &lpbitmap, &linesize,
+	              (const uint8_t * const*)&lpbitmap, &linesize,
 		      0, height,
 		      pic.img.plane,  pic.img.i_stride);
 
@@ -182,7 +177,7 @@ DWORD promys(LPVOID) {
 #ifdef FILE_DUMP
 		fwrite(nal->p_payload, 1, i_frame_size, out);
 #else
-		if (cast->send(nal->p_payload, i_frame_size) < 0) break;
+		if (socket_send(nal->p_payload, i_frame_size) < 0) break;
 #endif
 	    }
 	    GetSystemTime(&stop);
@@ -207,7 +202,7 @@ DWORD promys(LPVOID) {
 #ifdef FILE_DUMP
 		fwrite(nal->p_payload, 1, i_frame_size, out);
 #else
-		if (cast->send(nal->p_payload, i_frame_size) < 0) break;
+		if (socket_send(nal->p_payload, i_frame_size) < 0) break;
 #endif
 	    }
 	}
@@ -219,7 +214,7 @@ DWORD promys(LPVOID) {
 
 	free(lpbitmap);
 
-	delete cast;
+	socket_close();
 
 	return 0;
 }

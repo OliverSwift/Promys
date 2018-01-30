@@ -33,7 +33,7 @@ int APIENTRY guiMain(_In_ HINSTANCE hInstance,
     MSG msg;
 
     // Boucle de messages principale :
-    while (GetMessage(&msg, nullptr, 0, 0))
+    while (GetMessage(&msg, NULL, 0, 0))
     {
 	DispatchMessage(&msg);
     }
@@ -59,7 +59,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.cbWndExtra     = 0;
     wcex.hInstance      = hInstance;
     wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_SCREENCAST));
-    wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
+    wcex.hCursor        = LoadCursor(NULL, IDC_ARROW);
     wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW);
     wcex.lpszMenuName   = 0;
     wcex.lpszClassName  = L"PROMYS";
@@ -83,7 +83,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // Stocke le handle d'instance dans la variable globale
 
    HWND hWnd = CreateWindow(TEXT("PROMYS"), TEXT("PROMYS"), WS_POPUP|WS_BORDER|WS_MINIMIZEBOX,
-      CW_USEDEFAULT, 0, 350, 80, nullptr, nullptr, hInstance, nullptr);
+      CW_USEDEFAULT, 0, 350, 80, NULL, NULL, hInstance, NULL);
 
    mainWnd = hWnd;
 
