@@ -1,7 +1,7 @@
 OBJS=main.o socket.o gui.o discover.o
 DEBUG=-O
 CFLAGS=$(DEBUG) -I../Common/x264 -I../Common/ffmpeg -I../Common/Socket
-LIBRARIES:= -L../Common/x264 -lx264 -L../Common/ffmpeg/libswscale -lswscale -L../Common/ffmpeg/libavutil -lavutil -lstdc++ -lX11 -lpthread
+LIBRARIES:= -L../Common/x264 -lx264 -L../Common/ffmpeg/libswscale -lswscale -L../Common/ffmpeg/libavutil -lavutil -lX11 -lpthread
 
 screencast: $(OBJS)
 	$(CC) $(DEBUG) -o $@ $(OBJS) $(FRAMEWORKS) -Wl,-rpath=./:/opt/promys $(LIBRARIES)
@@ -9,14 +9,14 @@ screencast: $(OBJS)
 socket.o: ../Common/Socket/socket.c
 	$(CC) -c -o $@ $(CFLAGS) $<
 
-install:
+install: screencast
 	cp ../Common/x264/libx264.so.* .
 	cp ../Common/ffmpeg/libswscale/libswscale.so.* .
 	cp ../Common/ffmpeg/libavutil/libavutil.so.* .
 	strip screencast lib*.so.*
 	tar czf promys.tgz screencast lib*.so.*
 
-package:
+package: screencast
 	mkdir -p dist/opt/promys
 	cp ../Common/x264/libx264.so.* dist/opt/promys
 	cp ../Common/ffmpeg/libswscale/libswscale.so.* dist/opt/promys
