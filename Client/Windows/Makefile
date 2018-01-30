@@ -19,4 +19,4 @@ install: screencast.exe promys.SED
 	iexpress /N /Q promys.SED
 
 clean:
-	-rm *.o screencast.exe
+	-rm *.o screencast.exe promys.exe
