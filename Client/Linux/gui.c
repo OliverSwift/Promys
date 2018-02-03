@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2018, Olivier DEBON
+ * All rights reserved.
+ * Please checkout LICENSE file.
+ */
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <stdio.h>
