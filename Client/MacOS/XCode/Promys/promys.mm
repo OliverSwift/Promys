@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018, Olivier DEBON
+ * All rights reserved.
+ */
 #include "promys.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreGraphics/CGImage.h>
