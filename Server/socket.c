@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2018, Olivier DEBON
+ * All rights reserved.
+ * Checkout LICENSE file
+ */
 #include "socket.h"
 #include <stdio.h>
 #include <unistd.h>

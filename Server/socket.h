@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2018, Olivier DEBON
+ * All rights reserved.
+ * Checkout LICENSE file
+ */
 #ifndef _SOCKET_H_
 #define _SOCKET_H_
 

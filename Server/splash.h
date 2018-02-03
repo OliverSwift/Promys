@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2018, Olivier DEBON
+ * All rights reserved.
+ * Checkout LICENSE file
+ */
 #ifndef _SPLASH_H_
 #define _SPLASH_H_
 int fb_init();
