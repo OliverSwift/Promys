@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2018, Olivier DEBON
+ * All rights reserved.
+ */
+#include <stdio.h>
 #ifndef _SOCKET_H_
 #define _SOCKET_H_
 
