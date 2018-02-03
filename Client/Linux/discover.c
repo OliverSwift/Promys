@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2018, Olivier DEBON
+ * All rights reserved.
+ * Please checkout LICENSE file.
+ */
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
