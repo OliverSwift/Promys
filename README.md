@@ -5,7 +5,7 @@ A screencasting system project based on a Pi 3. Nothing very new for such projec
 
 User connects to Wifi, visits an embedded web page, downloads and starts client application. Almost as easy as Click&Share from BARCO but at a reasonable price (~40€).
 
-Already made image will be available soon on the web site, so it should be very straightforward to setup a Pi3 out of the box and have an up and running system.
+Already made image is available on the web site (see below), so it should be very straightforward to setup a Pi3 out of the box and have an up and running system.
 
 For the moment it is very basic but it can be extended with plenty of nifty features. Check out TODO/Ideas section for that and feel free to contribute.
 
@@ -15,12 +15,42 @@ What this is all about...
 
 _TBD_
 
+## Building a Promys device
+
+Just want to build a `Promys device` and use it ?
+
+1. First get a Raspberry Pi 3 (I haven't tested with Pi 2 but you'll miss the main advantage of Wifi).
+2. Find [here](http://promys.me/downloads/image_2018-02-02-Promys.zip) a zipped image for a 2GB or more SD card
+3. Unzip the file, you should get an approximately 1.6Gb image.
+4. Insert the SD card in your system, and figure out what device it is bound to. This is very important so you don't screw up with following command. If you have a SD read slot it's likely to be `/dev//dev/mmcblk0`
+5. Finally burn the SD with :
+```
+dd if=2018-02-02-Promys.img of=/dev/xxxxx bs=4M
+```
+6. Insert the SD in the Raspberry, connect to a projector or TV with HDMI cable. Power TV on.
+7. Power on the Promys device.
+8. Tada ![Splash](/Server/Target/opt/promys/splash.jpg)
+
+> **Warning**, you won't be able to login to the device. You'll need to modify the image by mounting the SD and remove start up lines in `/etc/rc.local` file
+
+There is a nice [documentation](https://www.raspberrypi.org/documentation/installation/installing-images/) from Raspberry's web site that covers instructions for major operating systems.
+
 ## Server
 This section describes what is needed to build and setup the server.
 
-You'll need a Pi3 running `Raspian stretch` to compile the server executable.
+### Binary
+You'll need a Pi3 running `Raspian stretch` to compile the server executable. I don't cover any cross-compiling instructions.
 
-_TBD_
+If you've installed a Raspbian disto you'll only need `libjpeg62-turbo-dev` package.
+
+Just get to `Server`diectory and type make.
+
+### Creating an image
+
+I've forked `pi-gen` project and modified it to generate a Promys image.
+https://github.com/OliverSwift/pi-gen
+It still needs a lot of clean up to get the bare necessities.
+_TO BE CONTINUED_
 
 ## Client
 The client part is the application to be run on a desktop so as to cast it to a Promys device connected to a TV set or projector.
@@ -82,3 +112,11 @@ will certainly ask permission to run an application downloaded from the Internet
 The already built one is signed with my developer account so user won't have to allow its execution.
 I haven't pushed it on the Mac Store though.
 
+## TODO
+_and ideas_
+* overscan adjustment with CEC
+* connect a smartphone and fake a laser spot
+* improve clients (performance, mouse, ...)
+* token passing for presenters
+* administration web page (Wifi ESSID, password, enable/disable NAT feature, IP addresses, overscan, etc)
+* ...
