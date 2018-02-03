@@ -1,6 +1,8 @@
 # Promys
 _Project My Screen_
 
+http://promys.me
+
 A screencasting system project based on a Pi 3. Nothing very new for such project except that it aims at being very user friendly. Easy setup for users on Windows, Mac and Linux.
 
 User connects to Wifi, visits an embedded web page, downloads and starts client application. Almost as easy as Click&Share from BARCO but at a reasonable price (~40€).
@@ -13,16 +15,18 @@ For the moment it is very basic but it can be extended with plenty of nifty feat
 
 What this is all about...
 
-_TBD_
+I've seen those BARCO boxes that let you screencast your desktop onto a TV set or projector a lot. Very handy, but as usual no Linux binary (there used to be one but not maintained anymore for lame reasons) and also very expensive.
+There are blogs and blablas about how to do screencasting, but most of the time instructions are awkward and based on complicated ffmpeg or VLC setup, well nothing very user friendly.
+Knowing RPi3 hardware capabilities, espcecially the H264 decoder and the Wifi addon I just put myself into the challenge to deliver an easy to use or setup system. Building a Promys device is easy and cheap, using it is easy as well. It can improve in many ways. Dig in and join!
 
 ## Building a Promys device
 
 Just want to build a `Promys device` and use it ?
 
 1. First get a Raspberry Pi 3 (I haven't tested with Pi 2 but you'll miss the main advantage of Wifi).
-2. Find [here](http://promys.me/downloads/image_2018-02-02-Promys.zip) a zipped image for a 2GB or more SD card
+2. Find **[here](http://promys.me/downloads/image_2018-02-02-Promys.zip)** a zipped image for a 2GB or more SD card
 3. Unzip the file, you should get an approximately 1.6Gb image.
-4. Insert the SD card in your system, and figure out what device it is bound to. This is very important so you don't screw up with following command. If you have a SD read slot it's likely to be `/dev//dev/mmcblk0`
+4. Insert the SD card in your system, and figure out what device it is bound to. This is very important so you don't screw up with following command. If you have a SD card reader slot it's likely to be `/dev/mmcblk0`
 5. Finally burn the SD with :
 ```
 dd if=2018-02-02-Promys.img of=/dev/xxxxx bs=4M
@@ -33,23 +37,23 @@ dd if=2018-02-02-Promys.img of=/dev/xxxxx bs=4M
 
 > **Warning**, you won't be able to login to the device. You'll need to modify the image by mounting the SD and remove start up lines in `/etc/rc.local` file
 
-There is a nice [documentation](https://www.raspberrypi.org/documentation/installation/installing-images/) from Raspberry's web site that covers instructions for major operating systems.
+> **Note:** There is a nice [documentation](https://www.raspberrypi.org/documentation/installation/installing-images/) from Raspberry's web site that covers instructions on how to burn SD card for major operating systems.
 
 ## Server
 This section describes what is needed to build and setup the server.
 
-### Binary
+### _Binary_
 You'll need a Pi3 running `Raspian stretch` to compile the server executable. I don't cover any cross-compiling instructions.
 
 If you've installed a Raspbian disto you'll only need `libjpeg62-turbo-dev` package.
 
-Just get to `Server`diectory and type make.
+Just get to `Server` directory and type make. It relies on `/op/vc` package that contains helper libraries to use the OpenMAX layer available for the Broadcom ARM chip.
 
-### Creating an image
+### _Creating an image_
 
-I've forked `pi-gen` project and modified it to generate a Promys image.
-https://github.com/OliverSwift/pi-gen
-It still needs a lot of clean up to get the bare necessities.
+I've forked `pi-gen` project and modified it to generate a Promys image. Check out https://github.com/OliverSwift/pi-gen
+It still needs a lot of clean up to get the bare necessities, but it's a start.
+
 _TO BE CONTINUED_
 
 ## Client
@@ -57,7 +61,7 @@ The client part is the application to be run on a desktop so as to cast it to a 
 Once launched it will start searching promys device over available networks. When a promys device is found your desktop will be cast to it.
 A desktop PC or Mac can be directly connected to a Promys device using its Wifi access point or the same lan network they both are connected to. Usually, Wifi is used for guests and Lan for co-workers in a company. Lan connection is optional since it might be not allowed by company's security policy (default Promys device behaviour it to NAT Wifi trafic to Lan).
 
-You'll need native platforms running (or VMs). I used Ubuntu 16.04, Windows 7, MacOS High Sierra.
+You'll need native 64bit platforms running (or VMs). I used Ubuntu 16.04, Windows 7, MacOS High Sierra.
 Minimum environment is required for compiling client binaries. You'll need bash, git, gcc (or clang) and nasm 2.13.
 On Windows `cygwin64` is required with these specific packages. On Linux you'll probably have to get recent nasm package. On MacOS you'll need XCode and nasm.
 
@@ -77,13 +81,21 @@ ffmpeg: bfe397e4313c640e2f05c90a2ff1541f50524094
 ```
 For versions matching reason I recommend to git checkout these commits.
 
-For x264 you'll need nasm version 2.13 or superior.
+**Important:** For compiling `x264` you'll need nasm version 2.13 or superior.
+
+| Build OS | NASM 2.13 source |
+|----------|------------------|
+| Ubuntu/Debian | https://debian.pkgs.org/sid/debian-main-amd64/nasm_2.13.02-0.1_amd64.deb.html |
+| MacOS | http://www.nasm.us/pub/nasm/releasebuilds/2.13.01/macosx/nasm-2.13.01-macosx.zip |
+| Windows | Add nasm in package selection when installing `cygwin64` https://www.cygwin.com/setup-x86_64.exe |
+
+Compile `x264`:
 ```
 # ./configure --disable-cli --enable-shared
 # make
 ```
 
-For ffmpeg:
+Compile `ffmpeg`:
 ```
 # ./configure --disable-all --enable-swscale --enable-shared
 # make
