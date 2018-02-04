@@ -1,0 +1,6 @@
+[submodule "Client/Common/x264"]
+	path = Client/Common/x264
+	url = http://git.videolan.org/git/x264.git
+[submodule "Client/Common/ffmpeg"]
+	path = Client/Common/ffmpeg
+	url = https://git.ffmpeg.org/ffmpeg.git
