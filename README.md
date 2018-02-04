@@ -5,7 +5,9 @@ http://promys.me
 
 A screencasting system project based on a Pi 3. Nothing very new for such project except that it aims at being very user friendly. Easy setup for users on Windows, Mac and Linux.
 
-User connects to Wifi, visits an embedded web page, downloads and starts client application. Almost as easy as Click&Share from BARCO but at a reasonable price (~40€).
+User connects to the Promys Device Wifi access point, visits the embedded web page, downloads client application from there and starts it. Almost as easy as Click&Share from BARCO but at a reasonable price (~40€).
+
+It's **NOT** like a Chromecast device, guests don't have to join hosts wifi network. It's suitable for companies that would like to offer easy screencasting to visitors and employees. It's more similar to Click&Share. I don't see a point using it at home, but, why not?
 
 Already made image is available on the web site (see below), so it should be very straightforward to setup a Pi3 out of the box and have an up and running system.
 
@@ -49,12 +51,23 @@ If you've installed a Raspbian disto you'll only need `libjpeg62-turbo-dev` pack
 
 Just get to `Server` directory and type make. It relies on `/op/vc` package that contains helper libraries to use the OpenMAX layer available for the Broadcom ARM chip.
 
+### _Server setup_
+
+`Server/Target` directory contains a few things to modify on the system to make it dedicated.
+
+* `boot` directory contains suggested modified `cmdline.txt` and `config.txt` files.
+* `/etc/rc.local` should be replaced with the one proposed.
+* Making the device a Wifi access point and adjusting various networking things relies on `/etc` content.
+* Embedded web site is also setup in `www`, you'll need to install `lighttpd` package to serve it. You'll need to install client binaries in `downloads` sub-directory.
+* application directory is `/opt/promys` with splash screen image.
+* I also made mounted filesystems `readonly` to avoid the annoying usual SD issues.
+
+Section below points to how to create an image for dedicated Promys box. You should find insteresting things there.
+
 ### _Creating an image_
 
 I've forked `pi-gen` project and modified it to generate a Promys image. Check out https://github.com/OliverSwift/pi-gen
 It still needs a lot of clean up to get the bare necessities, but it's a start.
-
-_TO BE CONTINUED_
 
 ## Client
 The client part is the application to be run on a desktop so as to cast it to a Promys device connected to a TV set or projector.
@@ -126,9 +139,10 @@ I haven't pushed it on the Mac Store though.
 
 ## TODO
 _and ideas_
+* version checking
 * overscan adjustment with CEC
 * connect a smartphone and fake a laser spot
-* improve clients (performance, mouse, ...)
-* token passing for presenters
+* improve clients (performance, power consumption, mouse capture, ...)
+* token passing for presenters (queuing for screencasting)
 * administration web page (Wifi ESSID, password, enable/disable NAT feature, IP addresses, overscan, etc)
 * ...
