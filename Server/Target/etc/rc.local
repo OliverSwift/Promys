@@ -17,14 +17,16 @@ if [ "$_IP" ]; then
   printf "My IP address is %s\n" "$_IP"
 fi
 
+if [ -e /boot/nat.txt ]; then
 # Enable IP FORWARDING
-echo 1 > /proc/sys/net/ipv4/ip_forward
+    echo 1 > /proc/sys/net/ipv4/ip_forward
 
 # Enable NAT
-iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+    iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+fi
 
 # Start PROMYS
-export PROMYS_BACKGROUND=/opt/promys/splash.jpg
+export PROMYS_BACKGROUND=/boot/splash.jpg
 /opt/promys/promys 2> /var/run/promys.log
 
 exit 0
