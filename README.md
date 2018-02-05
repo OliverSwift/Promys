@@ -26,12 +26,12 @@ Knowing RPi3 hardware capabilities, espcecially the H264 decoder and the Wifi ad
 Just want to build a `Promys device` and use it ?
 
 1. First get a Raspberry Pi 3 (I haven't tested with Pi 2 but you'll miss the main advantage of Wifi).
-2. ~~Find **[here](http://promys.me/downloads/image_2018-02-02-Promys.zip)** a zipped image for a 2GB or more SD card~~ **Current image needs a fix, lighttpd doesn start, fix soon**
+2. Find **[here](http://promys.me/downloads/image_2018-02-05-Promys.zip)** a zipped image for a 2GB or more SD card
 3. Unzip the file, you should get an approximately 1.6Gb image.
 4. Insert the SD card in your system, and figure out what device it is bound to. This is very important so you don't screw up with following command. If you have a SD card reader slot it's likely to be `/dev/mmcblk0`
 5. Finally burn the SD with :
 ```
-dd if=2018-02-02-Promys.img of=/dev/xxxxx bs=4M
+dd if=2018-02-05-Promys.img of=/dev/xxxxx bs=4M
 ```
 6. Insert the SD in the Raspberry, connect to a projector or TV with HDMI cable. Power TV on.
 7. Power on the Promys device.
@@ -39,7 +39,7 @@ dd if=2018-02-02-Promys.img of=/dev/xxxxx bs=4M
 
 > **Warning**, you won't be able to login to the device. You'll need to modify the image by mounting the SD and remove start up lines in `/etc/rc.local` file
 
-> **Note:** There is a nice [documentation](https://www.raspberrypi.org/documentation/installation/installing-images/) from Raspberry's web site that covers instructions on how to burn SD card for major operating systems.
+> **Note:** I highly recommend **[ETCHER](https://etcher.io/)** by _[Resin.io](https://resin.io/)_ that makes image burning on SD very easy on Linux, MacOS and Windows.
 
 ## Server
 This section describes what is needed to build and setup the server.
@@ -56,11 +56,12 @@ Just get to `Server` directory and type make. It relies on `/op/vc` package that
 `Server/Target` directory contains a few things to modify on the system to make it dedicated.
 
 * `boot` directory contains suggested modified `cmdline.txt` and `config.txt` files.
+* `boot` also contains Wifi configuration and splash.jpg file for easier customization. NAT is not active by default now, it can become active if a `nat.txt` file exists in `/boot`.
 * `/etc/rc.local` should be replaced with the one proposed.
 * Making the device a Wifi access point and adjusting various networking things relies on `/etc` content.
 * Embedded web site is also setup in `www`, you'll need to install `lighttpd` package to serve it. You'll need to install client binaries in `downloads` sub-directory.
-* application directory is `/opt/promys` with splash screen image.
-* I also made mounted filesystems `readonly` to avoid the annoying usual SD issues.
+* application directory is `/opt/promys`.
+* I also made mounted `rootfs` filesystem `readonly` to avoid the annoying usual SD issues.
 
 Section below points to how to create an image for dedicated Promys box. You should find insteresting things there.
 
@@ -98,9 +99,9 @@ For versions matching reason I recommend to git checkout these commits.
 
 | Build OS | NASM 2.13 source |
 |----------|------------------|
-| Ubuntu/Debian | https://debian.pkgs.org/sid/debian-main-amd64/nasm_2.13.02-0.1_amd64.deb.html |
+| Ubuntu/Debian | https://debian.pkgs.org/sid/debian-main-amd64/nasm\_2.13.02-0.1\_amd64.deb.html |
 | MacOS | http://www.nasm.us/pub/nasm/releasebuilds/2.13.01/macosx/nasm-2.13.01-macosx.zip |
-| Windows | Add nasm in package selection when installing `cygwin64` https://www.cygwin.com/setup-x86_64.exe |
+| Windows | Add nasm in package selection when installing `cygwin64` https://www.cygwin.com/setup-x86\_64.exe |
 
 Compile `x264`:
 ```
