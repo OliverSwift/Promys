@@ -26,7 +26,7 @@ Knowing RPi3 hardware capabilities, espcecially the H264 decoder and the Wifi ad
 Just want to build a `Promys device` and use it ?
 
 1. First get a Raspberry Pi 3 (I haven't tested with Pi 2 but you'll miss the main advantage of Wifi).
-2. Find **[here](http://promys.me/downloads/image_2018-02-02-Promys.zip)** a zipped image for a 2GB or more SD card
+2. ~~Find **[here](http://promys.me/downloads/image_2018-02-02-Promys.zip)** a zipped image for a 2GB or more SD card~~ **Current image needs a fix, lighttpd doesn start, fix soon**
 3. Unzip the file, you should get an approximately 1.6Gb image.
 4. Insert the SD card in your system, and figure out what device it is bound to. This is very important so you don't screw up with following command. If you have a SD card reader slot it's likely to be `/dev/mmcblk0`
 5. Finally burn the SD with :
