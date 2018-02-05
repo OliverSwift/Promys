@@ -1,4 +1,4 @@
-promys.dmg: Promys.app
+promys.dmg:
 	hdiutil create -srcfolder Promys.app -volname Promys promys.dmg
 
 Promys.app: libs XCode/build/Release/Promys.app
