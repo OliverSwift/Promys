@@ -191,8 +191,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p $BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Lib\ncp $SRCROOT/../lib*.dylib $BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Lib";
-			showEnvVarsInLog = 0;
+			shellScript = "mkdir -p \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Lib\"\ncp $SRCROOT/../lib*.dylib \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Lib\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
