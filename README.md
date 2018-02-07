@@ -101,7 +101,7 @@ For versions matching reason I recommend to git checkout these commits. _Note th
 |----------|------------------|
 | Ubuntu/Debian | https://debian.pkgs.org/sid/debian-main-amd64/nasm_2.13.02-0.1_amd64.deb.html |
 | MacOS | http://www.nasm.us/pub/nasm/releasebuilds/2.13.01/macosx/nasm-2.13.01-macosx.zip |
-| Windows | Add nasm in package selection when installing `cygwin64` https://www.cygwin.com/setup-x86\_64.exe |
+| Windows | Add nasm in package selection when installing `cygwin64` https://www.cygwin.com/setup-x86_64.exe |
 
 Compile `x264`:
 ```
