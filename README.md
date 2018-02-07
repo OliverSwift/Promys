@@ -73,7 +73,7 @@ It still needs a lot of clean up to get the bare necessities, but it's a start.
 ## Client
 The client part is the application to be run on a desktop so as to cast it to a Promys device connected to a TV set or projector.
 Once launched it will start searching promys device over available networks. When a promys device is found your desktop will be cast to it.
-A desktop PC or Mac can be directly connected to a Promys device using its Wifi access point or the same lan network they both are connected to. Usually, Wifi is used for guests and Lan for co-workers in a company. Lan connection is optional since it might be not allowed by company's security policy (default Promys device behaviour it to NAT Wifi trafic to Lan).
+A desktop PC or Mac can be directly connected to a Promys device using its Wifi access point or the same lan network they both are connected to. Usually, Wifi is used for guests and Lan for co-workers in a company. For security reason there is no routing between ethernet and wifi although it can be actived along with NAT.
 
 You'll need native 64bit platforms running (or VMs). I used Ubuntu 16.04, Windows 7, MacOS High Sierra.
 Minimum environment is required for compiling client binaries. You'll need bash, git, gcc (or clang) and nasm 2.13.
@@ -93,13 +93,13 @@ Current promys clients have been compiled against these exact versions:
 x264: b00bcafe53a166b63a179a2f41470cd13b59f927
 ffmpeg: bfe397e4313c640e2f05c90a2ff1541f50524094
 ```
-For versions matching reason I recommend to git checkout these commits.
+For versions matching reason I recommend to git checkout these commits. _Note that x264 hash start is awsome, couldn't resist to stick with it._
 
 **Important:** For compiling `x264` you'll need nasm version 2.13 or superior.
 
 | Build OS | NASM 2.13 source |
 |----------|------------------|
-| Ubuntu/Debian | https://debian.pkgs.org/sid/debian-main-amd64/nasm\_2.13.02-0.1\_amd64.deb.html |
+| Ubuntu/Debian | https://debian.pkgs.org/sid/debian-main-amd64/nasm_2.13.02-0.1_amd64.deb.html |
 | MacOS | http://www.nasm.us/pub/nasm/releasebuilds/2.13.01/macosx/nasm-2.13.01-macosx.zip |
 | Windows | Add nasm in package selection when installing `cygwin64` https://www.cygwin.com/setup-x86\_64.exe |
 
@@ -117,7 +117,7 @@ Compile `ffmpeg`:
 
 For both, no installation step needed. Leave libs where they are.
 
-Once you have x264, swscale and avtuil libraries compiled you can proceed to each specific build stages below.
+Once you have x264, swscale and avutil libraries compiled you can proceed to each specific build stages below.
 
 ### Windows
 
