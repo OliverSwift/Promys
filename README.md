@@ -18,28 +18,25 @@ For the moment it is very basic but it can be extended with plenty of nifty feat
 What this is all about...
 
 I've seen those BARCO boxes that let you screencast your desktop onto a TV set or projector a lot. Very handy, but as usual no Linux binary (there used to be one but not maintained anymore for lame reasons) and also very expensive.
-There are blogs and blablas about how to do screencasting, but most of the time instructions are awkward and based on complicated ffmpeg or VLC setup, well nothing very user friendly.
-Knowing RPi3 hardware capabilities, espcecially the H264 decoder and the Wifi addon I just put myself into the challenge to deliver an easy to use or setup system. Building a Promys device is easy and cheap, using it is easy as well. It can improve in many ways. Dig in and join!
+There are blogs and blablas about how to do screencasting, but most of the time instructions are awkward and based on complicated ffmpeg or VLC setup, well nothing very user friendly.  
+Considering RPi3 hardware capabilities, espcecially the H264 decoder and the Wifi addon I just put myself into the challenge to deliver an easy to use or setup system. Building a Promys device is easy and cheap, using it is easy as well. It can improve in many ways. Dig in and join!
 
 ## Building a Promys device
 
 Just want to build a `Promys device` and use it ?
 
 1. First get a Raspberry Pi 3 (I haven't tested with Pi 2 but you'll miss the main advantage of Wifi).
-2. Find **[here](http://promys.me/downloads/image_2018-02-05-Promys.zip)** a zipped image for a 2GB or more SD card
-3. Unzip the file, you should get an approximately 1.6Gb image.
-4. Insert the SD card in your system, and figure out what device it is bound to. This is very important so you don't screw up with following command. If you have a SD card reader slot it's likely to be `/dev/mmcblk0`
-5. Finally burn the SD with :
-```
-dd if=2018-02-05-Promys.img of=/dev/xxxxx bs=4M
-```
-6. Insert the SD in the Raspberry, connect to a projector or TV with HDMI cable. Power TV on.
-7. Power on the Promys device.
-8. Tada ![Splash](/Server/Target/opt/promys/splash.jpg)
+2. Find **[here](http://promys.me/downloads/image_2018-02-05-Promys.zip)** a zipped image for a 2GB or more micro SD card
+3. Get **[ETCHER](https://etcher.io/)** and burn the image (you don't even have to unzip the file) on the micro SD.
+4. Insert the SD in the Raspberry, connect to a projector or TV with HDMI cable. Power TV on.
+5. Power on the Promys device.
+6. Tada ![Splash](/Server/Target/opt/promys/splash.jpg)
 
-> **Warning**, you won't be able to login to the device. You'll need to modify the image by mounting the SD and remove start up lines in `/etc/rc.local` file
+> **Warning**, you won't be able to login to the device. You'll need to modify the image by mounting the SD (on a Linux box) and remove start up lines in `/etc/rc.local` file. SSH is not active by default, use keyboard on console.
 
-> **Note:** I highly recommend **[ETCHER](https://etcher.io/)** by _[Resin.io](https://resin.io/)_ that makes image burning on SD very easy on Linux, MacOS and Windows.
+> **Note:** **[ETCHER](https://etcher.io/)** by _[Resin.io](https://resin.io/)_ makes image burning on SD very easy and safe on Linux, MacOS and Windows.
+
+For administrators, the `/boot` partition is VFAT formatted and can easily be mounted on any PC/Mac. It contains wifi.cfg for Wifi access point configuration where you can change password, channel, etc. If a `nat.txt` file exists there ip forwarding and masquerading will be performed so connected users on Wifi will be routed to LAN. The splash image (see above) is a jpeg file named `splash.jpg` (1920 by 1080 pixels) that can easily be customized (with company logo and additional technical details for users for exmaple).
 
 ## Server
 This section describes what is needed to build and setup the server.
