@@ -36,7 +36,7 @@ Just want to build a `Promys device` and use it ?
 
 > **Note:** **[ETCHER](https://etcher.io/)** by _[Resin.io](https://resin.io/)_ makes image burning on SD very easy and safe on Linux, MacOS and Windows.
 
-For administrators, the `/boot` partition is VFAT formatted and can easily be mounted on any PC/Mac. It contains wifi.cfg for Wifi access point configuration where you can change password, channel, etc. If a `nat.txt` file exists there ip forwarding and masquerading will be performed so connected users on Wifi will be routed to LAN. The splash image (see above) is a jpeg file named `splash.jpg` (1920 by 1080 pixels) that can easily be customized (with company logo and additional technical details for users for exmaple).
+For administrators, the `/boot` partition is VFAT formatted and can easily be mounted on any PC/Mac. It contains `wifi.cfg` for Wifi access point configuration where you can change ESSID, password, channel, etc. If a `nat.txt` file exists there ip forwarding and masquerading will be performed so connected users on Wifi will be routed to LAN. The splash image (see above) is a jpeg file named `splash.jpg` (1920 by 1080 pixels) that can easily be customized (with company logo and additional technical details for users for exmaple).
 
 ## Server
 This section describes what is needed to build and setup the server.
