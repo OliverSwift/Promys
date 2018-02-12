@@ -73,17 +73,16 @@ Once launched it will start searching promys device over available networks. Whe
 A desktop PC or Mac can be directly connected to a Promys device using its Wifi access point or the same lan network they both are connected to. Usually, Wifi is used for guests and Lan for co-workers in a company. For security reason there is no routing between ethernet and wifi although it can be actived along with NAT.
 
 You'll need native 64bit platforms running (or VMs). I used Ubuntu 16.04, Windows 7, MacOS High Sierra.
-Minimum environment is required for compiling client binaries. You'll need bash, git, gcc (or clang) and nasm 2.13.
+Minimum environment is required for compiling client binaries. You'll need bash, git, gcc (or clang), g++, make, and nasm 2.13.
 On Windows `cygwin64` is required with these specific packages. On Linux you'll probably have to get recent nasm package. On MacOS you'll need XCode and nasm.
 
 It depends on x264 and ffmpeg package. It only uses libswscale/libavutil from ffmpeg, x264 is used for video compression.
 For each platform you'll have to compile them this way:
 
-In `Client/Common` directory you'll have to clone both projects.
+You'll have to clone and checkout both sub-projects:
 ```
-# cd Client/Common
-# git clone http://git.videolan.org/git/x264.git x264
-# git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
+# git submodule init
+# git submodule update
 ```
 Current promys clients have been compiled against these exact versions:
 ```
@@ -94,7 +93,7 @@ For versions matching reason I recommend to git checkout these commits. _Note th
 
 **Important:** For compiling `x264` you'll need nasm version 2.13 or superior.
 
-| Build OS | NASM 2.13 source |
+| Build OS | NASM 2.13 |
 |----------|------------------|
 | Ubuntu/Debian | https://debian.pkgs.org/sid/debian-main-amd64/nasm_2.13.02-0.1_amd64.deb.html |
 | MacOS | http://www.nasm.us/pub/nasm/releasebuilds/2.13.01/macosx/nasm-2.13.01-macosx.zip |
