@@ -159,6 +159,8 @@ DWORD promys(LPVOID arg) {
 	    GetObject(ii.hbmColor, sizeof(bm), &bm);
 	    //MaskBlt(hDCMem, ci.ptScreenPos.x, bmpScreen.bmHeight - ci.ptScreenPos.y, bm.bmWidth, bm.bmHeight, cdc, 0, 0, ii.hbmMask, 0,0, MAKEROP4(SRCPAINT,SRCCOPY) );
 	    StretchBlt(hDCMem, ci.ptScreenPos.x, bmpScreen.bmHeight - ci.ptScreenPos.y, bm.bmWidth, -bm.bmHeight, cdc, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
+	    DeleteObject(ii.hbmColor);
+	    DeleteObject(ii.hbmMask);
 	    DeleteDC(cdc);
 #endif
 

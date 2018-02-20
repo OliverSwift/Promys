@@ -87,7 +87,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // Stocke le handle d'instance dans la variable globale
 
-   HWND hWnd = CreateWindow(TEXT("PROMYS"), TEXT("PROMYS"), WS_POPUP|WS_BORDER|WS_MINIMIZEBOX,
+   HWND hWnd = CreateWindowW(L"PROMYS", (LPCWSTR)"Promys", WS_POPUP|WS_BORDER|WS_MINIMIZEBOX,
       CW_USEDEFAULT, 0, 350, 80, NULL, NULL, hInstance, NULL);
 
    mainWnd = hWnd;
