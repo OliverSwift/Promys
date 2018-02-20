@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="styles/style.css">
+		<title>Settings</title>
+		<style>
+.parameter {
+	display: block;
+	margin: 0rem auto;
+	padding: 1rem;
+	background: #111;
+	width: 50%;
+}
+.label {
+	margin: 0;
+	background: #000;
+	color: #ffa;
+	font-weight: bold;
+	display: inline-block;
+	padding: 0.5rem;
+	width: 10rem;
+	text-align: right;
+}
+.field {
+	margin: 0;
+	border-style: solid;
+	border-width: 0.5px;
+	border-color: #fff;
+	background: #000;
+	color: #fff;
+	font-weight: 100;
+	display: inline-block;
+	padding: 0.5rem;
+	width: 20rem;
+	font-family: "Lucida Console", monospace;
+}
+.field:hover {
+	color: #000;
+	background: #eee;
+	transition: 0.3s;
+}
+.button {
+    display: inline-block;
+    position: relative;
+    left: 60%;
+    background: #000;
+    color: #fff;
+    padding: 0.5rem;
+    margin: 1rem;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    border-style: solid;
+    border-color: #888;
+    border-width: 1pt;
+}
+.button:hover {
+    background: #fff;
+    color: #000;
+    transition: 0.3s;
+    border-color: #fff;
+}
+		</style>
+	</head>
+	<script>
+function apply() {
+    if (confirm("Restart?")) {
+	document.forms[0].elements['nat'].value = document.getElementById('nat').innerHTML.trim();
+	document.forms[0].elements['ssid'].value = document.getElementById('ssid').innerHTML.trim();
+	document.forms[0].elements['channel'].value = document.getElementById('channel').innerHTML.trim();
+	document.forms[0].elements['password'].value = document.getElementById('wifi_pass').innerHTML.trim();
+	document.forms[0].submit();
+    }
+}
+function updateFields(status) {
+	var el;
+	// NAT status
+       	el = document.getElementById('nat');
+	el.innerHTML = status.nat?"On":"Off";
+	// SSID
+       	el = document.getElementById('ssid');
+	el.innerHTML = status.ssid;
+	// Channel
+       	el = document.getElementById('channel');
+	el.innerHTML = status.channel;
+	// Wifi Password
+       	el = document.getElementById('wifi_pass');
+	el.innerHTML = status.wpa_passphrase;
+}
+function getStatus() {
+	var xmlhttp = new XMLHttpRequest();
+
+	xmlhttp.onreadystatechange = function() {
+	    if (this.readyState == 4 && this.status == 200) {
+		    var myArr = JSON.parse(this.responseText);
+		    updateFields(myArr);
+		}
+	};
+	xmlhttp.open("GET", "/cgi-bin/status.cgi", true);
+	xmlhttp.send();
+}
+	</script>
+	<body onload="getStatus();">
+	<form action="/cgi-bin/apply.cgi" method="PUT">
+	    <input type=hidden name='nat' value=''>
+	    <input type=hidden name='ssid' value=''>
+	    <input type=hidden name='channel' value=''>
+	    <input type=hidden name='password' value=''>
+	</form>
+	<main>
+        <header>
+	    	<h2>Settings</h2>
+        </header>
+		<div class="parameter">
+			<div class="label">NAT: </div>
+			<div class="field" id="nat" contenteditable="true" spellcheck="false"></div>
+		</div>
+		<div class="parameter">
+			<div class="label">SSID: </div>
+			<div class="field" id="ssid" contenteditable="true" spellcheck="false"></div>
+		</div>
+		<div class="parameter">
+			<div class="label">Wifi channel: </div>
+			<div class="field" id="channel" contenteditable="true" spellcheck="false"></div>
+		</div>
+		<div class="parameter">
+			<div class="label">Wifi password: </div>
+			<div class="field" id="wifi_pass" contenteditable="true" spellcheck="false"></div>
+		</div>
+		<div class="parameter">
+			<div class="button" onclick="apply();">Apply &amp; restart device</div>
+		</div>
+	</main>
+	</body>
+</html>
