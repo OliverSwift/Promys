@@ -64,13 +64,12 @@
 	</head>
 	<script>
 function apply() {
-    if (confirm("Restart?")) {
-	document.forms[0].elements['nat'].value = document.getElementById('nat').innerHTML.trim();
-	document.forms[0].elements['ssid'].value = document.getElementById('ssid').innerHTML.trim();
-	document.forms[0].elements['channel'].value = document.getElementById('channel').innerHTML.trim();
-	document.forms[0].elements['password'].value = document.getElementById('wifi_pass').innerHTML.trim();
+	alert("Settings will be active on device restart");
+	document.forms[0].elements['nat'].value = document.getElementById('nat').textContent.trim();
+	document.forms[0].elements['ssid'].value = document.getElementById('ssid').textContent.trim();
+	document.forms[0].elements['channel'].value = document.getElementById('channel').textContent.trim();
+	document.forms[0].elements['password'].value = document.getElementById('wifi_pass').textContent.trim();
 	document.forms[0].submit();
-    }
 }
 function updateFields(status) {
 	var el;
@@ -101,7 +100,7 @@ function getStatus() {
 }
 	</script>
 	<body onload="getStatus();">
-	<form action="/cgi-bin/apply.cgi" method="PUT">
+	<form action="/cgi-bin/apply.cgi" method="POST">
 	    <input type=hidden name='nat' value=''>
 	    <input type=hidden name='ssid' value=''>
 	    <input type=hidden name='channel' value=''>
@@ -128,7 +127,7 @@ function getStatus() {
 			<div class="field" id="wifi_pass" contenteditable="true" spellcheck="false"></div>
 		</div>
 		<div class="parameter">
-			<div class="button" onclick="apply();">Apply &amp; restart device</div>
+			<div class="button" onclick="apply();">Save</div>
 		</div>
 	</main>
 	</body>
