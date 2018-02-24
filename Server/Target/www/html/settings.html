@@ -60,6 +60,13 @@
     transition: 0.3s;
     border-color: #fff;
 }
+h3 {
+    font-size: 70%;
+    border-style: solid;
+    border-width: 0 0 0.5pt 0;
+    border-color: #888;
+    text-align: right;
+}
 		</style>
 	</head>
 	<script>
@@ -73,6 +80,9 @@ function apply() {
 }
 function updateFields(status) {
 	var el;
+	// Image name
+       	el = document.getElementById('image');
+	el.innerHTML = status.image;
 	// NAT status
        	el = document.getElementById('nat');
 	el.innerHTML = status.nat?"On":"Off";
@@ -110,6 +120,9 @@ function getStatus() {
         <header>
 	    	<h2>Settings</h2>
         </header>
+		<div class="parameter">
+			<h3 id="image">Promys - 2018-02-24</h3>
+		</div>
 		<div class="parameter">
 			<div class="label">NAT: </div>
 			<div class="field" id="nat" contenteditable="true" spellcheck="false"></div>

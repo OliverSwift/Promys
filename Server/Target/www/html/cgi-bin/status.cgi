@@ -4,9 +4,12 @@ echo ""
 echo "{"
 echo -n '"nat": ';
 if [ -e /boot/nat.txt ]; then
-	echo -n "true"
+	echo "true,"
 else
-	echo -n "false"
+	echo "false,"
 fi
+echo -n '"image": "'
+[ -e /etc/promys-issue ] && cat /etc/promys-issue
+echo -n '"'
 awk -F = -- '{ printf(",\n\"%s\": \"%s\"", $1, $2); }' /boot/wifi.cfg
 echo "}"
