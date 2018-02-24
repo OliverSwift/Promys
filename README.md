@@ -26,7 +26,7 @@ Considering RPi3 hardware capabilities, espcecially the H264 decoder and the Wif
 Just want to build a `Promys device` and use it ?
 
 1. First get a Raspberry Pi 3 (I haven't tested with Pi 2 but you'll miss the main advantage of Wifi).
-2. Find **[here](http://promys.me/downloads/image_2018-02-05-Promys.zip)** a zipped image for a 2GB or more micro SD card
+2. Find **[here](http://promys.me/downloads/image_2018-02-24-Promys.zip)** a zipped image for a 2GB or more micro SD card
 3. Get **[ETCHER](https://etcher.io/)** and burn the image (you don't even have to unzip the file) on the micro SD.
 4. Insert the SD in the Raspberry, connect to a projector or TV with HDMI cable. Power TV on.
 5. Power on the Promys device.
@@ -141,5 +141,5 @@ _and ideas_
 * connect a smartphone and fake a laser spot
 * improve clients (performance, power consumption, mouse capture, ...)
 * token passing for presenters (queuing for screencasting)
-* administration web page (Wifi ESSID, password, enable/disable NAT feature, IP addresses, overscan, etc)
+* More things on settings page (IP addresses, overscan, etc)
 * ...
