@@ -1,6 +1,7 @@
 #!/bin/bash
+export TMPDIR=/var/run/lighttpd
 read -N $CONTENT_LENGTH query
-echo $query > /tmp/apply.log
+echo $query > $TMPDIR/apply.log
 eval `echo $query | sed -e 's:&:\n:g'`
 cat > /boot/wifi.cfg <<EOF
 interface=wlan0
