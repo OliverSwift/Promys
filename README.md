@@ -36,7 +36,7 @@ Just want to build a `Promys device` and use it ?
 
 > **Note:** **[ETCHER](https://etcher.io/)** by _[Resin.io](https://resin.io/)_ makes image burning on SD very easy and safe on Linux, MacOS and Windows.
 
-For administrators, the `/boot` partition is VFAT formatted and can easily be mounted on any PC/Mac. It contains `wifi.cfg` for Wifi access point configuration where you can change ESSID, password, channel, etc. If a `nat.txt` file exists there ip forwarding and masquerading will be performed so connected users on Wifi will be routed to LAN. The splash image (see above) is a jpeg file named `splash.jpg` (1920 by 1080 pixels) that can easily be customized (with company logo and additional technical details for users for exmaple).
+For administrators, the `/boot` partition is VFAT formatted and can easily be mounted on any PC/Mac. It contains `wifi.cfg` for Wifi access point configuration where you can change ESSID, password, channel, etc. If a `nat.txt` file exists there ip forwarding and masquerading will be performed so connected users on Wifi will be routed to LAN. The splash image (see above) is a jpeg file named `splash.jpg` (1920 by 1080 pixels) that can easily be customized (with company logo and additional technical details for users for example).
 
 ## Server
 This section describes what is needed to build and setup the server.
@@ -59,6 +59,8 @@ Just get to `Server` directory and type make. It relies on `/op/vc` package that
 * Embedded web site is also setup in `www`, you'll need to install `lighttpd` package to serve it. You'll need to install client binaries in `downloads` sub-directory.
 * application directory is `/opt/promys`.
 * I also made mounted `rootfs` filesystem `readonly` to avoid the annoying usual SD issues.
+
+The web server also exposes a `settings.html` page that relies on cgi scripts to allow some changes.
 
 Section below points to how to create an image for dedicated Promys box. You should find insteresting things there.
 
