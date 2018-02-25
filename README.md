@@ -30,7 +30,7 @@ Just want to build a `Promys device` and use it ?
 3. Get **[ETCHER](https://etcher.io/)** and burn the image (you don't even have to unzip the file) on the micro SD.
 4. Insert the SD in the Raspberry, connect to a projector or TV with HDMI cable. Power TV on.
 5. Power on the Promys device.
-6. Tada ![Splash](/Server/Target/opt/promys/splash.jpg)
+6. Tada ![Splash](/Server/Target/boot/splash.jpg)
 
 > **Warning**, you won't be able to login to the device. You'll need to modify the image by mounting the SD (on a Linux box) and remove start up lines in `/etc/rc.local` file. SSH is not active by default, use keyboard on console.
 
