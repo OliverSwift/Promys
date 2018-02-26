@@ -5,6 +5,7 @@
  */
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <X11/extensions/Xrandr.h>
 #include <unistd.h>
 #include <sys/time.h>
 #include <arpa/inet.h>
@@ -58,6 +59,16 @@ main(int argc, char **argv) {
 	root = RootWindow(dpy, screen);
 	width = DisplayWidth (dpy, screen);
 	height = DisplayHeight (dpy, screen);
+
+	XRRMonitorInfo *monitors;
+    int nbMonitors = 0;
+
+    monitors = XRRGetMonitors(dpy, root, True, &nbMonitors);
+
+    if (nbMonitors) {
+        width =  monitors[0].width;
+        height = monitors[0].height;
+    }
 
 	image = XGetImage(dpy, root, 0, 0, width, height, AllPlanes, ZPixmap);
 
