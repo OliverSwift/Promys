@@ -21,6 +21,19 @@ extern "C" {
 
 #undef FILE_DUMP
 
+#include <pthread.h>
+
+static void change_priority() {
+    struct sched_param sp;
+    
+    memset(&sp, 0, sizeof(struct sched_param));
+    sp.sched_priority= sched_get_priority_max(2);
+    
+    if (pthread_setschedparam(pthread_self(), SCHED_FIFO, &sp)  == -1) {
+        printf("Failed to change priority.\n");
+    }
+}
+
 @implementation Promys
 
 -(void)showMessage:(NSString*)text {
@@ -108,6 +121,8 @@ extern "C" {
         [ self showMessage:@"Broadcasting..." ];
 	[ self hideWindow ];
     
+        change_priority();
+    
 	while(1) {
 	    CFDataRef dataref = CGDataProviderCopyData(CGImageGetDataProvider(image_ref));
 	    const unsigned char *data = CFDataGetBytePtr(dataref);
@@ -139,13 +154,17 @@ extern "C" {
 
 	    delay = (stop.tv_sec - start.tv_sec)*1000000;
 	    delay += (stop.tv_usec - start.tv_usec);
-	    if (delay < 40000) {
-		usleep(40000 - (int)delay);
+#define DELAY_US 50000
+	    if (delay < DELAY_US) {
+		usleep(DELAY_US - (int)delay);
 	    }
 
 	    gettimeofday(&start, NULL);
 	    // Capture a new image
 	    image_ref = CGDisplayCreateImage(CGMainDisplayID());
+#if 1
+            NSPoint mouse = [ NSEvent mouseLocation ];
+#endif
 	}
 
 	/* Flush delayed frames */
