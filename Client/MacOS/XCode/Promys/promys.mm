@@ -162,7 +162,7 @@ static void change_priority() {
 	    gettimeofday(&start, NULL);
 	    // Capture a new image
 	    image_ref = CGDisplayCreateImage(CGMainDisplayID());
-#if 1
+#if 0
             NSPoint mouse = [ NSEvent mouseLocation ];
 #endif
 	}
