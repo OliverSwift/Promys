@@ -1,4 +1,4 @@
-OBJS=main.o socket.o gui.o discover.o screencast.res
+OBJS=main.o socket.o gui.o discover.o h264.o screencast.res
 CFLAGS=-I../Common/x264 -I../Common/ffmpeg -I../Common/Socket
 
 screencast.exe: $(OBJS)

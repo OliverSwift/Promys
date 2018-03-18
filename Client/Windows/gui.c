@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include "Resource.h"
 
+extern HANDLE thread;
+
 #define MAX_LOADSTRING 100
 
 // Variables globales :
@@ -123,6 +125,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
+    case WM_CREATE:
+	ResumeThread(thread);
+    	break;
     case WM_DESTROY:
         PostQuitMessage(0);
         break;
