@@ -12,10 +12,9 @@
 #include <stdio.h>
 #include <stdint.h>
 extern "C" {
-#include <libswscale/swscale.h>
+#include "h264.h"
 #include "discover.h"
 }
-#include <x264.h>
 #include "socket.h"
 #include "AppDelegate.h"
 
@@ -71,53 +70,14 @@ static void change_priority() {
         CGImageRef image_ref = CGDisplayCreateImage(CGMainDisplayID());
 
         size_t width, height;
-        size_t out_width, out_height;
 
         width = CGImageGetWidth(image_ref);
         height = CGImageGetHeight(image_ref);
 
-	out_width = 1920;
-	out_height = 1080;
-
-	int linesize = width *4;
-
-	x264_param_t param;
-	x264_picture_t pic;
-	x264_picture_t pic_out;
-	x264_t *h;
-	int i_frame_size;
-	x264_nal_t *nal;
-	int i_nal;
-
-	if( x264_param_default_preset( &param, "ultrafast", "zerolatency" ) < 0 )
-	    exit(1);
-
-	param.i_csp = X264_CSP_I420;
-	param.i_width  = out_width;
-	param.i_height = out_height;
-	param.b_vfr_input = 0;
-	param.b_repeat_headers = 1;
-	param.b_annexb = 1;
-
-	x264_param_apply_fastfirstpass(&param);
-
-	/* Apply profile restrictions. */
-	if( x264_param_apply_profile( &param, "main" ) < 0 )
-	    exit(2);
-
-	if( x264_picture_alloc( &pic, param.i_csp, param.i_width, param.i_height ) < 0 )
-	    exit(2);
-
-	h = x264_encoder_open( &param );
-
-	SwsContext *swsCtxt;
-
-	swsCtxt = sws_getContext(width, height, AV_PIX_FMT_BGRA,
-	                         param.i_width, param.i_height, AV_PIX_FMT_YUV420P,
-				 SWS_FAST_BILINEAR, NULL, NULL, NULL);
-
-	int i=0;
-
+	size_t linesize = width *4;
+    
+        h264_init(width, height, linesize);
+    
         [ self showMessage:@"Broadcasting..." ];
 	[ self hideWindow ];
     
@@ -126,27 +86,18 @@ static void change_priority() {
 	while(1) {
 	    CFDataRef dataref = CGDataProviderCopyData(CGImageGetDataProvider(image_ref));
 	    const unsigned char *data = CFDataGetBytePtr(dataref);
-
-	    sws_scale(swsCtxt,
-	              &data, &linesize,
-		      0, height,
-		      pic.img.plane,  pic.img.i_stride);
+            
+            unsigned char *packet;
+            size_t packet_size;
+            
+            packet = h264_encode(data, &packet_size);
 
 	    CFRelease(dataref);
 	    CGImageRelease(image_ref);
 
-	    pic.i_pts = i++;
-	    i_frame_size = x264_encoder_encode( h, &nal, &i_nal, &pic, &pic_out );
-	    if( i_frame_size < 0 )
-		break;
-	    else if( i_frame_size )
-	    {
-#ifdef FILE_DUMP
-		fwrite(nal->p_payload, 1, i_frame_size, out);
-#else
-		if (cast->send(nal->p_payload, i_frame_size) < 0) break;
-#endif
-	    }
+            if (packet_size) {
+                if (cast->send(packet, (int)packet_size) < 0) break;
+            }
 
 	    gettimeofday(&stop, NULL);
 
@@ -167,27 +118,8 @@ static void change_priority() {
 #endif
 	}
 
-	/* Flush delayed frames */
-	while( x264_encoder_delayed_frames( h ) )
-	{
-	    i_frame_size = x264_encoder_encode( h, &nal, &i_nal, NULL, &pic_out );
-	    if( i_frame_size < 0 )
-		break;
-	    else if( i_frame_size )
-	    {
-#ifdef FILE_DUMP
-		fwrite(nal->p_payload, 1, i_frame_size, out);
-#else
-		if (cast->send(nal->p_payload, i_frame_size) < 0) break;
-#endif
-	    }
-	}
-
-	x264_encoder_close( h );
-	x264_picture_clean( &pic );
-
-	sws_freeContext(swsCtxt);
-
+        h264_close();
+    
 	delete cast;
 }
 @end

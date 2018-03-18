@@ -19,6 +19,7 @@
 		096032E72014EEF3009E1E3B /* socket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 096032E42014EEF3009E1E3B /* socket.cpp */; };
 		0994007E2017B38A00E214E7 /* libswscale.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0994007B2017B38A00E214E7 /* libswscale.5.dylib */; };
 		0994007F2017B38A00E214E7 /* libx264.155.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0994007C2017B38A00E214E7 /* libx264.155.dylib */; };
+		09DE74D8205E59B7002D9FC1 /* h264.c in Sources */ = {isa = PBXBuildFile; fileRef = 09DE74D7205E59B7002D9FC1 /* h264.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +42,8 @@
 		0994007A2016794C00E214E7 /* promys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = promys.h; sourceTree = "<group>"; };
 		0994007B2017B38A00E214E7 /* libswscale.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libswscale.5.dylib; path = ../libswscale.5.dylib; sourceTree = "<group>"; };
 		0994007C2017B38A00E214E7 /* libx264.155.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libx264.155.dylib; path = ../libx264.155.dylib; sourceTree = "<group>"; };
+		09DE74D6205E59B7002D9FC1 /* h264.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = h264.h; sourceTree = "<group>"; };
+		09DE74D7205E59B7002D9FC1 /* h264.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = h264.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +82,8 @@
 		096032D120138544009E1E3B /* Promys */ = {
 			isa = PBXGroup;
 			children = (
+				09DE74D7205E59B7002D9FC1 /* h264.c */,
+				09DE74D6205E59B7002D9FC1 /* h264.h */,
 				0994007A2016794C00E214E7 /* promys.h */,
 				095EA4F1201DD95E002CD5E0 /* discover.c */,
 				095EA4F2201DD95E002CD5E0 /* discover.h */,
@@ -203,6 +208,7 @@
 				096032E72014EEF3009E1E3B /* socket.cpp in Sources */,
 				096032DC20138545009E1E3B /* main.m in Sources */,
 				095EA4F3201DD95E002CD5E0 /* discover.c in Sources */,
+				09DE74D8205E59B7002D9FC1 /* h264.c in Sources */,
 				096032D420138545009E1E3B /* AppDelegate.m in Sources */,
 				096032E62014EEF3009E1E3B /* promys.mm in Sources */,
 			);
