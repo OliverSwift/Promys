@@ -12,26 +12,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <libswscale/swscale.h>
 #include "gui.h"
+#include "h264.h"
 #include "discover.h"
-#include <x264.h>
 #include "socket.h"
-
-#undef FILE_DUMP
 
 int
 main(int argc, char **argv) {
 	struct timeval start,stop;
-#ifdef FILE_DUMP
-	FILE *out = fopen("out.h264","wb");
-#endif
 	const char *cast_server = argv[1];
 	int cast_port = 9000;
 	int go;
 
+	// Initialize GUI stuff in separate thread
 	gui_init(&go);
 
+	// Discover a Promys device, unless specified in arguments
 	if (argv[1] == NULL) {
 	    showMessage("Searching for PROMYS device");
 	    cast_server = promys_discover(&cast_port);
@@ -39,6 +35,7 @@ main(int argc, char **argv) {
 
 	printf("Found at %s:%d\n", cast_server, cast_port);
 
+	// Update UI and iconfy window
 	showMessage("PROMYS device found");
 	hideWindow();
 
@@ -46,8 +43,8 @@ main(int argc, char **argv) {
 
 	gettimeofday(&start, NULL);
 
+	// Determine desktop size
 	size_t width, height;
-	size_t out_width, out_height;
 
 	Display *dpy;
 	int screen;
@@ -55,129 +52,75 @@ main(int argc, char **argv) {
 	Window root;
 
 	dpy = XOpenDisplay(getenv("DISPLAY"));
+	if (dpy == NULL) {
+	    printf("Can't open display.\n");
+	    exit(1);
+	}
 	screen = DefaultScreen(dpy);
 	root = RootWindow(dpy, screen);
 	width = DisplayWidth (dpy, screen);
 	height = DisplayHeight (dpy, screen);
 
+	// If multiple monitors, use Xrandr to figure out the central left moft one
 	XRRMonitorInfo *monitors;
-    int nbMonitors = 0;
 
-    monitors = XRRGetMonitors(dpy, root, True, &nbMonitors);
+	int nbMonitors = 0;
 
-    if (nbMonitors) {
-        width =  monitors[0].width;
-        height = monitors[0].height;
-    }
+	monitors = XRRGetMonitors(dpy, root, True, &nbMonitors);
 
+	if (nbMonitors) {
+	    width =  monitors[0].width;
+	    height = monitors[0].height;
+	}
+
+	// Make a first capture to figure out stride
 	image = XGetImage(dpy, root, 0, 0, width, height, AllPlanes, ZPixmap);
 
-	out_width = 1920;
-	out_height = 1080;
+	// Init encoder with correct sizes
+	h264_init(width, height, image->bytes_per_line);
 
-	int linesize = image->bytes_per_line;
+	// Inform we're broadcasting thru UI
+	showMessage("Broadcasting...");
 
-	x264_param_t param;
-	x264_picture_t pic;
-	x264_picture_t pic_out;
-	x264_t *h;
-	int i_frame = 0;
-	int i_frame_size;
-	x264_nal_t *nal;
-	int i_nal;
-
-	if( x264_param_default_preset( &param, "ultrafast", "zerolatency" ) < 0 )
-	    exit(1);
-
-	param.i_csp = X264_CSP_I420;
-	param.i_width  = out_width;
-	param.i_height = out_height;
-	param.b_vfr_input = 0;
-	param.b_repeat_headers = 1;
-	param.b_annexb = 1;
-
-	x264_param_apply_fastfirstpass(&param);
-
-	/* Apply profile restrictions. */
-	if( x264_param_apply_profile( &param, "main" ) < 0 )
-	    exit(2);
-
-	if( x264_picture_alloc( &pic, param.i_csp, param.i_width, param.i_height ) < 0 )
-	    exit(2);
-
-	h = x264_encoder_open( &param );
-
-	struct SwsContext *swsCtxt;
-
-	swsCtxt = sws_getContext(width, height, AV_PIX_FMT_BGRA,
-	                         param.i_width, param.i_height, AV_PIX_FMT_YUV420P,
-				 SWS_FAST_BILINEAR, NULL, NULL, NULL);
-
-	int i=0;
-
-    showMessage("Broadcasting...");
-
+	// Proceed til user ends it up
 	while(go) {
+	    unsigned char *packet;
+	    size_t packet_size;
+
 	    const unsigned char *data = (const unsigned char *)image->data;
 
-	    sws_scale(swsCtxt,
-	              &data, &linesize,
-		      0, height,
-		      pic.img.plane,  pic.img.i_stride);
+	    packet = h264_encode(data, &packet_size);
+
+	    if (packet_size) {
+		if (socket_send(packet, packet_size) < 0) break; // Peer likely has disconnected
+	    }
 
 	    XDestroyImage(image);
 
-	    pic.i_pts = i++;
-	    i_frame_size = x264_encoder_encode( h, &nal, &i_nal, &pic, &pic_out );
-	    if( i_frame_size < 0 )
-		break;
-	    else if( i_frame_size )
-	    {
-#ifdef FILE_DUMP
-		fwrite(nal->p_payload, 1, i_frame_size, out);
-#else
-		if (socket_send(nal->p_payload, i_frame_size) < 0) break;
-#endif
-	    }
+	    // We're trying to maintain a 20i/s pace
+	    // taking into account all possible delays (capture, encoding and network)
 
 	    gettimeofday(&stop, NULL);
+
+#define DELAY_US 50000
 
 	    long delay;
 
 	    delay = (stop.tv_sec - start.tv_sec)*1000000;
 	    delay += (stop.tv_usec - start.tv_usec);
-	    if (delay < 40000) {
-		usleep(40000 - delay);
+	    if (delay < DELAY_US) {
+		usleep(DELAY_US - delay);
 	    }
 
 	    gettimeofday(&start, NULL);
+
 	    // Capture a new image
 	    image = XGetImage(dpy, root, 0, 0, width, height, AllPlanes, ZPixmap);
 	}
 
-	/* Flush delayed frames */
-	while( x264_encoder_delayed_frames( h ) )
-	{
-	    i_frame_size = x264_encoder_encode( h, &nal, &i_nal, NULL, &pic_out );
-	    if( i_frame_size < 0 )
-		break;
-	    else if( i_frame_size )
-	    {
-#ifdef FILE_DUMP
-		fwrite(nal->p_payload, 1, i_frame_size, out);
-#else
-		if (socket_send(nal->p_payload, i_frame_size) < 0) break;
-#endif
-	    }
-	}
-
-	x264_encoder_close( h );
-	x264_picture_clean( &pic );
-
-	sws_freeContext(swsCtxt);
+	h264_close();
 
 	socket_close();
 
 	XCloseDisplay(dpy);
-
 }

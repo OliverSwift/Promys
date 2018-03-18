@@ -64,7 +64,7 @@ promys_discover(int *port) {
 
 	    // Wait for reply
 	    struct sockaddr_in from;
-	    int from_len = sizeof(from);
+	    unsigned int from_len = sizeof(from);
 	    struct _promys reply;
 	    fd_set fds;
 	    struct timeval to;

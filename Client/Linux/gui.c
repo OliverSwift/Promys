@@ -87,6 +87,10 @@ gui_init(int *go) {
     XInitThreads();
 
     dpy = XOpenDisplay(NULL);
+    if (dpy == NULL) {
+	return -1;
+    }
+
     screen = DefaultScreen(dpy);
 
     win = XCreateSimpleWindow(dpy, RootWindow(dpy, screen),
@@ -119,4 +123,6 @@ gui_init(int *go) {
     XSetWMProtocols(dpy, win, &wm_delete_window, 1);
 
     pthread_create(&thread, NULL, mainLoop, go);
+
+    return 0;
 }
