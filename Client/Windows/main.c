@@ -9,35 +9,27 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdint.h>
-#include <libswscale/swscale.h>
 #include "discover.h"
-#include <x264.h>
+#include "h264.h"
 #include "socket.h"
 #include <arpa/inet.h>
 
-#undef FILE_DUMP
-
 DWORD promys(LPVOID);
+
+HANDLE thread;
 
 int
 WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow) {
-    CreateThread(NULL, 0, promys, NULL, 0, NULL);
+    thread = CreateThread(NULL, 0, promys, NULL, CREATE_SUSPENDED, NULL);
     guiMain(hInstance, hPrevInst, lpCmdLine, nCmdShow);
 }
 
 DWORD promys(LPVOID arg) {
-#ifdef FILE_DUMP
-	FILE *out = fopen("out.h264","wb");
-#endif
-	unsigned int height, width;
-	unsigned int out_width, out_height;
+	size_t height, width;
 
 	char *cast_server;
 	int cast_port;
 
-	Sleep(1000); // Give GUI thread some time to setup, kludgy
-
-#ifndef FILE_DUMP
 	showMessage("Searching for PROMYS device");
 
 	cast_server = promys_discover(&cast_port);
@@ -54,10 +46,6 @@ DWORD promys(LPVOID arg) {
 	    printf("Unable to connect to Promys\n");
 	    exit(1);
 	}
-#else
-	showMessage("File dump mode");
-	hideWindow();
-#endif
 
 	HDC hDCScreen = GetDC(NULL);
 
@@ -65,9 +53,6 @@ DWORD promys(LPVOID arg) {
 
 	width = GetSystemMetrics(SM_CXSCREEN);
 	height = GetSystemMetrics(SM_CYSCREEN);
-
-	out_width = 1920;
-	out_height = 1080;
 
 	HBITMAP hBitmap = CreateCompatibleBitmap(hDCScreen, width, height);
 	BITMAP bmpScreen;
@@ -96,43 +81,7 @@ DWORD promys(LPVOID arg) {
 
 	SelectObject(hDCMem, hBitmap);
 
-	x264_param_t param;
-	x264_picture_t pic;
-	x264_picture_t pic_out;
-	x264_t *h;
-	int i_frame = 0;
-	int i_frame_size;
-	x264_nal_t *nal;
-	int i_nal;
-
-	if( x264_param_default_preset( &param, "ultrafast", "zerolatency" ) < 0 )
-	    exit(1);
-
-	param.i_csp = X264_CSP_I420;
-	param.i_width  = out_width;
-	param.i_height = out_height;
-	param.b_vfr_input = 0;
-	param.b_repeat_headers = 1;
-	param.b_annexb = 1;
-
-	x264_param_apply_fastfirstpass(&param);
-
-	/* Apply profile restrictions. */
-	if( x264_param_apply_profile( &param, "main" ) < 0 )
-	    exit(2);
-
-	if( x264_picture_alloc( &pic, param.i_csp, param.i_width, param.i_height ) < 0 )
-	    exit(2);
-
-	h = x264_encoder_open( &param );
-
-	struct SwsContext *swsCtxt;
-
-	swsCtxt = sws_getContext(width, height, AV_PIX_FMT_BGRA,
-	                         param.i_width, param.i_height, AV_PIX_FMT_YUV420P,
-				 SWS_FAST_BILINEAR, NULL, NULL, NULL);
-
-	int i=0;
+	h264_init(width, height, linesize);
 
 	showMessage("Broadcasting...");
 
@@ -157,7 +106,6 @@ DWORD promys(LPVOID arg) {
 
 	    SelectObject(cdc, ii.hbmColor);
 	    GetObject(ii.hbmColor, sizeof(bm), &bm);
-	    //MaskBlt(hDCMem, ci.ptScreenPos.x, bmpScreen.bmHeight - ci.ptScreenPos.y, bm.bmWidth, bm.bmHeight, cdc, 0, 0, ii.hbmMask, 0,0, MAKEROP4(SRCPAINT,SRCCOPY) );
 	    StretchBlt(hDCMem, ci.ptScreenPos.x, bmpScreen.bmHeight - ci.ptScreenPos.y, bm.bmWidth, -bm.bmHeight, cdc, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
 	    DeleteObject(ii.hbmColor);
 	    DeleteObject(ii.hbmMask);
@@ -171,23 +119,15 @@ DWORD promys(LPVOID arg) {
 		lpbitmap, // pic.img.plane[0],
 		(BITMAPINFO *)&bi, DIB_RGB_COLORS);
 
-	    sws_scale(swsCtxt,
-	              (const uint8_t * const*)&lpbitmap, &linesize,
-		      0, height,
-		      pic.img.plane,  pic.img.i_stride);
+	    unsigned char *packet;
+	    size_t packet_size;
 
-	    pic.i_pts = i++;
-	    i_frame_size = x264_encoder_encode( h, &nal, &i_nal, &pic, &pic_out );
-	    if( i_frame_size < 0 )
-		break;
-	    else if( i_frame_size )
+	    packet = h264_encode(lpbitmap, &packet_size);
+	    if (packet_size)
 	    {
-#ifdef FILE_DUMP
-		fwrite(nal->p_payload, 1, i_frame_size, out);
-#else
-		if (socket_send(nal->p_payload, i_frame_size) < 0) break;
-#endif
+		if (socket_send(packet, packet_size) < 0) break;
 	    }
+
 	    GetSystemTime(&stop);
 	    DWORD delta;
 
@@ -199,26 +139,7 @@ DWORD promys(LPVOID arg) {
 	    }
 	}
 
-	/* Flush delayed frames */
-	while( x264_encoder_delayed_frames( h ) )
-	{
-	    i_frame_size = x264_encoder_encode( h, &nal, &i_nal, NULL, &pic_out );
-	    if( i_frame_size < 0 )
-		break;
-	    else if( i_frame_size )
-	    {
-#ifdef FILE_DUMP
-		fwrite(nal->p_payload, 1, i_frame_size, out);
-#else
-		if (socket_send(nal->p_payload, i_frame_size) < 0) break;
-#endif
-	    }
-	}
-
-	x264_encoder_close( h );
-	x264_picture_clean( &pic );
-
-	sws_freeContext(swsCtxt);
+	h264_close();
 
 	free(lpbitmap);
 
