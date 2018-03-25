@@ -35,7 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "ilclient.h"
 
 int
-video_decode(int stream)
+video_decode(int stream, int overscan)
 {
    OMX_VIDEO_PARAM_PORTFORMATTYPE format;
    OMX_TIME_CONFIG_CLOCKSTATETYPE cstate;
@@ -151,6 +151,27 @@ video_decode(int stream)
             }
 
             ilclient_change_component_state(video_render, OMX_StateExecuting);
+
+	    if (overscan) {
+		   OMX_CONFIG_DISPLAYREGIONTYPE disp_teg_type;
+		   int ret;
+
+		   memset(&disp_teg_type, 0, sizeof(OMX_CONFIG_DISPLAYREGIONTYPE));
+		   disp_teg_type.nSize = sizeof(OMX_CONFIG_DISPLAYREGIONTYPE);
+		   disp_teg_type.nVersion.nVersion = OMX_VERSION;
+		   disp_teg_type.nPortIndex = 90;
+		   disp_teg_type.fullscreen = 0;
+		   disp_teg_type.set = OMX_DISPLAY_SET_FULLSCREEN | OMX_DISPLAY_SET_DEST_RECT;
+		   disp_teg_type.dest_rect.x_offset = overscan;
+		   disp_teg_type.dest_rect.y_offset = overscan;
+		   disp_teg_type.dest_rect.width = 1920 - overscan*2;
+		   disp_teg_type.dest_rect.height = 1080 - overscan*2;
+
+	           ret = OMX_SetParameter(ILC_GET_HANDLE(video_render), OMX_IndexConfigDisplayRegion, &disp_teg_type);
+		   if (ret != OMX_ErrorNone) {
+			   printf("Set Ret: %x\n", ret);
+		   }
+	    }
          }
          if(!data_len)
             break;

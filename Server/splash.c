@@ -89,7 +89,6 @@ fb_splash() {
   struct jpeg_decompress_struct cinfo;
   struct my_error_mgr jerr;
   FILE *infile;                 /* source file */
-  JSAMPARRAY buffer;            /* Output row buffer */
   int row_stride;               /* physical row width in output buffer */
 
   if ((infile = fopen(getenv("PROMYS_BACKGROUND"), "rb")) == NULL) {
@@ -125,9 +124,6 @@ fb_splash() {
 
   row_stride = cinfo.output_width * cinfo.output_components;
  
-  buffer = (*cinfo.mem->alloc_sarray)
-                ((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
-
   if (row_stride > finfo.line_length) {
 	  row_stride = finfo.line_length;
   }
@@ -137,9 +133,7 @@ fb_splash() {
   }
 
   while (cinfo.output_scanline < cinfo.output_height) {
-    (void) jpeg_read_scanlines(&cinfo, buffer, 1);
-
-    memcpy(ptr, buffer[0], row_stride);
+    (void) jpeg_read_scanlines(&cinfo, &ptr, 1);
     ptr += finfo.line_length;
   }
 

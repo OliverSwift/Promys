@@ -21,6 +21,7 @@ main(int argc, char **argv) {
 	int ret;
 	int connection;
 	int discover;
+	int overscan = 0;
 
 	connection = socket_listen(9000);
 
@@ -60,7 +61,7 @@ main(int argc, char **argv) {
 				pid = fork();
 				switch (pid) {
 					case 0: // Child
-						video_decode(client);
+						video_decode(client, overscan);
 						exit(0);
 					case -1: // Error
 						break;
