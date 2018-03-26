@@ -11,10 +11,10 @@
 #include <errno.h>
 #include <string.h>
 
-#include <socket.h>
-#include <video.h>
-#include <splash.h>
-#include <discover.h>
+#include "socket.h"
+#include "video.h"
+#include "splash.h"
+#include "discover.h"
 
 int
 main(int argc, char **argv) {
@@ -30,6 +30,8 @@ main(int argc, char **argv) {
 	fb_init();
 
 	fb_splash();
+
+	fb_info();
 
 	discover = promys_listen();
 	if (discover < 0) {
@@ -69,6 +71,7 @@ main(int argc, char **argv) {
 						waitpid(pid, NULL, 0);
 						close(client);
 						fb_splash();
+                        fb_info();
 						break;
 				}
 			}

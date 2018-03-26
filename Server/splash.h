@@ -8,4 +8,6 @@
 int fb_init();
 void fb_splash();
 int fb_close();
+void fb_print(int x, int y, const char *, ...);
+void fb_info();
 #endif
