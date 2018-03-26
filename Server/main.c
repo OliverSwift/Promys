@@ -71,6 +71,7 @@ main(int argc, char **argv) {
 						waitpid(pid, NULL, 0);
 						close(client);
 						fb_splash();
+                        fb_info();
 						break;
 				}
 			}
