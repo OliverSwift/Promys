@@ -5,7 +5,7 @@ http://promys.me
 
 A screencasting system project based on a Pi 3. Nothing very new for such project except that it aims at being very user friendly. Easy setup for users on Windows, Mac and Linux.
 
-User connects to the Promys Device Wifi access point, visits the embedded web page, downloads client application from there and starts it. Almost as easy as Click&Share from BARCO but at a reasonable price (~40€).
+User connects to the Promys Device Wifi access point, visits the embedded web page, downloads client application from there and starts it. Almost as easy as ClickShare from BARCO but at a reasonable price (~40€).
 
 It's **NOT** like a Chromecast device, guests don't have to join hosts wifi network. It's suitable for companies that would like to offer easy screencasting to visitors and employees. It's more similar to Click&Share. I don't see a point using it at home, but, why not?
 
@@ -26,7 +26,7 @@ Considering RPi3 hardware capabilities, espcecially the H264 decoder and the Wif
 Just want to build a `Promys device` and use it ?
 
 1. First get a Raspberry Pi 3 (I haven't tested with Pi 2 but you'll miss the main advantage of Wifi).
-2. Find **[here](http://promys.me/downloads/image_2018-03-18-Promys.zip)** a zipped image for a 2GB or more micro SD card
+2. Find **[here](http://promys.me/downloads/image_2018-03-26-Promys.zip)** a zipped image for a 1GB or more micro SD card
 3. Get **[ETCHER](https://etcher.io/)** and burn the image (you don't even have to unzip the file) on the micro SD.
 4. Insert the SD in the Raspberry, connect to a projector or TV with HDMI cable. Power TV on.
 5. Power on the Promys device.
