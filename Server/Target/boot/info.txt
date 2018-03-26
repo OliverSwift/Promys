@@ -1,0 +1,3 @@
+ Wifi: PROMYS
+ Pass: BringOnTheShow
+Visit: http://promys.local or http://promys.lan

@@ -25,8 +25,14 @@ if [ -e /boot/nat.txt ]; then
     iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 fi
 
+cp /boot/info.txt /var/run/promys.txt
+echo -n "   IP: " >> /var/run/promys.txt
+hostname -I >> /var/run/promys.txt
+
 # Start PROMYS
 export PROMYS_BACKGROUND=/boot/splash.jpg
+export PROMYS_INFO_FILE=/var/run/promys.txt
+export PROMYS_TTF_FONT=/opt/promys/lucon.ttf
 /opt/promys/promys 2> /var/run/promys.log
 
 exit 0
