@@ -25,6 +25,16 @@ if [ -e /boot/nat.txt ]; then
     iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 fi
 
+# This one gives you a chance to set sshd up on a brand new flashed system
+# 1) Edit /etc/fstab and make / rw
+# 2) Uncomment the following lines
+# 3) Boot it up
+# 4) ssh on system, change default pi passwd, make / ro, comment back these lines
+#if ( ! systemctl status ssh.service) then
+#  systemctl enable ssh.service
+#  systemctl start ssh.service
+#fi
+
 cp /boot/info.txt /var/run/promys.txt
 echo -n "   IP: " >> /var/run/promys.txt
 hostname -I >> /var/run/promys.txt
