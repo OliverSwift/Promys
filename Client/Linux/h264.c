@@ -65,14 +65,14 @@ h264_encode(const unsigned char *image_data, size_t * packet_size) {
 
     pic.i_pts = i++;
     i_frame_size = x264_encoder_encode( h, &nal, &i_nal, &pic, &pic_out );
-    if( i_frame_size < 0 )
-	return NULL;
+
+    if( i_frame_size < 0 ) return NULL;
 
     *packet_size = (size_t)i_frame_size;
 
 #ifdef FILE_DUMP
     if(i_frame_size)
-	fwrite(nal->p_payload, 1, i_frame_size, out);
+        fwrite(nal->p_payload, 1, i_frame_size, out);
     }
 #endif
 

@@ -18,10 +18,8 @@ static GC gc;
 static Font font;
 static XFontStruct *font_info;
 static pthread_t thread;
-static Atom wm_delete_window, wm_protocols;
+static Atom wm_delete_window, wm_protocols, cm_hide_window;
 static char *message = "";
-
-#define HIDE_WINDOW (0x0D)
 
 void
 hideWindow() {
@@ -29,7 +27,7 @@ hideWindow() {
 
     event.type = ClientMessage;
     event.xclient.window = win;
-    event.xclient.message_type = HIDE_WINDOW;
+    event.xclient.message_type = cm_hide_window;
     event.xclient.format = 8;
     XSendEvent(dpy, win, False, 0, &event);
     XFlush(dpy);
@@ -69,7 +67,7 @@ mainLoop(void *arg) {
                     break;
                 }
             }
-            if (event.xclient.message_type == HIDE_WINDOW) {
+            if (event.xclient.message_type == cm_hide_window) {
                 XIconifyWindow(dpy, win, screen);
             }
         }
@@ -118,9 +116,14 @@ gui_init(int *go) {
     XSetClassHint(dpy, win, classHint);
     XFree(classHint);
 
+    // Some WM client message atoms
     wm_protocols     = XInternAtom(dpy, "WM_PROTOCOLS", False);
     wm_delete_window = XInternAtom(dpy, "WM_DELETE_WINDOW", False);
+
     XSetWMProtocols(dpy, win, &wm_delete_window, 1);
+
+    // Create our client message
+    cm_hide_window = XInternAtom(dpy, "PROMYS_HIDE_WINDOW", False);
 
     pthread_create(&thread, NULL, mainLoop, go);
 
