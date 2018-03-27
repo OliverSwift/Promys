@@ -61,7 +61,7 @@ main(int argc, char **argv) {
 	width = DisplayWidth (dpy, screen);
 	height = DisplayHeight (dpy, screen);
 
-	// If multiple monitors, use Xrandr to figure out the central left moft one
+	// If multiple monitors, use Xrandr to figure out the central left most one
 	XRRMonitorInfo *monitors;
 
 	int nbMonitors = 0;
@@ -91,11 +91,11 @@ main(int argc, char **argv) {
 
 	    packet = h264_encode(data, &packet_size);
 
-	    if (packet_size) {
-		if (socket_send(packet, packet_size) < 0) break; // Peer likely has disconnected
-	    }
-
 	    XDestroyImage(image);
+
+	    if (packet) {
+                if (socket_send(packet, packet_size) < 0) break; // Peer likely has disconnected
+	    }
 
 	    // We're trying to maintain a 20i/s pace
 	    // taking into account all possible delays (capture, encoding and network)
@@ -109,7 +109,7 @@ main(int argc, char **argv) {
 	    delay = (stop.tv_sec - start.tv_sec)*1000000;
 	    delay += (stop.tv_usec - start.tv_usec);
 	    if (delay < DELAY_US) {
-		usleep(DELAY_US - delay);
+                usleep(DELAY_US - delay);
 	    }
 
 	    gettimeofday(&start, NULL);
