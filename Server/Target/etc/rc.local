@@ -36,6 +36,7 @@ fi
 #fi
 
 cp /boot/info.txt /var/run/promys.txt
+awk -F = '/^ssid/ { print "  Wifi:",$2 } /^wpa_passphrase/ { print "  Pass:",$2 }' /boot/wifi.cfg >> /var/run/promys.txt
 echo -n "   IP: " >> /var/run/promys.txt
 hostname -I >> /var/run/promys.txt
 
