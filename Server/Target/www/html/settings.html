@@ -73,12 +73,23 @@ h3 {
 		</style>
 	</head>
 	<script>
+var password = "";
 function apply() {
 	alert("Settings will be active on device restart");
 	document.forms[0].submit();
 }
 function updateFields(status) {
 	var el;
+
+        el = document.getElementById('parameters');
+        if (status.access_granted != true) {
+            el.style.display = "none";
+        } else {
+            el.style.display = "block";
+            el = document.getElementById('valiate');
+            el.style.display = "none";
+        }
+
 	// Info
        	el = document.getElementById('info');
 	el.textContent = status.info;
@@ -107,16 +118,20 @@ function getStatus() {
 		    updateFields(myArr);
 		}
 	};
-	xmlhttp.open("GET", "/cgi-bin/status.cgi", true);
+	xmlhttp.open("GET", "/cgi-bin/status.cgi?" + password, true);
 	xmlhttp.send();
+}
+function authenticate() {
+    password = document.forms[0].elements['password'].value;
+    getStatus();
 }
 	</script>
 	<body onload="getStatus();">
 	<form action="/cgi-bin/apply.cgi" method="POST">
 	<main>
-        <header>
-	    	<h2>Settings</h2>
-        </header>
+                <header>
+                        <h2>Settings</h2>
+                </header>
 		<div class="parameter">
 			<h3>
 				<span id="info">Promys - 2018-02-24</span> -
@@ -124,35 +139,41 @@ function getStatus() {
 				LAN:<span id="ip"></span>
 			</h3>
 		</div>
-		<div id="credentials" style="display: none;">
-		    <div class="parameter">
-			    <div class="label" style="color: red;">Password: </div>
-			    <input class="field" type="password" name= "password" spellcheck="false">
-		    </div>
-		    <div class="parameter">
-			    <div class="label" style="color: red;">Confirm: </div>
-			    <input class="field" type="password" name= "password2" spellcheck="false">
-		    </div>
-		</div>
-		<div class="parameter">
-			<div class="label">NAT: </div>
-			<input class="field" type="text" name= "nat" id="nat" spellcheck="false">
-		</div>
-		<div class="parameter">
-			<div class="label">SSID: </div>
-			<input class="field" type="text" name= "ssid" id="ssid" spellcheck="false">
-		</div>
-		<div class="parameter">
-			<div class="label">Wifi channel: </div>
-			<input class="field" type="text" name= "channel" id="channel" spellcheck="false">
-		</div>
-		<div class="parameter">
-			<div class="label">Wifi password: </div>
-			<input class="field" type="text" name= "wifi_pass" id="wifi_pass" spellcheck="false">
-		</div>
-		<div class="parameter">
-			<div class="button" onclick="apply();">Save</div>
-		</div>
+
+                <div class="parameter">
+                        <div class="label" style="color: red;">Password: </div>
+                        <input class="field" type="password" name= "password" spellcheck="false">
+                </div>
+                <div class="parameter" id="validate">
+                    <div class="button" onclick="authenticate();">Validate</div>
+                </div>
+
+
+                <div id="parameters" style="display: none;">
+                    <div class="parameter">
+                            <div class="label" style="color: red;">Confirm: </div>
+                            <input class="field" type="text" name= "new_password" spellcheck="false">
+                    </div>
+                    <div class="parameter">
+                            <div class="label">NAT: </div>
+                            <input class="field" type="checkbox" name= "nat">
+                    </div>
+                    <div class="parameter">
+                            <div class="label">SSID: </div>
+                            <input class="field" type="text" name= "ssid" spellcheck="false">
+                    </div>
+                    <div class="parameter">
+                            <div class="label">Wifi channel: </div>
+                            <input class="field" type="text" name= "channel" spellcheck="false">
+                    </div>
+                    <div class="parameter">
+                            <div class="label">Wifi password: </div>
+                            <input class="field" type="text" name= "wifi_pass" spellcheck="false">
+                    </div>
+                    <div class="parameter">
+                            <div class="button" onclick="apply();">Save</div>
+                    </div>
+                </div>
 	</main>
 	</form>
 	</body>

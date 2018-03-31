@@ -1,8 +1,37 @@
 #!/bin/bash
 export TMPDIR=/var/run/lighttpd
+
+error() {
+    echo "Content-Type: text/html"
+    echo ""
+    echo "<html>"
+    echo "Error: " $1
+    echo "</html>"
+    exit
+}
+
+# POST vars parsing
 read -N $CONTENT_LENGTH query
 echo $query > $TMPDIR/apply.log
-eval `echo $query | sed -e 's:&:\n:g'`
+# TODO: escape dangerous values. Attacker can exploit easily the eval part
+eval `echo $query | tr '`$' "__" | sed -e 's:&:\n:g'`
+
+# Password checking
+if [ -e /boot/password.txt ]; then
+    hash=$(echo $password | md5sum)
+    if [ $hash != `cat /boot/password.txt`]; then
+        error("Wrong password");
+    fi
+else
+    if [ "$new_password" = "" ]; then
+        error("Password must bet set");
+    fi
+fi
+if [ "$new_password" != "$password" && "$new_password" != "" ]; then
+    echo $new_password | md5sum > /boot/password.txt
+fi
+
+# WIFI configuration file generation
 cat > /boot/wifi.cfg <<EOF
 interface=wlan0
 driver=nl80211
@@ -19,12 +48,16 @@ wpa_key_mgmt=WPA-PSK
 wpa_pairwise=TKIP
 rsn_pairwise=CCMP
 EOF
+
+# NAT file activation creation or deletion
 if [ $nat = "On" ]; then
 	touch /boot/nat.txt
 else
 	rm -f /boot/nat.txt
 fi
 sync
+
+# HTLM Redirection to settings.html
 echo "Content-Type: text/html"
 echo ""
 echo "<script>"
