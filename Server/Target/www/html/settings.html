@@ -34,6 +34,7 @@
 	padding: 0.5rem;
 	width: 20rem;
 	font-family: "Lucida Console", monospace;
+	font-size: 1em;
 }
 .field:hover {
 	color: #000;
@@ -74,10 +75,6 @@ h3 {
 	<script>
 function apply() {
 	alert("Settings will be active on device restart");
-	document.forms[0].elements['nat'].value = document.getElementById('nat').textContent.trim();
-	document.forms[0].elements['ssid'].value = document.getElementById('ssid').textContent.trim();
-	document.forms[0].elements['channel'].value = document.getElementById('channel').textContent.trim();
-	document.forms[0].elements['password'].value = document.getElementById('wifi_pass').textContent.trim();
 	document.forms[0].submit();
 }
 function updateFields(status) {
@@ -92,17 +89,14 @@ function updateFields(status) {
        	el = document.getElementById('ip');
 	el.textContent = status.ip;
 	// NAT status
-       	el = document.getElementById('nat');
-	el.textContent = status.nat?"On":"Off";
+	document.forms[0].elements['nat'].value = status.nat?"On":"Off";
 	// SSID
-       	el = document.getElementById('ssid');
-	el.textContent = status.ssid;
+	document.forms[0].elements['ssid'].value = status.ssid;
 	// Channel
-       	el = document.getElementById('channel');
-	el.textContent = status.channel;
+	document.forms[0].elements['channel'].value = status.channel;
 	// Wifi Password
        	el = document.getElementById('wifi_pass');
-	el.textContent = status.wpa_passphrase;
+	document.forms[0].elements['wifi_pass'].value = status.wpa_passphrase;
 }
 function getStatus() {
 	var xmlhttp = new XMLHttpRequest();
@@ -119,11 +113,6 @@ function getStatus() {
 	</script>
 	<body onload="getStatus();">
 	<form action="/cgi-bin/apply.cgi" method="POST">
-	    <input type=hidden name='nat' value=''>
-	    <input type=hidden name='ssid' value=''>
-	    <input type=hidden name='channel' value=''>
-	    <input type=hidden name='password' value=''>
-	</form>
 	<main>
         <header>
 	    	<h2>Settings</h2>
@@ -135,25 +124,36 @@ function getStatus() {
 				LAN:<span id="ip"></span>
 			</h3>
 		</div>
+		<div id="credentials" style="display: none;">
+		    <div class="parameter">
+			    <div class="label" style="color: red;">Password: </div>
+			    <input class="field" type="password" name= "password" spellcheck="false">
+		    </div>
+		    <div class="parameter">
+			    <div class="label" style="color: red;">Confirm: </div>
+			    <input class="field" type="password" name= "password2" spellcheck="false">
+		    </div>
+		</div>
 		<div class="parameter">
 			<div class="label">NAT: </div>
-			<div class="field" id="nat" contenteditable="true" spellcheck="false"></div>
+			<input class="field" type="text" name= "nat" id="nat" spellcheck="false">
 		</div>
 		<div class="parameter">
 			<div class="label">SSID: </div>
-			<div class="field" id="ssid" contenteditable="true" spellcheck="false"></div>
+			<input class="field" type="text" name= "ssid" id="ssid" spellcheck="false">
 		</div>
 		<div class="parameter">
 			<div class="label">Wifi channel: </div>
-			<div class="field" id="channel" contenteditable="true" spellcheck="false"></div>
+			<input class="field" type="text" name= "channel" id="channel" spellcheck="false">
 		</div>
 		<div class="parameter">
 			<div class="label">Wifi password: </div>
-			<div class="field" id="wifi_pass" contenteditable="true" spellcheck="false"></div>
+			<input class="field" type="text" name= "wifi_pass" id="wifi_pass" spellcheck="false">
 		</div>
 		<div class="parameter">
 			<div class="button" onclick="apply();">Save</div>
 		</div>
 	</main>
+	</form>
 	</body>
 </html>
