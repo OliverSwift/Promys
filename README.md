@@ -9,7 +9,7 @@ User connects to the Promys Device Wifi access point, visits the embedded web pa
 
 It's **NOT** like a Chromecast device, guests don't have to join hosts wifi network. It's suitable for companies that would like to offer easy screencasting to visitors and employees. It's more similar to Click&Share. I don't see a point using it at home, but, why not?
 
-Already made image is available on the web site (see below), so it should be very straightforward to setup a Pi3 out of the box and have an up and running system.
+An already made system image is available on the web site (see below), so it should be very straightforward to setup a Pi3 out of the box and have an up and running system.
 
 For the moment it is very basic but it can be extended with plenty of nifty features. Check out TODO/Ideas section for that and feel free to contribute.
 
@@ -32,11 +32,13 @@ Just want to build a `Promys device` and use it ?
 5. Power on the Promys device.
 6. Tada ![Splash](/Server/Target/boot/splash.jpg)
 
-> **Warning**, you won't be able to login to the device. You'll need to modify the image by mounting the SD (on a Linux box) and remove start up lines in `/etc/rc.local` file. SSH is not active by default, use keyboard on console.
+> **Warning**, you won't be able to login to the device. SSH is not active by default. You'll need to modify the image by mounting the SD (on a Linux box) uncomment some lines in `/etc/rc.local` file and make root read-write by modifying `/etc/fstab`. You'll then need to reboot and ssh to it (usual Pi credentials are preserved), change password, make root file filesystem read-only again and comment the extra lines in `rc.local`.
 
 > **Note:** **[ETCHER](https://etcher.io/)** by _[Resin.io](https://resin.io/)_ makes image burning on SD very easy and safe on Linux, MacOS and Windows.
 
-For administrators, the `/boot` partition is VFAT formatted and can easily be mounted on any PC/Mac. It contains `wifi.cfg` for Wifi access point configuration where you can change ESSID, password, channel, etc. If a `nat.txt` file exists there ip forwarding and masquerading will be performed so connected users on Wifi will be routed to LAN. The splash image (see above) is a jpeg file named `splash.jpg` (1920 by 1080 pixels) that can easily be customized (with company logo and additional technical details for users for example).
+For administrators, the `/boot` partition is VFAT formatted and can easily be mounted on any PC/Mac. It contains `wifi.cfg` for Wifi access point configuration where you can change ESSID, password, channel, etc. If a `nat.txt` file exists there ip forwarding and masquerading will be performed so connected users on Wifi will be routed to LAN. You may also visit the `settings.html`page to adjust main parameters, on first vist you'll be asked to set a password.
+
+The splash image (see above) is a jpeg file named `splash.jpg` (1920 by 1080 pixels) that can easily be customized (with company logo and additional technical details for users for example).
 
 ## Server
 This section describes what is needed to build and setup the server.
@@ -44,7 +46,7 @@ This section describes what is needed to build and setup the server.
 ### _Binary_
 You'll need a Pi3 running `Raspian stretch` to compile the server executable. I don't cover any cross-compiling instructions.
 
-If you've installed a Raspbian disto you'll only need `libjpeg62-turbo-dev` package.
+If you've installed a Raspbian disto you'll need `libjpeg62-turbo-dev` and `libfreetype6-dev` packages.
 
 Just get to `Server` directory and type make. It relies on `/op/vc` package that contains helper libraries to use the OpenMAX layer available for the Broadcom ARM chip.
 
@@ -126,22 +128,20 @@ a autoextractable executable with all needed stuff in it. User has just to run i
 
 Get to `Client/Linux` and type `make package`. This will generate a `promys.deb` file which is
 intended for debian based distros. User will have to install it prior to using the client.
-With any launcher, search for promys and start the application.
+With any launcher, search for promys and start the application. Works fine on Ubuntu, Mint, ...
 
 ### MacOS
 
 Get to `Client/MacOS` and type `make`. This will generate a `promys.dmg` file which is
 a software drive. User will have to download it, open it and start the application. GateKeeper
 will certainly ask permission to run an application downloaded from the Internet.
-The already built one is signed with my developer account so user won't have to allow its execution.
-I haven't pushed it on the Mac Store though.
+The already built one is signed with my developer account so users just have to allow its execution because it comes _the Internet_. I haven't pushed it on the Mac Store though.
 
 ## TODO
 _and ideas_
 * version checking
-* overscan adjustment with CEC
+* overscan adjustment with CEC. **WIP**
 * connect a smartphone and fake a laser spot
 * improve clients (performance, power consumption, mouse capture, ...)
 * token passing for presenters (queuing for screencasting)
-* More things on settings page (IP addresses, overscan, etc)
 * ...
