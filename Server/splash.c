@@ -255,7 +255,7 @@ fb_info() {
 
 		if (fgets(line, sizeof(line), info) == NULL) break;
 		line[strlen(line)-1] = 0; // remove eol
-		fb_print(32, y, "%s", line);
+		fb_print(64, y, "%s", line);
 		y += 24;
 	}
 }
