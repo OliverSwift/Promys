@@ -7,7 +7,7 @@ A screencasting system project based on a Pi 3. Nothing very new for such projec
 
 User connects to the Promys Device Wifi access point, visits the embedded web page, downloads client application from there and starts it. Almost as easy as ClickShare from BARCO but at a reasonable price (~40€).
 
-It's **NOT** like a Chromecast device, guests don't have to join hosts wifi network. It's suitable for companies that would like to offer easy screencasting to visitors and employees. It's more similar to Click&Share. I don't see a point using it at home, but, why not?
+It's **NOT** like a Chromecast device, guests don't have to join hosts wifi network. It's suitable for companies that would like to offer easy screencasting to visitors and employees. It's more similar to Clickshare. I don't see a point using it at home, but, why not?
 
 An already made system image is available on the web site (see below), so it should be very straightforward to setup a Pi3 out of the box and have an up and running system.
 
@@ -26,7 +26,7 @@ Considering RPi3 hardware capabilities, espcecially the H264 decoder and the Wif
 Just want to build a `Promys device` and use it ?
 
 1. First get a Raspberry Pi 3 (I haven't tested with Pi 2 but you'll miss the main advantage of Wifi).
-2. Find **[here](http://promys.me/downloads/image_2018-03-26-Promys.zip)** a zipped image for a 1GB or more micro SD card
+2. Find **[here](http://promys.me/downloads/image_2018-04-15-Promys.zip)** a zipped image for a 1GB or more micro SD card
 3. Get **[ETCHER](https://etcher.io/)** and burn the image (you don't even have to unzip the file) on the micro SD.
 4. Insert the SD in the Raspberry, connect to a projector or TV with HDMI cable. Power TV on.
 5. Power on the Promys device.
@@ -52,6 +52,8 @@ Just get to `Server` directory and type make. It relies on `/op/vc` package that
 
 ### _Server setup_
 
+_This section needs to be updated_
+
 `Server/Target` directory contains a few things to modify on the system to make it dedicated.
 
 * `boot` directory contains suggested modified `cmdline.txt` and `config.txt` files.
@@ -70,6 +72,7 @@ Section below points to how to create an image for dedicated Promys box. You sho
 
 I've forked `pi-gen` project and modified it to generate a Promys image. Check out https://github.com/OliverSwift/pi-gen
 It still needs a lot of clean up to get the bare necessities, but it's a start.
+A new method is based on an already made image and just updates what's needed. Script `build.sh` is in `Image`.
 
 ## Client
 The client part is the application to be run on a desktop so as to cast it to a Promys device connected to a TV set or projector.
@@ -140,8 +143,11 @@ The already built one is signed with my developer account so users just have to 
 ## TODO
 _and ideas_
 * version checking
-* overscan adjustment with CEC. **WIP**
 * connect a smartphone and fake a laser spot
 * improve clients (performance, power consumption, mouse capture, ...)
 * token passing for presenters (queuing for screencasting)
 * ...
+
+## Changes
+* 2018/04/15 Overscan can be adjusted with TV Remote (through CEC). During screencasting use Up/Down buttons to adjust overscan by 1 pixel and Left/Right to adjust it by 4 pixels.
+* 2018/03/26 settings.html page lets you change many parameters. If no password was set user we'll be prompted for it.
