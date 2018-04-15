@@ -49,8 +49,8 @@ install -m 755 $TARGET_SRC/www/html/cgi-bin/apply.cgi    ${ROOTFS_DIR}/var/www/h
 
 ##### PROMYS BIN PART #########
 install -v -d ${ROOTFS_DIR}/opt/promys
-install -m 755 $TARGET_SRC/opt/promys     ${ROOTFS_DIR}/opt/promys/
-install -m 644 $TARGET_SRC/opt/lucon.ttf  ${ROOTFS_DIR}/opt/promys/
+install -m 755 $TARGET_SRC/opt/promys/promys     ${ROOTFS_DIR}/opt/promys/
+install -m 644 $TARGET_SRC/opt/promys/lucon.ttf  ${ROOTFS_DIR}/opt/promys/
 
 ##### CUSTOM PART ############
 install -m 644 $TARGET_SRC/boot/splash.jpg            ${ROOTFS_DIR}/boot/
