@@ -1,7 +1,7 @@
 # Promys
-_Project My Screen_
+_PROject MY Screen_
 
-http://promys.me
+http://promys.me/promys.html
 
 A screencasting system project based on a Pi 3. Nothing very new for such project except that it aims at being very user friendly. Easy setup for users on Windows, Mac and Linux.
 
