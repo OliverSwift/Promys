@@ -4,7 +4,7 @@
  */
 #include "promys.h"
 #include <CoreFoundation/CoreFoundation.h>
-#include <CoreGraphics/CGImage.h>
+#include <CoreGraphics/CoreGraphics.h>
 #include <unistd.h>
 #include <errno.h>
 #include <sys/time.h>
@@ -17,8 +17,6 @@ extern "C" {
 }
 #include "socket.h"
 #include "AppDelegate.h"
-
-#undef FILE_DUMP
 
 #include <pthread.h>
 
@@ -49,9 +47,6 @@ static void change_priority() {
 
 - (void)main {
 	struct timeval start,stop;
-#ifdef FILE_DUMP
-	FILE *out = fopen("out.h264","wb");
-#endif
 	Socket *cast;
 	char *cast_server;
         int cast_port;
@@ -74,7 +69,7 @@ static void change_priority() {
         width = CGImageGetWidth(image_ref);
         height = CGImageGetHeight(image_ref);
 
-	size_t linesize = width *4;
+	size_t linesize = CGImageGetBytesPerRow(image_ref);
     
         h264_init(width, height, linesize);
     
@@ -83,9 +78,31 @@ static void change_priority() {
     
         change_priority();
     
+        CGFloat scale = (float)width / [ NSScreen mainScreen].frame.size.width;
+        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+
 	while(1) {
 	    CFDataRef dataref = CGDataProviderCopyData(CGImageGetDataProvider(image_ref));
 	    const unsigned char *data = CFDataGetBytePtr(dataref);
+            
+@autoreleasepool {
+                CGContextRef gc = CGBitmapContextCreateWithData((void*)data, width, height, CGImageGetBitsPerComponent(image_ref), linesize, colorSpace, CGImageGetBitmapInfo(image_ref), NULL, NULL);
+     
+                NSPoint mouse = [ NSEvent mouseLocation ];
+                NSCursor *cursor = [NSCursor currentSystemCursor];
+                NSImage *cursorImage = [cursor image];
+
+                NSGraphicsContext *ngc = [NSGraphicsContext graphicsContextWithCGContext:gc flipped:NO ];
+                
+                [NSGraphicsContext setCurrentContext:ngc];
+                
+                [cursorImage drawInRect:CGRectMake((mouse.x-cursor.hotSpot.x)*scale,
+                                                   (mouse.y-cursor.hotSpot.y)*scale,
+                                                   [cursorImage size].width*scale,
+                                                   [cursorImage size].height*scale)];
+                
+                CGContextRelease(gc);
+            }
             
             unsigned char *packet;
             size_t packet_size;
@@ -113,9 +130,6 @@ static void change_priority() {
 	    gettimeofday(&start, NULL);
 	    // Capture a new image
 	    image_ref = CGDisplayCreateImage(CGMainDisplayID());
-#if 0
-            NSPoint mouse = [ NSEvent mouseLocation ];
-#endif
 	}
 
         h264_close();
