@@ -1,7 +1,7 @@
 # Promys
 _PROject MY Screen_
 
-http://promys.me/promys.html
+http://promys.me
 
 A screencasting system project based on a Pi 3. Nothing very new for such project except that it aims at being very user friendly. Easy setup for users on Windows, Mac and Linux.
 
@@ -12,6 +12,10 @@ It's **NOT** like a Chromecast device, guests don't have to join hosts wifi netw
 An already made system image is available on the web site (see below), so it should be very straightforward to setup a Pi3 out of the box and have an up and running system.
 
 For the moment it is very basic but it can be extended with plenty of nifty features. Check out TODO/Ideas section for that and feel free to contribute.
+
+## Changes
+* _`2018/04/15`_ Overscan can be adjusted with TV Remote (through CEC). During screencasting use Up/Down buttons to adjust overscan by 1 pixel and Left/Right to adjust it by 4 pixels.
+* _`2018/03/26`_ settings.html page lets you change many parameters. If no password was set user we'll be prompted for it.
 
 ## Background
 
@@ -147,7 +151,3 @@ _and ideas_
 * improve clients (performance, power consumption, mouse capture, ...)
 * token passing for presenters (queuing for screencasting)
 * ...
-
-## Changes
-* 2018/04/15 Overscan can be adjusted with TV Remote (through CEC). During screencasting use Up/Down buttons to adjust overscan by 1 pixel and Left/Right to adjust it by 4 pixels.
-* 2018/03/26 settings.html page lets you change many parameters. If no password was set user we'll be prompted for it.
