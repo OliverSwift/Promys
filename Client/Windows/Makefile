@@ -10,6 +10,8 @@ socket.o: ../Common/Socket/socket.c
 screencast.res: ScreenCast.rc
 	windres ScreenCast.rc -o screencast.res -O coff
 
+ScreenCast.rc: promys.ico
+
 install: screencast.exe promys.SED
 	cp ../Common/ffmpeg/libavutil/cygavutil-56.dll .
 	cp ../Common/ffmpeg/libswscale/cygswscale-5.dll .
@@ -19,4 +21,4 @@ install: screencast.exe promys.SED
 	iexpress /N /Q promys.SED
 
 clean:
-	-rm *.o screencast.exe promys.exe
+	-rm *.o screencast.exe *.res promys.exe
