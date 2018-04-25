@@ -87,20 +87,20 @@ static void change_priority() {
             
 @autoreleasepool {
                 CGContextRef gc = CGBitmapContextCreateWithData((void*)data, width, height, CGImageGetBitsPerComponent(image_ref), linesize, colorSpace, CGImageGetBitmapInfo(image_ref), NULL, NULL);
-     
+    
                 NSPoint mouse = [ NSEvent mouseLocation ];
                 NSCursor *cursor = [NSCursor currentSystemCursor];
                 NSImage *cursorImage = [cursor image];
 
                 NSGraphicsContext *ngc = [NSGraphicsContext graphicsContextWithCGContext:gc flipped:NO ];
-                
+    
                 [NSGraphicsContext setCurrentContext:ngc];
-                
+    
                 [cursorImage drawInRect:CGRectMake((mouse.x-cursor.hotSpot.x)*scale,
-                                                   (mouse.y-cursor.hotSpot.y)*scale,
-                                                   [cursorImage size].width*scale,
-                                                   [cursorImage size].height*scale)];
-                
+                                                   (mouse.y-(cursorImage.size.height-cursor.hotSpot.y))*scale,
+                                                   cursorImage.size.width*scale,
+                                                   cursorImage.size.height*scale)];
+    
                 CGContextRelease(gc);
             }
             
