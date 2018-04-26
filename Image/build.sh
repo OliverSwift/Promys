@@ -54,11 +54,11 @@ install -m 755 $TARGET_SRC/opt/promys/promys     ${ROOTFS_DIR}/opt/promys/
 install -m 644 $TARGET_SRC/opt/promys/lucon.ttf  ${ROOTFS_DIR}/opt/promys/
 
 ##### CUSTOM PART ############
-install -m 644 $TARGET_SRC/boot/splash.jpg            ${ROOTFS_DIR}/boot/
-install -m 644 $TARGET_SRC/boot/config.txt            ${ROOTFS_DIR}/boot/
-install -m 644 $TARGET_SRC/boot/cmdline.txt           ${ROOTFS_DIR}/boot/
-install -m 644 $TARGET_SRC/boot/info.txt              ${ROOTFS_DIR}/boot/
-install -m 644 $TARGET_SRC/boot/wifi.cfg              ${ROOTFS_DIR}/boot/
+install -m 644 $TARGET_SRC/boot/splash.jpg            ${BOOT_DIR}/boot/
+install -m 644 $TARGET_SRC/boot/config.txt            ${BOOT_DIR}/boot/
+install -m 644 $TARGET_SRC/boot/cmdline.txt           ${BOOT_DIR}/boot/
+install -m 644 $TARGET_SRC/boot/info.txt              ${BOOT_DIR}/boot/
+install -m 644 $TARGET_SRC/boot/wifi.cfg              ${BOOT_DIR}/boot/
 
 ##### SYSTEM PART ############
 install -m 755 $TARGET_SRC/etc/rc.local    ${ROOTFS_DIR}/etc/rc.local
