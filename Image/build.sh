@@ -4,6 +4,7 @@ BOOT_DIR=$PWD/boot
 TARGET_SRC=$PWD/../Server/Target
 DATE=`date +%Y-%m-%d`
 IMAGE=image_${DATE}-Promys.img
+LOOPDEV=`losetup -f`
 
 if [ `id -u` != 0 ]; then
     sudo $0
@@ -20,8 +21,8 @@ cp promys.img ${IMAGE}
 losetup -Pf ${IMAGE}
 mkdir -p rootfs
 mkdir -p boot
-mount /dev/loop0p1 boot
-mount /dev/loop0p2 rootfs
+mount ${LOOPDEV}p1 boot
+mount ${LOOPDEV}p2 rootfs
 
 ##### WEB PART #########
 
