@@ -128,14 +128,16 @@ DWORD promys(LPVOID arg) {
 		if (socket_send(packet, packet_size) < 0) break;
 	    }
 
+#define DELAY_MS 50
+
 	    GetSystemTime(&stop);
 	    DWORD delta;
 
 	    delta  = (stop.wSecond - start.wSecond)*1000;
 	    if (delta < 0) delta += 60*1000;
 	    delta += (stop.wMilliseconds - start.wMilliseconds);
-	    if (delta < 40) {
-		Sleep(40-delta);
+	    if (delta < DELAY_MS) {
+		Sleep(DELAY_MS-delta);
 	    }
 	}
 
