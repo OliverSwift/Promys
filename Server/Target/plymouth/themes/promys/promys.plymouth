@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=promys
+Description=Promys Splash
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/promys
+ScriptFile=/usr/share/plymouth/themes/promys/promys.script

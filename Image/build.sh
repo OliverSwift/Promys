@@ -16,8 +16,11 @@ function error {
 }
 
 # Get the base image already prepared from pi-gen fork
+echo "Cloning base image"
 [ -e promys.img ] || error "No base image"
 cp promys.img ${IMAGE}
+
+echo "Mounting rootfs and boot"
 losetup -Pf ${IMAGE}
 mkdir -p rootfs
 mkdir -p boot
@@ -27,10 +30,12 @@ mount ${LOOPDEV}p2 rootfs
 ##### WEB PART #########
 
 # Get client binaries from web site
+echo "Retrieving client binaries from web site"
 wget -O $ROOTFS_DIR/var/www/html/downloads/promys.deb http://promys.me/downloads/promys.deb
 wget -O $ROOTFS_DIR/var/www/html/downloads/promys.dmg http://promys.me/downloads/promys.dmg
 wget -O $ROOTFS_DIR/var/www/html/downloads/promys.exe http://promys.me/downloads/promys.exe
 
+echo "Installing embedded web site"
 install -m 644 $TARGET_SRC/www/html/index.html    ${ROOTFS_DIR}/var/www/html
 install -m 644 $TARGET_SRC/www/html/settings.html ${ROOTFS_DIR}/var/www/html
 
@@ -49,11 +54,13 @@ install -m 755 $TARGET_SRC/www/html/cgi-bin/status.cgi   ${ROOTFS_DIR}/var/www/h
 install -m 755 $TARGET_SRC/www/html/cgi-bin/apply.cgi    ${ROOTFS_DIR}/var/www/html/cgi-bin/
 
 ##### PROMYS BIN PART #########
-install -v -d ${ROOTFS_DIR}/opt/promys
+echo "Installing promys application files"
+install -d ${ROOTFS_DIR}/opt/promys
 install -m 755 $TARGET_SRC/opt/promys/promys     ${ROOTFS_DIR}/opt/promys/
 install -m 644 $TARGET_SRC/opt/promys/lucon.ttf  ${ROOTFS_DIR}/opt/promys/
 
 ##### CUSTOM PART ############
+echo "Installing configuration files"
 install -m 644 $TARGET_SRC/boot/splash.jpg            ${BOOT_DIR}
 install -m 644 $TARGET_SRC/boot/config.txt            ${BOOT_DIR}
 install -m 644 $TARGET_SRC/boot/cmdline.txt           ${BOOT_DIR}
@@ -61,14 +68,26 @@ install -m 644 $TARGET_SRC/boot/info.txt              ${BOOT_DIR}
 install -m 644 $TARGET_SRC/boot/wifi.cfg              ${BOOT_DIR}
 
 ##### SYSTEM PART ############
+echo "Installing system start up script"
 install -m 755 $TARGET_SRC/etc/rc.local    ${ROOTFS_DIR}/etc/rc.local
 echo "Promys - $DATE" > ${ROOTFS_DIR}/etc/promys-issue
 
+##### PLYMOUTH #######
+echo "Installing boot up image"
+install -m 644 $TARGET_SRC/plymouth/plymouthd.defaults  ${ROOTFS_DIR}/usr/share/plymouth
+install -d ${ROOTFS_DIR}/usr/share/plymouth/themes/promys
+install -m 644 $TARGET_SRC/plymouth/themes/promys/promys.plymouth  ${ROOTFS_DIR}/usr/share/plymouth/themes/promys
+install -m 644 $TARGET_SRC/plymouth/themes/promys/promys.script    ${ROOTFS_DIR}/usr/share/plymouth/themes/promys
+install -m 644 $TARGET_SRC/plymouth/themes/promys/splash.png       ${ROOTFS_DIR}/usr/share/plymouth/themes/promys
+
 ##### Wrap it up
+echo "Cleaning up"
 umount rootfs
 umount boot
 rmdir rootfs
 rmdir boot
 losetup -D
+
+echo "Zipping"
 zip image_${DATE}-Promys.zip ${IMAGE}
 rm ${IMAGE}
