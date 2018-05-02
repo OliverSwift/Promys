@@ -14,6 +14,7 @@ An already made system image is available on the web site (see below), so it sho
 For the moment it is very basic but it can be extended with plenty of nifty features. Check out TODO/Ideas section for that and feel free to contribute.
 
 ## Changes
+* _`2018/05/02`_ Logo when booting. 
 * _`2018/04/26`_ New logo from [Ssnjrthegr8](https://github.com/ssnjrthegr8). MacOS client now captures mouse. Timeout on input video stream. Settings can be accessed from front page.
 * _`2018/04/15`_ Overscan can be adjusted with TV Remote (through CEC). During screencasting use Up/Down buttons to adjust overscan by 1 pixel and Left/Right to adjust it by 4 pixels.
 * _`2018/03/26`_ settings.html page lets you change many parameters. If no password was set user we'll be prompted for it.
@@ -31,7 +32,7 @@ Considering RPi3 hardware capabilities, espcecially the H264 decoder and the Wif
 Just want to build a `Promys device` and use it ?
 
 1. First get a Raspberry Pi 3 (I haven't tested with Pi 2 but you'll miss the main advantage of Wifi).
-2. Find **[here](http://promys.me/downloads/image_2018-04-26-Promys.zip)** a zipped image for a 1GB or more micro SD card
+2. Find **[here](http://promys.me/downloads/image_2018-05-02-Promys.zip)** a zipped image for a 1GB or more micro SD card
 3. Get **[ETCHER](https://etcher.io/)** and burn the image (you don't even have to unzip the file) on the micro SD.
 4. Insert the SD in the Raspberry, connect to a projector or TV with HDMI cable. Power TV on.
 5. Power on the Promys device.
