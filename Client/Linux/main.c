@@ -6,6 +6,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/extensions/Xrandr.h>
+#include <X11/extensions/Xfixes.h>
 #include <unistd.h>
 #include <sys/time.h>
 #include <arpa/inet.h>
@@ -17,15 +18,23 @@
 #include "discover.h"
 #include "socket.h"
 
+static inline unsigned char
+color_select(unsigned char dst, unsigned char src_pre, unsigned char alpha) {
+    unsigned short val;
+
+    val = (dst * (~alpha & 255)) + src_pre * 255;
+    return val >> 8;
+}
+
 int
 main(int argc, char **argv) {
 	struct timeval start,stop;
 	const char *cast_server = argv[1];
 	int cast_port = 9000;
-	int go;
+	volatile int go;
 
 	// Initialize GUI stuff in separate thread
-	gui_init(&go);
+	gui_init((int *)&go);
 
 	// Discover a Promys device, unless specified in arguments
 	if (argv[1] == NULL) {
@@ -35,7 +44,7 @@ main(int argc, char **argv) {
 
 	printf("Found at %s:%d\n", cast_server, cast_port);
 
-	// Update UI and iconfy window
+	// Update UI and iconify window
 	showMessage("PROMYS device found");
 	hideWindow();
 
@@ -116,6 +125,44 @@ main(int argc, char **argv) {
 
 	    // Capture a new image
 	    image = XGetImage(dpy, root, 0, 0, width, height, AllPlanes, ZPixmap);
+
+            // Capture cursor
+            Window root, child;
+            int root_x, root_y, win_x, win_y;
+            unsigned int mask;
+
+            // Use XQueryPointer to make sure we're on main monitor
+            if (XQueryPointer(dpy, DefaultRootWindow(dpy), &root, &child, &root_x, &root_y, &win_x, &win_y, &mask)) {
+                XFixesCursorImage *cursorImage;
+
+                cursorImage = XFixesGetCursorImage(dpy);
+
+                if (cursorImage) {
+                    unsigned char *dst, *low, *high;
+                    unsigned long *src;
+
+                    dst = (unsigned char*)image->data + ((cursorImage->y - cursorImage->yhot) * image->bytes_per_line) + (cursorImage->x - cursorImage->xhot)*4;
+                    src = cursorImage->pixels;
+
+                    low = (unsigned char*)image->data;
+                    high = (unsigned char*)image->data + (image->height - 1) * image->bytes_per_line;
+
+                    int l,c;
+
+                    for(l=0; l < cursorImage->height; l++) {
+                        for(c=0; c < cursorImage->width*4; c+=4) {
+                            if (dst >= low && dst < high) {
+                                dst[0+c] = color_select(dst[0+c], *src, (*src)>>24);
+                                dst[1+c] = color_select(dst[1+c], (*src)>>8, (*src)>>24);
+                                dst[2+c] = color_select(dst[2+c], (*src)>>16, (*src)>>24);
+                            }
+                            src++;
+                        }
+                        dst += image->bytes_per_line;
+                    }
+                    XFree(cursorImage);
+                }
+            }
 	}
 
 	h264_close();
