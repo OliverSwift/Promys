@@ -3,7 +3,16 @@ _PROject MY Screen_
 
 http://promys.me
 
-A screencasting system project based on a Pi 3. Nothing very new for such project except that it aims at being very user friendly. Easy setup for users on Windows, Mac and Linux.
+## Changes
+* _`2018/05/03`_ Linux client now captures the cursor.
+* _`2018/05/02`_ Logo when booting.
+* _`2018/04/26`_ New logo from [Ssnjrthegr8](https://github.com/ssnjrthegr8). MacOS client now captures mouse. Timeout on input video stream. Settings can be accessed from front page.
+* _`2018/04/15`_ Overscan can be adjusted with TV Remote (through CEC). During screencasting use Up/Down buttons to adjust overscan by 1 pixel and Left/Right to adjust it by 4 pixels.
+* _`2018/03/26`_ settings.html page lets you change many parameters. If no password was set user we'll be prompted for it.
+
+## Introduction
+
+It's a screencasting system project based on a Pi 3. Nothing very new for such project except that it aims at being very user friendly. Easy setup for users on Windows, Mac and Linux.
 
 User connects to the Promys Device Wifi access point, visits the embedded web page, downloads client application from there and starts it. Almost as easy as ClickShare from BARCO but at a reasonable price (~40€).
 
@@ -12,12 +21,6 @@ It's **NOT** like a Chromecast device, guests don't have to join hosts wifi netw
 An already made system image is available on the web site (see below), so it should be very straightforward to setup a Pi3 out of the box and have an up and running system.
 
 For the moment it is very basic but it can be extended with plenty of nifty features. Check out TODO/Ideas section for that and feel free to contribute.
-
-## Changes
-* _`2018/05/02`_ Logo when booting. 
-* _`2018/04/26`_ New logo from [Ssnjrthegr8](https://github.com/ssnjrthegr8). MacOS client now captures mouse. Timeout on input video stream. Settings can be accessed from front page.
-* _`2018/04/15`_ Overscan can be adjusted with TV Remote (through CEC). During screencasting use Up/Down buttons to adjust overscan by 1 pixel and Left/Right to adjust it by 4 pixels.
-* _`2018/03/26`_ settings.html page lets you change many parameters. If no password was set user we'll be prompted for it.
 
 ## Background
 
@@ -32,11 +35,11 @@ Considering RPi3 hardware capabilities, espcecially the H264 decoder and the Wif
 Just want to build a `Promys device` and use it ?
 
 1. First get a Raspberry Pi 3 (I haven't tested with Pi 2 but you'll miss the main advantage of Wifi).
-2. Find **[here](http://promys.me/downloads/image_2018-05-02-Promys.zip)** a zipped image for a 1GB or more micro SD card
+2. Find **[here](http://promys.me/downloads/image_2018-05-03-Promys.zip)** a zipped image for a 1GB or more micro SD card
 3. Get **[ETCHER](https://etcher.io/)** and burn the image (you don't even have to unzip the file) on the micro SD.
 4. Insert the SD in the Raspberry, connect to a projector or TV with HDMI cable. Power TV on.
 5. Power on the Promys device.
-6. Tada ![Splash](/Server/Target/boot/splash.jpg)
+6. Tada ![Splash](http://promys.me/images/tv_frame.png)
 
 > **Warning**, you won't be able to login to the device. SSH is not active by default. You'll need to modify the image by mounting the SD (on a Linux box) uncomment some lines in `/etc/rc.local` file and make root read-write by modifying `/etc/fstab`. You'll then need to reboot and ssh to it (usual Pi credentials are preserved), change password, make root file filesystem read-only again and comment the extra lines in `rc.local`.
 
