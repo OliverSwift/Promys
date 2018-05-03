@@ -1,7 +1,7 @@
 OBJS=main.o socket.o gui.o discover.o h264.o
 DEBUG=-O
 CFLAGS=$(DEBUG) -Wall -Werror -I../Common/x264 -I../Common/ffmpeg -I../Common/Socket
-LIBRARIES:= -L../Common/x264 -lx264 -L../Common/ffmpeg/libswscale -lswscale -L../Common/ffmpeg/libavutil -lavutil -lX11 -lXrandr -lpthread
+LIBRARIES:= -L../Common/x264 -lx264 -L../Common/ffmpeg/libswscale -lswscale -L../Common/ffmpeg/libavutil -lavutil -lX11 -lXrandr -lXfixes -lpthread
 
 screencast: $(OBJS)
 	$(CC) $(DEBUG) -o $@ $(OBJS) $(FRAMEWORKS) -Wl,-rpath=./:/opt/promys $(LIBRARIES)
