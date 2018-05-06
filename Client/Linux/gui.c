@@ -96,8 +96,12 @@ gui_init(int *go) {
                               BlackPixel(dpy, screen), WhitePixel(dpy, screen));
     gc = XCreateGC(dpy, win, 0, 0);
     XSelectInput(dpy, win, ExposureMask);
-    font = XLoadFont(dpy, "-*-fixed-*-*-*-*-18-*-*-*-*-*-*-*");
-    font_info = XQueryFont(dpy, font);
+
+    font_info = XLoadQueryFont(dpy, "-*-fixed-*-*-*-*-18-*-*-*-*-*-*-*");
+    if (font_info == NULL) {
+	    font_info = XLoadQueryFont(dpy, "fixed");
+    }
+    font = font_info->fid;
 
     XSetFont(dpy, gc, font);
 

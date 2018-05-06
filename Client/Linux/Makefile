@@ -1,5 +1,5 @@
 OBJS=main.o socket.o gui.o discover.o h264.o
-DEBUG=-O
+DEBUG=-O3
 CFLAGS=$(DEBUG) -Wall -Werror -I../Common/x264 -I../Common/ffmpeg -I../Common/Socket
 LIBRARIES:= -L../Common/x264 -lx264 -L../Common/ffmpeg/libswscale -lswscale -L../Common/ffmpeg/libavutil -lavutil -lX11 -lXrandr -lXfixes -lpthread
 
