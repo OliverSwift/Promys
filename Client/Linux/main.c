@@ -7,6 +7,8 @@
 #include <xcb/randr.h>
 #include <xcb/xfixes.h>
 #include <unistd.h>
+#include <errno.h>
+#include <string.h>
 #include <sys/time.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -212,7 +214,10 @@ main(int argc, char **argv) {
 	    free(image);
 
 	    if (packet) {
-		if (socket_send(packet, packet_size) < 0) break; // Peer likely has disconnected
+                if (socket_send(packet, packet_size) < 0) {
+		    printf("Error %d (%s)\n", errno, strerror(errno));
+		    break; // Peer likely has disconnected
+		}
 	    }
 
 	    // Request next capture
