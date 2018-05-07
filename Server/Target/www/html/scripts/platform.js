@@ -5,7 +5,8 @@ function active(platform) {
 
 function platform() {
 	if(navigator.userAgent.indexOf('Linux') != -1) {
-		active('linux');
+		active('ubuntu');
+		active('fedora');
 	} else if(navigator.userAgent.indexOf('Macintosh') != -1) {
 		active('macos');
 	} else if(navigator.userAgent.indexOf('Windows NT') != -1) {
@@ -13,7 +14,8 @@ function platform() {
 	} else {
 		active('windows');
 		active('macos');
-		active('linux');
+		active('ubuntu');
+		active('fedora');
 	}
 }
 
