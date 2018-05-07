@@ -34,6 +34,7 @@ echo "Retrieving client binaries from web site"
 wget -O $ROOTFS_DIR/var/www/html/downloads/promys.deb http://promys.me/downloads/promys.deb
 wget -O $ROOTFS_DIR/var/www/html/downloads/promys.dmg http://promys.me/downloads/promys.dmg
 wget -O $ROOTFS_DIR/var/www/html/downloads/promys.exe http://promys.me/downloads/promys.exe
+wget -O $ROOTFS_DIR/var/www/html/downloads/promys.rpm http://promys.me/downloads/promys.rpm
 
 echo "Installing embedded web site"
 install -m 644 $TARGET_SRC/www/html/index.html    ${ROOTFS_DIR}/var/www/html
@@ -43,6 +44,7 @@ install -m 644 $TARGET_SRC/www/html/images/Apple.png   ${ROOTFS_DIR}/var/www/htm
 install -m 644 $TARGET_SRC/www/html/images/bg.jpg      ${ROOTFS_DIR}/var/www/html/images/
 install -m 644 $TARGET_SRC/www/html/images/Tux.png     ${ROOTFS_DIR}/var/www/html/images/
 install -m 644 $TARGET_SRC/www/html/images/ubuntu.png  ${ROOTFS_DIR}/var/www/html/images/
+install -m 644 $TARGET_SRC/www/html/images/fedora.png  ${ROOTFS_DIR}/var/www/html/images/
 install -m 644 $TARGET_SRC/www/html/images/Windows.png ${ROOTFS_DIR}/var/www/html/images/
 
 install -m 644 $TARGET_SRC/www/html/scripts/platform.js ${ROOTFS_DIR}/var/www/html/scripts/platform.js
