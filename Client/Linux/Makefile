@@ -4,19 +4,30 @@ CFLAGS=$(DEBUG) -Wall -Werror -I../Common/x264 -I../Common/ffmpeg -I../Common/So
 LIBRARIES:= -L../Common/x264 -lx264 -L../Common/ffmpeg/libswscale -lswscale -L../Common/ffmpeg/libavutil -lavutil -lX11 -lXrandr -lXfixes -lpthread
 
 screencast: $(OBJS)
+	cp ../Common/x264/libx264.so.* .
+	cp ../Common/ffmpeg/libswscale/libswscale.so.* .
+	cp ../Common/ffmpeg/libavutil/libavutil.so.* .
 	$(CC) $(DEBUG) -o $@ $(OBJS) $(FRAMEWORKS) -Wl,-rpath=./:/opt/promys $(LIBRARIES)
 
 socket.o: ../Common/Socket/socket.c
 	$(CC) -c -o $@ $(CFLAGS) $<
 
-install: screencast
-	cp ../Common/x264/libx264.so.* .
-	cp ../Common/ffmpeg/libswscale/libswscale.so.* .
-	cp ../Common/ffmpeg/libavutil/libavutil.so.* .
+tgz: screencast
 	strip screencast lib*.so.*
 	tar czf promys.tgz screencast lib*.so.*
 
-package: screencast
+deb: dist
+	mkdir -p dist/DEBIAN
+	cp deb-control dist/DEBIAN/control
+	echo Installed-Size: `du -sk dist | awk -- '{print $$1}'` >> dist/DEBIAN/control
+	dpkg-deb -b dist promys.deb
+	rm -rf dist
+
+rpm: dist
+	rpmbuild -bb --buildroot ${PWD}/dist promys.spec
+	cp ${HOME}/rpmbuild/RPMS/promy*.rpm .
+
+dist: screencast
 	mkdir -p dist/opt/promys
 	cp ../Common/x264/libx264.so.* dist/opt/promys
 	cp ../Common/ffmpeg/libswscale/libswscale.so.* dist/opt/promys
@@ -24,13 +35,8 @@ package: screencast
 	strip screencast
 	cp screencast dist/opt/promys
 	cp promys.png dist/opt/promys
-	mkdir -p dist/DEBIAN
-	cp deb-control dist/DEBIAN/control
-	echo Installed-Size: `du -sk dist | awk -- '{print $$1}'` >> dist/DEBIAN/control
 	mkdir -p dist/usr/share/applications
 	cp promys.desktop dist/usr/share/applications
-	dpkg-deb -b dist promys.deb
-	rm -rf dist
 
 clean:
 	-rm -f *.o lib*.so.* screencast
