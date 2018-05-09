@@ -3,27 +3,132 @@
  * All rights reserved.
  * Please checkout LICENSE file.
  */
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/extensions/Xrandr.h>
-#include <X11/extensions/Xfixes.h>
+#include <xcb/xcb.h>
+#include <xcb/randr.h>
+#include <xcb/xfixes.h>
 #include <unistd.h>
 #include <sys/time.h>
-#include <arpa/inet.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
+#include <fcntl.h>
 #include "gui.h"
 #include "h264.h"
 #include "discover.h"
 #include "socket.h"
 
-static inline unsigned char
-color_select(unsigned char dst, unsigned char src_pre, unsigned char alpha) {
-    unsigned short val;
+static void
+desk_properties(xcb_connection_t *connection,
+	int screen_number,
+	xcb_window_t *root,
+	int16_t *x,
+	int16_t *y,
+	uint16_t *width,
+	uint16_t *height) {
+	xcb_screen_iterator_t iterator
+	    = xcb_setup_roots_iterator(xcb_get_setup(connection));
 
-    val = (dst * (~alpha & 255)) + src_pre * 255;
-    return val >> 8;
+	// First, we find the root window
+	while(iterator.rem != 0
+	    && screen_number != 0) {
+	    screen_number -= 1;
+	    xcb_screen_next(&iterator);
+	}
+
+	if(screen_number != 0) {
+	    fprintf(stderr, "Cannot determine root window\n");
+	    exit(EXIT_FAILURE);
+	}
+
+	*root = iterator.data->root;
+
+	// We find randr resources associated to root
+	xcb_randr_get_screen_resources_reply_t *screen_resources
+	    = xcb_randr_get_screen_resources_reply(connection,
+		xcb_randr_get_screen_resources_unchecked(connection,
+		    *root),
+		NULL);
+        if(screen_resources == NULL) {
+	    fprintf(stderr, "Unable to get screen resources\n");
+	    exit(EXIT_FAILURE);
+        }
+
+	// Listing its crtcs, we take the first viewport for display
+	xcb_randr_crtc_t *crtcs
+	    = xcb_randr_get_screen_resources_crtcs(screen_resources);
+	xcb_randr_get_crtc_info_reply_t *info
+	    = xcb_randr_get_crtc_info_reply(connection,
+		xcb_randr_get_crtc_info_unchecked(connection,
+		    crtcs[0], XCB_TIME_CURRENT_TIME),
+		NULL);
+
+	*x = info->x;
+	*y = info->y;
+	*width = info->width;
+	*height = info->height;
+
+	free(info);
+	free(screen_resources);
+}
+
+static inline uint8_t
+color_select(uint8_t dst, uint8_t src_pre, uint8_t alpha) {
+	uint16_t val;
+
+	val = (dst * (~alpha & 255)) + src_pre * 255;
+
+	return val >> 8;
+}
+
+static void
+draw_cursor(xcb_connection_t *connection,
+	xcb_window_t root,
+	uint8_t *data,
+	uint16_t height,
+	size_t stride) {
+	xcb_query_pointer_reply_t *query_pointer
+	    = xcb_query_pointer_reply(connection,
+		xcb_query_pointer_unchecked(connection, root),
+		NULL);
+
+	if(query_pointer != NULL
+	    && query_pointer->same_screen == 1) {
+	    xcb_generic_error_t *error;
+	    xcb_xfixes_get_cursor_image_reply_t *cursor_image
+		= xcb_xfixes_get_cursor_image_reply(connection,
+		    xcb_xfixes_get_cursor_image(connection),
+		    &error);
+
+	    if(cursor_image != NULL) {
+		uint8_t *dst, *low, *high;
+		uint8_t *src;
+
+		dst = data + ((cursor_image->y - cursor_image->yhot) * stride) + (cursor_image->x - cursor_image->xhot) * 4;
+		src = (uint8_t *)xcb_xfixes_get_cursor_image_cursor_image(cursor_image);
+
+		low = data;
+		high = data + (height - 1) * stride;
+
+                    int l,c;
+
+                    for(l=0; l < cursor_image->height; l++) {
+                        for(c=0; c < cursor_image->width*4; c+=4) {
+                            if (dst >= low && dst < high) {
+                                dst[0+c] = color_select(dst[0+c], *src, (*src)>>24);
+                                dst[1+c] = color_select(dst[1+c], (*src)>>8, (*src)>>24);
+                                dst[2+c] = color_select(dst[2+c], (*src)>>16, (*src)>>24);
+                            }
+                            src++;
+                        }
+                        dst += stride;
+                    }
+
+		free(cursor_image);
+	    } else {
+		printf("error code: %u\n", error->error_code);
+	    }
+	}
+
+	free(query_pointer);
 }
 
 int
@@ -39,10 +144,10 @@ main(int argc, char **argv) {
 	// Discover a Promys device, unless specified in arguments
 	if (argv[1] == NULL) {
 	    showMessage("Searching for PROMYS device");
-	    cast_server = promys_discover(&cast_port);
+	    //cast_server = promys_discover(&cast_port);
 	}
 
-	printf("Found at %s:%d\n", cast_server, cast_port);
+	//printf("Found at %s:%d\n", cast_server, cast_port);
 
 	// Update UI and iconify window
 	showMessage("PROMYS device found");
@@ -52,59 +157,64 @@ main(int argc, char **argv) {
 
 	gettimeofday(&start, NULL);
 
-	// Determine desktop size
-	size_t width, height;
+	// Connection to X11
+        xcb_connection_t *connection;
+        int screen_number;
 
-	Display *dpy;
-	int screen;
-	XImage *image;
-	Window root;
+        connection = xcb_connect(NULL, &screen_number);
+        if(xcb_connection_has_error(connection) > 0) {
+	    fprintf(stderr, "Cannot connect to X11\n");
+	    exit(EXIT_FAILURE);
+        }
 
-	dpy = XOpenDisplay(getenv("DISPLAY"));
-	if (dpy == NULL) {
-	    printf("Can't open display.\n");
-	    exit(1);
-	}
-	screen = DefaultScreen(dpy);
-	root = RootWindow(dpy, screen);
-	width = DisplayWidth (dpy, screen);
-	height = DisplayHeight (dpy, screen);
+        // Determine desktop geometry
+        xcb_window_t root;
+	int16_t x, y;
+	uint16_t width, height;
 
-	// If multiple monitors, use Xrandr to figure out the central left most one
-	XRRMonitorInfo *monitors;
-
-	int nbMonitors = 0;
-
-	monitors = XRRGetMonitors(dpy, root, True, &nbMonitors);
-
-	if (nbMonitors) {
-	    width =  monitors[0].width;
-	    height = monitors[0].height;
-	}
+	desk_properties(connection, screen_number,
+	    &root, &x, &y, &width, &height);
 
 	// Make a first capture to figure out stride
-	image = XGetImage(dpy, root, 0, 0, width, height, AllPlanes, ZPixmap);
+        xcb_get_image_cookie_t image_cookie
+	    = xcb_get_image_unchecked(connection, XCB_IMAGE_FORMAT_Z_PIXMAP,
+		root, x, y, width, height, ~0);
+        xcb_get_image_reply_t *image
+	    = xcb_get_image_reply(connection, image_cookie, NULL);
+        if(image == NULL) {
+	    fprintf(stderr, "Unable to get root image\n");
+	    exit(EXIT_FAILURE);
+        }
+	size_t stride = xcb_get_image_data_length(image) / height;
 
 	// Init encoder with correct sizes
-	h264_init(width, height, image->bytes_per_line);
+	h264_init(width, height, stride);
 
 	// Inform we're broadcasting thru UI
 	showMessage("Broadcasting...");
+
+	int fd = open("dump.h264", O_WRONLY);
 
 	// Proceed til user ends it up
 	while(go) {
 	    unsigned char *packet;
 	    size_t packet_size;
-
-	    const unsigned char *data = (const unsigned char *)image->data;
+	    uint8_t *data
+		= xcb_get_image_data(image);
+	    draw_cursor(connection, root, data, height, stride);
 
 	    packet = h264_encode(data, &packet_size);
 
-	    XDestroyImage(image);
+	    free(image);
 
 	    if (packet) {
-                if (socket_send(packet, packet_size) < 0) break; // Peer likely has disconnected
+		if(write(fd, packet, packet_size) == 0) break;
+//		if (socket_send(packet, packet_size) < 0) break; // Peer likely has disconnected
 	    }
+
+	    // Request next capture
+	    image_cookie = xcb_get_image_unchecked(connection, XCB_IMAGE_FORMAT_Z_PIXMAP,
+		root, x, y, width, height, ~0);
 
 	    // We're trying to maintain a 20i/s pace
 	    // taking into account all possible delays (capture, encoding and network)
@@ -112,62 +222,24 @@ main(int argc, char **argv) {
 	    gettimeofday(&stop, NULL);
 
 #define DELAY_US 50000
-
 	    long delay;
 
 	    delay = (stop.tv_sec - start.tv_sec)*1000000;
 	    delay += (stop.tv_usec - start.tv_usec);
 	    if (delay < DELAY_US) {
-                usleep(DELAY_US - delay);
+		usleep(DELAY_US - delay);
 	    }
 
 	    gettimeofday(&start, NULL);
 
 	    // Capture a new image
-	    image = XGetImage(dpy, root, 0, 0, width, height, AllPlanes, ZPixmap);
-
-            // Capture cursor
-            Window root, child;
-            int root_x, root_y, win_x, win_y;
-            unsigned int mask;
-
-            // Use XQueryPointer to make sure we're on main monitor
-            if (XQueryPointer(dpy, DefaultRootWindow(dpy), &root, &child, &root_x, &root_y, &win_x, &win_y, &mask)) {
-                XFixesCursorImage *cursorImage;
-
-                cursorImage = XFixesGetCursorImage(dpy);
-
-                if (cursorImage) {
-                    unsigned char *dst, *low, *high;
-                    unsigned long *src;
-
-                    dst = (unsigned char*)image->data + ((cursorImage->y - cursorImage->yhot) * image->bytes_per_line) + (cursorImage->x - cursorImage->xhot)*4;
-                    src = cursorImage->pixels;
-
-                    low = (unsigned char*)image->data;
-                    high = (unsigned char*)image->data + (image->height - 1) * image->bytes_per_line;
-
-                    int l,c;
-
-                    for(l=0; l < cursorImage->height; l++) {
-                        for(c=0; c < cursorImage->width*4; c+=4) {
-                            if (dst >= low && dst < high) {
-                                dst[0+c] = color_select(dst[0+c], *src, (*src)>>24);
-                                dst[1+c] = color_select(dst[1+c], (*src)>>8, (*src)>>24);
-                                dst[2+c] = color_select(dst[2+c], (*src)>>16, (*src)>>24);
-                            }
-                            src++;
-                        }
-                        dst += image->bytes_per_line;
-                    }
-                    XFree(cursorImage);
-                }
-            }
+	    image = xcb_get_image_reply(connection, image_cookie, NULL);
 	}
 
 	h264_close();
 
 	socket_close();
 
-	XCloseDisplay(dpy);
+	free(image);
+	xcb_disconnect(connection);
 }
