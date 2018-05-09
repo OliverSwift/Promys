@@ -144,10 +144,10 @@ main(int argc, char **argv) {
 	// Discover a Promys device, unless specified in arguments
 	if (argv[1] == NULL) {
 	    showMessage("Searching for PROMYS device");
-	    //cast_server = promys_discover(&cast_port);
+	    cast_server = promys_discover(&cast_port);
 	}
 
-	//printf("Found at %s:%d\n", cast_server, cast_port);
+	printf("Found at %s:%d\n", cast_server, cast_port);
 
 	// Update UI and iconify window
 	showMessage("PROMYS device found");
@@ -193,7 +193,7 @@ main(int argc, char **argv) {
 	// Inform we're broadcasting thru UI
 	showMessage("Broadcasting...");
 
-	int fd = open("dump.h264", O_WRONLY);
+	//int fd = open("dump.h264", O_WRONLY);
 
 	// Proceed til user ends it up
 	while(go) {
@@ -208,8 +208,8 @@ main(int argc, char **argv) {
 	    free(image);
 
 	    if (packet) {
-		if(write(fd, packet, packet_size) == 0) break;
-//		if (socket_send(packet, packet_size) < 0) break; // Peer likely has disconnected
+//		if(write(fd, packet, packet_size) == 0) break;
+		if (socket_send(packet, packet_size) < 0) break; // Peer likely has disconnected
 	    }
 
 	    // Request next capture
