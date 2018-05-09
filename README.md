@@ -4,6 +4,7 @@ _PROject MY Screen_
 http://promys.me
 
 ## Changes
+* _`2018/05/09`_ Fedora rpm available. Better cursor capture for Windows client.
 * _`2018/05/03`_ Linux client now captures the cursor.
 * _`2018/05/02`_ Logo when booting.
 * _`2018/04/26`_ New logo from [Ssnjrthegr8](https://github.com/ssnjrthegr8). MacOS client now captures mouse. Timeout on input video stream. Settings can be accessed from front page.
@@ -35,7 +36,7 @@ Considering RPi3 hardware capabilities, espcecially the H264 decoder and the Wif
 Just want to build a `Promys device` and use it ?
 
 1. First get a Raspberry Pi 3 (I haven't tested with Pi 2 but you'll miss the main advantage of Wifi).
-2. Find **[here](http://promys.me/downloads/image_2018-05-03-Promys.zip)** a zipped image for a 1GB or more micro SD card
+2. Find **[here](http://promys.me/downloads/image_2018-05-09-Promys.zip)** a zipped image for a 1GB or more micro SD card
 3. Get **[ETCHER](https://etcher.io/)** and burn the image (you don't even have to unzip the file) on the micro SD.
 4. Insert the SD in the Raspberry, connect to a projector or TV with HDMI cable. Power TV on.
 5. Power on the Promys device.
