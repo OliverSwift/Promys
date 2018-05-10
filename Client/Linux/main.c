@@ -44,7 +44,7 @@ desk_properties(xcb_connection_t *connection,
 	// We find randr resources associated to root
 	xcb_randr_get_screen_resources_reply_t *screen_resources
 	    = xcb_randr_get_screen_resources_reply(connection,
-		xcb_randr_get_screen_resources_unchecked(connection,
+		xcb_randr_get_screen_resources(connection,
 		    *root),
 		NULL);
         if(screen_resources == NULL) {
@@ -57,7 +57,7 @@ desk_properties(xcb_connection_t *connection,
 	    = xcb_randr_get_screen_resources_crtcs(screen_resources);
 	xcb_randr_get_crtc_info_reply_t *info
 	    = xcb_randr_get_crtc_info_reply(connection,
-		xcb_randr_get_crtc_info_unchecked(connection,
+		xcb_randr_get_crtc_info(connection,
 		    crtcs[0], XCB_TIME_CURRENT_TIME),
 		NULL);
 
@@ -87,44 +87,43 @@ draw_cursor(xcb_connection_t *connection,
 	size_t stride) {
 	xcb_query_pointer_reply_t *query_pointer
 	    = xcb_query_pointer_reply(connection,
-		xcb_query_pointer_unchecked(connection, root),
+		xcb_query_pointer(connection, root),
 		NULL);
 
 	if(query_pointer != NULL
 	    && query_pointer->same_screen == 1) {
-	    xcb_generic_error_t *error;
 	    xcb_xfixes_get_cursor_image_reply_t *cursor_image
 		= xcb_xfixes_get_cursor_image_reply(connection,
 		    xcb_xfixes_get_cursor_image(connection),
-		    &error);
+		    NULL);
 
 	    if(cursor_image != NULL) {
 		uint8_t *dst, *low, *high;
-		uint8_t *src;
+		uint32_t *src;
 
-		dst = data + ((cursor_image->y - cursor_image->yhot) * stride) + (cursor_image->x - cursor_image->xhot) * 4;
-		src = (uint8_t *)xcb_xfixes_get_cursor_image_cursor_image(cursor_image);
+		dst = data
+			+ ((cursor_image->y - cursor_image->yhot) * stride)
+			+ (cursor_image->x - cursor_image->xhot) * 4;
+		src = xcb_xfixes_get_cursor_image_cursor_image(cursor_image);
 
 		low = data;
 		high = data + (height - 1) * stride;
 
-                    int l,c;
+		int l,c;
 
-                    for(l=0; l < cursor_image->height; l++) {
-                        for(c=0; c < cursor_image->width*4; c+=4) {
-                            if (dst >= low && dst < high) {
-                                dst[0+c] = color_select(dst[0+c], *src, (*src)>>24);
-                                dst[1+c] = color_select(dst[1+c], (*src)>>8, (*src)>>24);
-                                dst[2+c] = color_select(dst[2+c], (*src)>>16, (*src)>>24);
-                            }
-                            src++;
-                        }
-                        dst += stride;
-                    }
+		for(l=0; l < cursor_image->height; l++) {
+		    for(c=0; c < cursor_image->width*4; c+=4) {
+			if(dst >= low && dst < high) {
+			    dst[0+c] = color_select(dst[0+c], *src, (*src)>>24);
+			    dst[1+c] = color_select(dst[1+c], (*src)>>8, (*src)>>24);
+			    dst[2+c] = color_select(dst[2+c], (*src)>>16, (*src)>>24);
+			}
+			src++;
+		    }
+		    dst += stride;
+		}
 
 		free(cursor_image);
-	    } else {
-		printf("error code: %u\n", error->error_code);
 	    }
 	}
 
@@ -167,6 +166,14 @@ main(int argc, char **argv) {
 	    exit(EXIT_FAILURE);
         }
 
+        // XFixes query version, required by protocol or "undefined behavior"
+	xcb_xfixes_query_version_reply_t *version
+	    = xcb_xfixes_query_version_reply(connection,
+		xcb_xfixes_query_version(connection,
+		    XCB_XFIXES_MAJOR_VERSION,
+		    XCB_XFIXES_MINOR_VERSION),
+		NULL);
+
         // Determine desktop geometry
         xcb_window_t root;
 	int16_t x, y;
@@ -177,7 +184,7 @@ main(int argc, char **argv) {
 
 	// Make a first capture to figure out stride
         xcb_get_image_cookie_t image_cookie
-	    = xcb_get_image_unchecked(connection, XCB_IMAGE_FORMAT_Z_PIXMAP,
+	    = xcb_get_image(connection, XCB_IMAGE_FORMAT_Z_PIXMAP,
 		root, x, y, width, height, ~0);
         xcb_get_image_reply_t *image
 	    = xcb_get_image_reply(connection, image_cookie, NULL);
@@ -193,8 +200,6 @@ main(int argc, char **argv) {
 	// Inform we're broadcasting thru UI
 	showMessage("Broadcasting...");
 
-	//int fd = open("dump.h264", O_WRONLY);
-
 	// Proceed til user ends it up
 	while(go) {
 	    unsigned char *packet;
@@ -208,12 +213,11 @@ main(int argc, char **argv) {
 	    free(image);
 
 	    if (packet) {
-//		if(write(fd, packet, packet_size) == 0) break;
 		if (socket_send(packet, packet_size) < 0) break; // Peer likely has disconnected
 	    }
 
 	    // Request next capture
-	    image_cookie = xcb_get_image_unchecked(connection, XCB_IMAGE_FORMAT_Z_PIXMAP,
+	    image_cookie = xcb_get_image(connection, XCB_IMAGE_FORMAT_Z_PIXMAP,
 		root, x, y, width, height, ~0);
 
 	    // We're trying to maintain a 20i/s pace
@@ -241,5 +245,6 @@ main(int argc, char **argv) {
 	socket_close();
 
 	free(image);
+	free(version);
 	xcb_disconnect(connection);
 }
