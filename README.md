@@ -1,7 +1,7 @@
 # Promys
 _PROject MY Screen_
 
-http://promys.me
+https://promys.me
 
 ## Changes
 * _`2018/05/09`_ Fedora rpm available. Better cursor capture for Windows client.
@@ -36,11 +36,11 @@ Considering RPi3 hardware capabilities, espcecially the H264 decoder and the Wif
 Just want to build a `Promys device` and use it ?
 
 1. First get a Raspberry Pi 3 (I haven't tested with Pi 2 but you'll miss the main advantage of Wifi).
-2. Find **[here](http://promys.me/downloads/image_2018-05-09-Promys.zip)** a zipped image for a 1GB or more micro SD card
+2. Find **[here](https://promys.me/downloads/image_2018-05-09-Promys.zip)** a zipped image for a 1GB or more micro SD card
 3. Get **[ETCHER](https://etcher.io/)** and burn the image (you don't even have to unzip the file) on the micro SD.
 4. Insert the SD in the Raspberry, connect to a projector or TV with HDMI cable. Power TV on.
 5. Power on the Promys device.
-6. Tada ![Splash](http://promys.me/images/tv_frame.png)
+6. Tada ![Splash](https://promys.me/images/tv_frame.png)
 
 > **Warning**, you won't be able to login to the device. SSH is not active by default. You'll need to modify the image by mounting the SD (on a Linux box) uncomment some lines in `/etc/rc.local` file and make root read-write by modifying `/etc/fstab`. You'll then need to reboot and ssh to it (usual Pi credentials are preserved), change password, make root file filesystem read-only again and comment the extra lines in `rc.local`.
 
