@@ -161,5 +161,7 @@ DWORD promys(LPVOID arg) {
 
 	socket_close();
 
+	exit(0);
+
 	return 0;
 }
