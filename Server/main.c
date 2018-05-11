@@ -64,7 +64,8 @@ main(int argc, char **argv) {
 
 				switch (pid) {
 					case 0: // Child
-						video_decode(client, overscan);
+						ret = video_decode(client, overscan);
+						if (ret) fprintf(stderr, "video_decode: %d\n", ret);
 						exit(0);
 					case -1: // Error
 						break;
