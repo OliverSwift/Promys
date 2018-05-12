@@ -10,6 +10,8 @@ Linux client to cast desktop to a Promys device
 %prep
 %build
 %install
+cd `dirname %{buildroot}`
+make dist
 %files
 /opt/promys/libavutil.so.56
 /opt/promys/libswscale.so.5
