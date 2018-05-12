@@ -4,6 +4,7 @@ _PROject MY Screen_
 https://promys.me
 
 ## Changes
+* _`2018/05/11`_ Windows client didn't quit well when server shuts down connection. 10s timeout on server side. `Return` tv remote key used to force server side connection shutdown.
 * _`2018/05/09`_ Fedora rpm available. Better cursor capture for Windows client.
 * _`2018/05/03`_ Linux client now captures the cursor.
 * _`2018/05/02`_ Logo when booting.
@@ -36,7 +37,7 @@ Considering RPi3 hardware capabilities, espcecially the H264 decoder and the Wif
 Just want to build a `Promys device` and use it ?
 
 1. First get a Raspberry Pi 3 (I haven't tested with Pi 2 but you'll miss the main advantage of Wifi).
-2. Find **[here](https://promys.me/downloads/image_2018-05-09-Promys.zip)** a zipped image for a 1GB or more micro SD card
+2. Find **[here](https://promys.me/downloads/image_2018-05-11-Promys.zip)** a zipped image for a 1GB or more micro SD card
 3. Get **[ETCHER](https://etcher.io/)** and burn the image (you don't even have to unzip the file) on the micro SD.
 4. Insert the SD in the Raspberry, connect to a projector or TV with HDMI cable. Power TV on.
 5. Power on the Promys device.
@@ -118,12 +119,14 @@ For versions matching reason I recommend to git checkout these commits. _Note th
 
 Compile `x264`:
 ```
+# cd Client/Common/x264
 # ./configure --disable-cli --enable-shared
 # make
 ```
 
 Compile `ffmpeg`:
 ```
+# cd Client/Common/ffmpeg
 # ./configure --disable-all --enable-swscale --enable-shared
 # make
 ```
@@ -131,6 +134,8 @@ Compile `ffmpeg`:
 For both, no installation step needed. Leave libs where they are.
 
 Once you have x264, swscale and avutil libraries compiled you can proceed to each specific build stages below.
+
+**Note:** I've written a `Makefile` to handle all steps above. Location: `Client/Common`
 
 ### Windows
 
