@@ -125,7 +125,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
-    case WM_CREATE:
+    case WM_ACTIVATE:
 	ResumeThread(thread);
     	break;
     case WM_DESTROY:
