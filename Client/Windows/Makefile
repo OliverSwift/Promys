@@ -17,7 +17,7 @@ install: screencast.exe promys.SED
 	cp ../Common/ffmpeg/libswscale/cygswscale-5.dll .
 	cp ../Common/x264/libx264-155.dll .
 	cp /usr/bin/cygwin1.dll .
-	strip screencast.exe
+	strip screencast.exe *.dll
 	iexpress /N /Q promys.SED
 
 clean:
