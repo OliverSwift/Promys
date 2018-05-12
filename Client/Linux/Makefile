@@ -24,19 +24,22 @@ deb: dist
 	rm -rf dist
 
 rpm: dist
-	rpmbuild -bb --buildroot ${PWD}/dist promys.spec
-	cp ${HOME}/rpmbuild/RPMS/promy*.rpm .
+	rpmbuild --quiet -bb --buildroot ${PWD}/dist promys.spec
+	cp ${HOME}/rpmbuild/RPMS/`uname -m`/promy*.rpm promys.rpm
 
-dist: screencast
+dist: screencast FRC
 	mkdir -p dist/opt/promys
 	cp ../Common/x264/libx264.so.* dist/opt/promys
 	cp ../Common/ffmpeg/libswscale/libswscale.so.* dist/opt/promys
 	cp ../Common/ffmpeg/libavutil/libavutil.so.* dist/opt/promys
-	strip screencast
 	cp screencast dist/opt/promys
+	strip dist/opt/promys/screencast dist/opt/promys/lib*
 	cp promys.png dist/opt/promys
 	mkdir -p dist/usr/share/applications
 	cp promys.desktop dist/usr/share/applications
 
+FRC:
+
 clean:
 	-rm -f *.o lib*.so.* screencast
+	-rm -rf dist
