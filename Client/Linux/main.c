@@ -40,7 +40,7 @@ desktop_properties(xcb_connection_t *connection, int screen_number, xcb_window_t
 	// We find randr resources associated to root
 	xcb_randr_get_screen_resources_reply_t *screen_resources;
 
-	screen_resources = = xcb_randr_get_screen_resources_reply(connection, xcb_randr_get_screen_resources(connection, *root), NULL);
+	screen_resources = xcb_randr_get_screen_resources_reply(connection, xcb_randr_get_screen_resources(connection, *root), NULL);
 
         if(screen_resources == NULL) {
 	    fprintf(stderr, "Unable to get screen resources\n");
