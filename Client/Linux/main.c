@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2018, Olivier DEBON
+ *                     Valentin DEBON (XCB version)
  * All rights reserved.
  * Please checkout LICENSE file.
  */
@@ -18,24 +19,18 @@
 #include "socket.h"
 
 static void
-desk_properties(xcb_connection_t *connection,
-	int screen_number,
-	xcb_window_t *root,
-	int16_t *x,
-	int16_t *y,
-	uint16_t *width,
-	uint16_t *height) {
-	xcb_screen_iterator_t iterator
-	    = xcb_setup_roots_iterator(xcb_get_setup(connection));
+desktop_properties(xcb_connection_t *connection, int screen_number, xcb_window_t *root, int16_t *x, int16_t *y, uint16_t *width, uint16_t *height) {
+	xcb_screen_iterator_t iterator;
 
 	// First, we find the root window
-	while(iterator.rem != 0
-	    && screen_number != 0) {
-	    screen_number -= 1;
+	iterator = xcb_setup_roots_iterator(xcb_get_setup(connection));
+
+	while (iterator.rem && screen_number) {
+	    screen_number--;
 	    xcb_screen_next(&iterator);
 	}
 
-	if(screen_number != 0) {
+	if (screen_number != 0) {
 	    fprintf(stderr, "Cannot determine root window\n");
 	    exit(EXIT_FAILURE);
 	}
@@ -43,24 +38,21 @@ desk_properties(xcb_connection_t *connection,
 	*root = iterator.data->root;
 
 	// We find randr resources associated to root
-	xcb_randr_get_screen_resources_reply_t *screen_resources
-	    = xcb_randr_get_screen_resources_reply(connection,
-		xcb_randr_get_screen_resources(connection,
-		    *root),
-		NULL);
+	xcb_randr_get_screen_resources_reply_t *screen_resources;
+
+	screen_resources = = xcb_randr_get_screen_resources_reply(connection, xcb_randr_get_screen_resources(connection, *root), NULL);
+
         if(screen_resources == NULL) {
 	    fprintf(stderr, "Unable to get screen resources\n");
 	    exit(EXIT_FAILURE);
         }
 
 	// Listing its crtcs, we take the first viewport for display
-	xcb_randr_crtc_t *crtcs
-	    = xcb_randr_get_screen_resources_crtcs(screen_resources);
-	xcb_randr_get_crtc_info_reply_t *info
-	    = xcb_randr_get_crtc_info_reply(connection,
-		xcb_randr_get_crtc_info(connection,
-		    crtcs[0], XCB_TIME_CURRENT_TIME),
-		NULL);
+	xcb_randr_crtc_t *crtcs;
+	xcb_randr_get_crtc_info_reply_t *info;
+
+	crtcs = xcb_randr_get_screen_resources_crtcs(screen_resources);
+	info = xcb_randr_get_crtc_info_reply(connection, xcb_randr_get_crtc_info(connection, crtcs[0], XCB_TIME_CURRENT_TIME), NULL);
 
 	*x = info->x;
 	*y = info->y;
@@ -81,22 +73,15 @@ color_select(uint8_t dst, uint8_t src_pre, uint8_t alpha) {
 }
 
 static void
-draw_cursor(xcb_connection_t *connection,
-	xcb_window_t root,
-	uint8_t *data,
-	uint16_t height,
-	size_t stride) {
-	xcb_query_pointer_reply_t *query_pointer
-	    = xcb_query_pointer_reply(connection,
-		xcb_query_pointer(connection, root),
-		NULL);
+draw_cursor(xcb_connection_t *connection, xcb_window_t root, uint8_t *data, uint16_t height, size_t stride) {
+	xcb_query_pointer_reply_t *query_pointer;
 
-	if(query_pointer != NULL
-	    && query_pointer->same_screen == 1) {
-	    xcb_xfixes_get_cursor_image_reply_t *cursor_image
-		= xcb_xfixes_get_cursor_image_reply(connection,
-		    xcb_xfixes_get_cursor_image(connection),
-		    NULL);
+	query_pointer = xcb_query_pointer_reply(connection, xcb_query_pointer(connection, root), NULL);
+
+	if (query_pointer != NULL && query_pointer->same_screen == 1) {
+	    xcb_xfixes_get_cursor_image_reply_t *cursor_image;
+
+	    cursor_image = xcb_xfixes_get_cursor_image_reply(connection, xcb_xfixes_get_cursor_image(connection), NULL);
 
 	    if(cursor_image != NULL) {
 		uint8_t *dst, *low, *high;
@@ -105,6 +90,7 @@ draw_cursor(xcb_connection_t *connection,
 		dst = data
 			+ ((cursor_image->y - cursor_image->yhot) * stride)
 			+ (cursor_image->x - cursor_image->xhot) * 4;
+
 		src = xcb_xfixes_get_cursor_image_cursor_image(cursor_image);
 
 		low = data;
@@ -112,9 +98,9 @@ draw_cursor(xcb_connection_t *connection,
 
 		int l,c;
 
-		for(l=0; l < cursor_image->height; l++) {
-		    for(c=0; c < cursor_image->width*4; c+=4) {
-			if(dst >= low && dst < high) {
+		for (l=0; l < cursor_image->height; l++) {
+		    for (c=0; c < cursor_image->width*4; c+=4) {
+			if (dst >= low && dst < high) {
 			    dst[0+c] = color_select(dst[0+c], *src, (*src)>>24);
 			    dst[1+c] = color_select(dst[1+c], (*src)>>8, (*src)>>24);
 			    dst[2+c] = color_select(dst[2+c], (*src)>>16, (*src)>>24);
@@ -162,37 +148,36 @@ main(int argc, char **argv) {
         int screen_number;
 
         connection = xcb_connect(NULL, &screen_number);
-        if(xcb_connection_has_error(connection) > 0) {
+
+        if (xcb_connection_has_error(connection) > 0) {
 	    fprintf(stderr, "Cannot connect to X11\n");
 	    exit(EXIT_FAILURE);
         }
 
         // XFixes query version, required by protocol or "undefined behavior"
-	xcb_xfixes_query_version_reply_t *version
-	    = xcb_xfixes_query_version_reply(connection,
-		xcb_xfixes_query_version(connection,
-		    XCB_XFIXES_MAJOR_VERSION,
-		    XCB_XFIXES_MINOR_VERSION),
-		NULL);
+	xcb_xfixes_query_version_reply_t *version;
+
+	version = xcb_xfixes_query_version_reply(connection, xcb_xfixes_query_version(connection, XCB_XFIXES_MAJOR_VERSION, XCB_XFIXES_MINOR_VERSION), NULL);
 
         // Determine desktop geometry
         xcb_window_t root;
 	int16_t x, y;
 	uint16_t width, height;
 
-	desk_properties(connection, screen_number,
-	    &root, &x, &y, &width, &height);
+	desktop_properties(connection, screen_number, &root, &x, &y, &width, &height);
 
 	// Make a first capture to figure out stride
-        xcb_get_image_cookie_t image_cookie
-	    = xcb_get_image(connection, XCB_IMAGE_FORMAT_Z_PIXMAP,
-		root, x, y, width, height, ~0);
-        xcb_get_image_reply_t *image
-	    = xcb_get_image_reply(connection, image_cookie, NULL);
-        if(image == NULL) {
+        xcb_get_image_cookie_t image_cookie;
+        xcb_get_image_reply_t *image;
+
+        image_cookie = xcb_get_image(connection, XCB_IMAGE_FORMAT_Z_PIXMAP, root, x, y, width, height, ~0);
+        image = xcb_get_image_reply(connection, image_cookie, NULL);
+
+        if (image == NULL) {
 	    fprintf(stderr, "Unable to get root image\n");
 	    exit(EXIT_FAILURE);
         }
+
 	size_t stride = xcb_get_image_data_length(image) / height;
 
 	// Init encoder with correct sizes
@@ -202,11 +187,11 @@ main(int argc, char **argv) {
 	showMessage("Broadcasting...");
 
 	// Proceed til user ends it up
-	while(go) {
+	while (go) {
 	    unsigned char *packet;
 	    size_t packet_size;
-	    uint8_t *data
-		= xcb_get_image_data(image);
+	    uint8_t *data = xcb_get_image_data(image);
+
 	    draw_cursor(connection, root, data, height, stride);
 
 	    packet = h264_encode(data, &packet_size);
@@ -221,8 +206,7 @@ main(int argc, char **argv) {
 	    }
 
 	    // Request next capture
-	    image_cookie = xcb_get_image(connection, XCB_IMAGE_FORMAT_Z_PIXMAP,
-		root, x, y, width, height, ~0);
+	    image_cookie = xcb_get_image(connection, XCB_IMAGE_FORMAT_Z_PIXMAP, root, x, y, width, height, ~0);
 
 	    // We're trying to maintain a 20i/s pace
 	    // taking into account all possible delays (capture, encoding and network)
