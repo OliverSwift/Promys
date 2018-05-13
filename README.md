@@ -4,6 +4,7 @@ _PROject MY Screen_
 https://promys.me
 
 ## Changes
+* _`2018/05/13`_ Smaller client sizes
 * _`2018/05/11`_ Windows client didn't quit well when server shuts down connection. 10s timeout on server side. `Return` tv remote key used to force server side connection shutdown.
 * _`2018/05/09`_ Fedora rpm available. Better cursor capture for Windows client.
 * _`2018/05/03`_ Linux client now captures the cursor.
@@ -37,7 +38,7 @@ Considering RPi3 hardware capabilities, espcecially the H264 decoder and the Wif
 Just want to build a `Promys device` and use it ?
 
 1. First get a Raspberry Pi 3 (I haven't tested with Pi 2 but you'll miss the main advantage of Wifi).
-2. Find **[here](https://promys.me/downloads/image_2018-05-11-Promys.zip)** a zipped image for a 1GB or more micro SD card
+2. Find **[here](https://promys.me/downloads/image_2018-05-13-Promys.zip)** a zipped image for a 1GB or more micro SD card
 3. Get **[ETCHER](https://etcher.io/)** and burn the image (you don't even have to unzip the file) on the micro SD.
 4. Insert the SD in the Raspberry, connect to a projector or TV with HDMI cable. Power TV on.
 5. Power on the Promys device.
@@ -146,7 +147,7 @@ a autoextractable executable with all needed stuff in it. User has just to run i
 
 Get to `Client/Linux` and type `make package`. This will generate a `promys.deb` file which is
 intended for debian based distros. User will have to install it prior to using the client.
-With any launcher, search for promys and start the application. Works fine on Ubuntu, Mint, ...
+With any launcher, search for promys and start the application. Works fine on Ubuntu, Mint, Fedora, ...
 
 ### MacOS
 
