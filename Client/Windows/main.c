@@ -133,6 +133,10 @@ DWORD promys(LPVOID arg) {
 		lpbitmap, // pic.img.plane[0],
 		(BITMAPINFO *)&bi, DIB_RGB_COLORS);
 
+	    if (stationIsLocked) {
+		memset(lpbitmap, 0, dwBmpSize);
+	    }
+
 	    unsigned char *packet;
 	    size_t packet_size;
 

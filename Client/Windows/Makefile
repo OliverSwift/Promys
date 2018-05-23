@@ -2,7 +2,7 @@ OBJS=main.o socket.o gui.o discover.o h264.o screencast.res
 CFLAGS=-O -I../Common/x264 -I../Common/ffmpeg -I../Common/Socket
 
 screencast.exe: $(OBJS)
-	$(CC) -o $@ $(OBJS) -mwindows -L../Common/x264 -lx264 -L../Common/ffmpeg/libswscale -lswscale
+	$(CC) -o $@ $(OBJS) -mwindows -L../Common/x264 -lx264 -L../Common/ffmpeg/libswscale -lswscale -lWtsapi32
 
 socket.o: ../Common/Socket/socket.c
 	$(CC) -c -o $@ $(CFLAGS) $<
