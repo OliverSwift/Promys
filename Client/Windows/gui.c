@@ -4,6 +4,7 @@
  * Checkout LICENSE file
  */
 #include <windows.h>
+#include <Wtsapi32.h>
 #include <stdio.h>
 #include "Resource.h"
 
@@ -17,6 +18,8 @@ WCHAR szTitle[MAX_LOADSTRING];                  // Le texte de la barre de titre
 WCHAR szWindowClass[MAX_LOADSTRING];            // le nom de la classe de fenêtre principale
 HWND mainWnd, hwndLabel;
 static const char *messageText;
+
+BOOL stationIsLocked = FALSE;
 
 // Pré-déclarations des fonctions incluses dans ce module de code :
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -133,7 +136,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_APP+1:
 	SendMessage(hwndLabel, WM_SETTEXT, 0, (LPARAM)messageText);
+	WTSRegisterSessionNotification(hWnd, NOTIFY_FOR_THIS_SESSION);
         break;
+    case WM_WTSSESSION_CHANGE:
+    	if (wParam == WTS_SESSION_LOCK) {
+	    stationIsLocked = TRUE;
+	} 
+	if (wParam == WTS_SESSION_UNLOCK) {
+	    stationIsLocked = FALSE;
+	}
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }

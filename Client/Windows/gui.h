@@ -8,3 +8,5 @@ int guiMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdS
 
 void showMessage(const char *message);
 void hideWindow();
+
+extern BOOL stationIsLocked;
