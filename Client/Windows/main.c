@@ -89,52 +89,52 @@ DWORD promys(LPVOID arg) {
 	    SYSTEMTIME start,stop;
 
 	    GetSystemTime(&start);
-	    StretchBlt(hDCMem, 0, bi.biHeight, bi.biWidth, -bi.biHeight, hDCScreen, 0, 0, bi.biWidth, bi.biHeight, SRCCOPY);
-
-#if 1
-	    // Draw cursor (poorly)
-	    CURSORINFO ci;
-	    ICONINFO ii;
-	    BITMAP bm;
-	    HDC cdc;
-
-	    ci.cbSize = sizeof(ci);
-	    GetCursorInfo(&ci);
-	    GetIconInfo(ci.hCursor, &ii);
-
-	    // Get mask
-	    cdc = CreateCompatibleDC(hDCMem);
-	    SelectObject(cdc, ii.hbmMask);
-	    GetObject(ii.hbmMask, sizeof(bm), &bm);
-	    if (bm.bmHeight == 64) {
-		StretchBlt(hDCMem, ci.ptScreenPos.x - ii.xHotspot, bmpScreen.bmHeight - ci.ptScreenPos.y + ii.yHotspot, 32, -32,
-		           cdc, 0, 32, 32, 32, SRCINVERT);
-	    } else {
-		StretchBlt(hDCMem, ci.ptScreenPos.x - ii.xHotspot, bmpScreen.bmHeight - ci.ptScreenPos.y + ii.yHotspot, 32, -32,
-		           cdc, 0, 0, 32, 32, SRCAND);
-	    }
-	    DeleteObject(ii.hbmMask);
-	    DeleteDC(cdc);
-
-	    // Get cursor
-	    cdc = CreateCompatibleDC(hDCMem);
-	    SelectObject(cdc, ii.hbmColor);
-	    GetObject(ii.hbmColor, sizeof(bm), &bm);
-	    StretchBlt(hDCMem, ci.ptScreenPos.x - ii.xHotspot, bmpScreen.bmHeight - ci.ptScreenPos.y + ii.yHotspot, bm.bmWidth, -bm.bmHeight,
-	               cdc, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
-	    DeleteObject(ii.hbmColor);
-	    DeleteDC(cdc);
-#endif
-
-	    // Gets the "bits" from the bitmap and copies them into a buffer 
-	    // which is pointed to by lpbitmap.
-	    GetDIBits(hDCMem, hBitmap, 0,
-		(UINT)bmpScreen.bmHeight,
-		lpbitmap, // pic.img.plane[0],
-		(BITMAPINFO *)&bi, DIB_RGB_COLORS);
 
 	    if (stationIsLocked) {
 		memset(lpbitmap, 0, dwBmpSize);
+	    } else {
+
+		StretchBlt(hDCMem, 0, bi.biHeight, bi.biWidth, -bi.biHeight, hDCScreen, 0, 0, bi.biWidth, bi.biHeight, SRCCOPY);
+
+		// Draw cursor (poorly)
+		CURSORINFO ci;
+		ICONINFO ii;
+		BITMAP bm;
+		HDC cdc;
+
+		ci.cbSize = sizeof(ci);
+		GetCursorInfo(&ci);
+		GetIconInfo(ci.hCursor, &ii);
+
+		// Get mask
+		cdc = CreateCompatibleDC(hDCMem);
+		SelectObject(cdc, ii.hbmMask);
+		GetObject(ii.hbmMask, sizeof(bm), &bm);
+		if (bm.bmHeight == 64) {
+		    StretchBlt(hDCMem, ci.ptScreenPos.x - ii.xHotspot, bmpScreen.bmHeight - ci.ptScreenPos.y + ii.yHotspot, 32, -32,
+			       cdc, 0, 32, 32, 32, SRCINVERT);
+		} else {
+		    StretchBlt(hDCMem, ci.ptScreenPos.x - ii.xHotspot, bmpScreen.bmHeight - ci.ptScreenPos.y + ii.yHotspot, 32, -32,
+			       cdc, 0, 0, 32, 32, SRCAND);
+		}
+		DeleteObject(ii.hbmMask);
+		DeleteDC(cdc);
+
+		// Get cursor
+		cdc = CreateCompatibleDC(hDCMem);
+		SelectObject(cdc, ii.hbmColor);
+		GetObject(ii.hbmColor, sizeof(bm), &bm);
+		StretchBlt(hDCMem, ci.ptScreenPos.x - ii.xHotspot, bmpScreen.bmHeight - ci.ptScreenPos.y + ii.yHotspot, bm.bmWidth, -bm.bmHeight,
+			   cdc, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
+		DeleteObject(ii.hbmColor);
+		DeleteDC(cdc);
+
+		// Gets the "bits" from the bitmap and copies them into a buffer 
+		// which is pointed to by lpbitmap.
+		GetDIBits(hDCMem, hBitmap, 0,
+		    (UINT)bmpScreen.bmHeight,
+		    lpbitmap, // pic.img.plane[0],
+		    (BITMAPINFO *)&bi, DIB_RGB_COLORS);
 	    }
 
 	    unsigned char *packet;
