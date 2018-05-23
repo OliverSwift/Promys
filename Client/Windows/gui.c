@@ -145,6 +145,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	if (wParam == WTS_SESSION_UNLOCK) {
 	    stationIsLocked = FALSE;
 	}
+	break;
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
