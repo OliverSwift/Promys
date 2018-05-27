@@ -110,24 +110,28 @@ DWORD promys(LPVOID arg) {
 		cdc = CreateCompatibleDC(hDCMem);
 		SelectObject(cdc, ii.hbmMask);
 		GetObject(ii.hbmMask, sizeof(bm), &bm);
-		if (bm.bmHeight == 64) {
-		    StretchBlt(hDCMem, ci.ptScreenPos.x - ii.xHotspot, bmpScreen.bmHeight - ci.ptScreenPos.y + ii.yHotspot, 32, -32,
-			       cdc, 0, 32, 32, 32, SRCINVERT);
+		if (bm.bmHeight == 2 * bm.bmWidth) {
+		    StretchBlt(hDCMem, ci.ptScreenPos.x - ii.xHotspot, bmpScreen.bmHeight - ci.ptScreenPos.y + ii.yHotspot, bm.bmWidth, -bm.bmHeight/2,
+			       cdc, 0, 0, bm.bmWidth, bm.bmHeight/2, SRCAND);
+		    StretchBlt(hDCMem, ci.ptScreenPos.x - ii.xHotspot, bmpScreen.bmHeight - ci.ptScreenPos.y + ii.yHotspot, bm.bmWidth, -bm.bmHeight/2,
+			       cdc, 0, bm.bmHeight/2, bm.bmWidth, bm.bmHeight/2, SRCINVERT);
 		} else {
-		    StretchBlt(hDCMem, ci.ptScreenPos.x - ii.xHotspot, bmpScreen.bmHeight - ci.ptScreenPos.y + ii.yHotspot, 32, -32,
-			       cdc, 0, 0, 32, 32, SRCAND);
+		    StretchBlt(hDCMem, ci.ptScreenPos.x - ii.xHotspot, bmpScreen.bmHeight - ci.ptScreenPos.y + ii.yHotspot, bm.bmWidth, -bm.bmHeight,
+			       cdc, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
 		}
 		DeleteObject(ii.hbmMask);
 		DeleteDC(cdc);
 
 		// Get cursor
-		cdc = CreateCompatibleDC(hDCMem);
-		SelectObject(cdc, ii.hbmColor);
-		GetObject(ii.hbmColor, sizeof(bm), &bm);
-		StretchBlt(hDCMem, ci.ptScreenPos.x - ii.xHotspot, bmpScreen.bmHeight - ci.ptScreenPos.y + ii.yHotspot, bm.bmWidth, -bm.bmHeight,
-			   cdc, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
-		DeleteObject(ii.hbmColor);
-		DeleteDC(cdc);
+		if (ii.hbmColor) {
+		    cdc = CreateCompatibleDC(hDCMem);
+		    SelectObject(cdc, ii.hbmColor);
+		    GetObject(ii.hbmColor, sizeof(bm), &bm);
+		    StretchBlt(hDCMem, ci.ptScreenPos.x - ii.xHotspot, bmpScreen.bmHeight - ci.ptScreenPos.y + ii.yHotspot, bm.bmWidth, -bm.bmHeight,
+			       cdc, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
+		    DeleteObject(ii.hbmColor);
+		    DeleteDC(cdc);
+		}
 
 		// Gets the "bits" from the bitmap and copies them into a buffer 
 		// which is pointed to by lpbitmap.
