@@ -4,6 +4,7 @@ _PROject MY Screen_
 https://promys.me
 
 ## Changes
+* _`2018/06/06`_ DDay. Moved to GitLab
 * _`2018/05/13`_ Smaller client sizes
 * _`2018/05/11`_ Windows client didn't quit well when server shuts down connection. 10s timeout on server side. `Return` tv remote key used to force server side connection shutdown.
 * _`2018/05/09`_ Fedora rpm available. Better cursor capture for Windows client.
