@@ -39,7 +39,7 @@ Considering RPi3 hardware capabilities, espcecially the H264 decoder and the Wif
 Just want to build a `Promys device` and use it ?
 
 1. First get a Raspberry Pi 3 (I haven't tested with Pi 2 but you'll miss the main advantage of Wifi).
-2. Find **[here](https://promys.me/downloads/image_2018-05-13-Promys.zip)** a zipped image for a 1GB or more micro SD card
+2. Find **[here](https://promys.me/downloads/image_2018-06-07-Promys.zip)** a zipped image for a 1GB or more micro SD card
 3. Get **[ETCHER](https://etcher.io/)** and burn the image (you don't even have to unzip the file) on the micro SD.
 4. Insert the SD in the Raspberry, connect to a projector or TV with HDMI cable. Power TV on.
 5. Power on the Promys device.
