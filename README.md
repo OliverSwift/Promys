@@ -61,7 +61,7 @@ You'll need a Pi3 running `Raspian stretch` to compile the server executable. I 
 
 If you've installed a Raspbian disto you'll need `libjpeg62-turbo-dev` and `libfreetype6-dev` packages.
 
-Just get to `Server` directory and type make. It relies on `/op/vc` package that contains helper libraries to use the OpenMAX layer available for the Broadcom ARM chip.
+Just get to `Server` directory and type make. It relies on `/opt/vc` package that contains helper libraries to use the OpenMAX layer available for the Broadcom ARM chip.
 
 ### _Server setup_
 
@@ -109,7 +109,7 @@ Current promys clients have been compiled against these exact versions:
 x264: b00bcafe53a166b63a179a2f41470cd13b59f927
 ffmpeg: bfe397e4313c640e2f05c90a2ff1541f50524094
 ```
-For versions matching reason I recommend to git checkout these commits. _Note that x264 hash start is awsome, couldn't resist to stick with it._
+For versions matching reason I recommend to git checkout these commits. _Note that x264 hash start is awesome, couldn't resist to stick with it._
 
 **Important:** For compiling `x264` you'll need nasm version 2.13 or superior.
 
