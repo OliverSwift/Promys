@@ -1,6 +1,3 @@
-# Promys
-_PROject MY Screen_
-
 https://promys.me
 
 ## Changes
