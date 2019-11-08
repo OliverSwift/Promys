@@ -4,7 +4,6 @@
  * Checkout LICENSE file
  */
 #include <windows.h>
-#include <windows.h>
 #include "gui.h"
 #include <unistd.h>
 #include <stdio.h>

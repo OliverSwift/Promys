@@ -5,6 +5,7 @@
  */
 #include <windows.h>
 #include <Wtsapi32.h>
+#include <dwmapi.h>
 #include <stdio.h>
 #include "Resource.h"
 
@@ -32,9 +33,10 @@ int APIENTRY guiMain(_In_ HINSTANCE hInstance,
                      _In_ LPSTR    lpCmdLine,
                      _In_ int       nCmdShow)
 {
+    DwmEnableComposition(DWM_EC_DISABLECOMPOSITION);
+
     MyRegisterClass(hInstance);
 
-    // Effectue l'initialisation de l'application :
     if (!InitInstance (hInstance, nCmdShow))
     {
         return FALSE;
