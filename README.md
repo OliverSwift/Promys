@@ -1,6 +1,7 @@
 https://promys.me
 
 ## Changes
+* _`2025/03/30`_ Windows 11 executable with desktop scaling bug fixed and netcard enumeration crash fixed.
 * _`2018/06/06`_ DDay. Moved to GitLab
 * _`2018/05/13`_ Smaller client sizes
 * _`2018/05/11`_ Windows client didn't quit well when server shuts down connection. 10s timeout on server side. `Return` tv remote key used to force server side connection shutdown.
@@ -13,7 +14,7 @@ https://promys.me
 
 ## Introduction
 
-It's a screencasting system project based on a Pi 3. Nothing very new for such project except that it aims at being very user friendly. Easy setup for users on Windows, Mac and Linux.
+It's a screencasting system project based on a Pi 3 (or similar). Nothing very new for such project except that it aims at being very user friendly. Easy setup for users on Windows, Mac and Linux.
 
 User connects to the Promys Device Wifi access point, visits the embedded web page, downloads client application from there and starts it. Almost as easy as ClickShare from BARCO but at a reasonable price (~40€).
 
@@ -35,8 +36,8 @@ Considering RPi3 hardware capabilities, espcecially the H264 decoder and the Wif
 
 Just want to build a `Promys device` and use it ?
 
-1. First get a Raspberry Pi 3 (I haven't tested with Pi 2 but you'll miss the main advantage of Wifi).
-2. Find **[here](https://promys.me/downloads/image_2018-06-07-Promys.zip)** a zipped image for a 1GB or more micro SD card
+1. First get a Raspberry Pi 3 (I haven't tested with Pi 2 but you'll miss the main advantage of Wifi). It works with a Raspberry Pi Zero W as well, without LAN.
+2. Find **[here](https://promys.me/downloads/image_2025-03-30-Promys.zip)** a zipped image for a 1GB or more micro SD card
 3. Get **[ETCHER](https://etcher.io/)** and burn the image (you don't even have to unzip the file) on the micro SD.
 4. Insert the SD in the Raspberry, connect to a projector or TV with HDMI cable. Power TV on.
 5. Power on the Promys device.
@@ -120,14 +121,14 @@ Compile `x264`:
 ```
 # cd Client/Common/x264
 # ./configure --disable-cli --enable-shared
-# make
+# make -j
 ```
 
 Compile `ffmpeg`:
 ```
 # cd Client/Common/ffmpeg
 # ./configure --disable-all --enable-swscale --enable-shared
-# make
+# make -j
 ```
 
 For both, no installation step needed. Leave libs where they are.
