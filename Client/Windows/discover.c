@@ -51,7 +51,7 @@ promys_discover(int *port) {
 
 	while(1) {
 	    for(iface = iface_list; iface;  iface = iface->ifa_next) {
-		if (iface->ifa_addr->sa_family == AF_INET) {
+		if (iface->ifa_addr && iface->ifa_addr->sa_family == AF_INET) {
 		    struct sockaddr_in *addr;
 
 		    addr = (struct sockaddr_in *)iface->ifa_broadaddr;

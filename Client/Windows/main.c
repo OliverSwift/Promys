@@ -48,15 +48,18 @@ DWORD promys(LPVOID arg) {
 
 	HDC hDCScreen = GetDC(NULL);
 
-	HDC hDCMem = CreateCompatibleDC(hDCScreen);
-
-	width = GetSystemMetrics(SM_CXSCREEN);
-	height = GetSystemMetrics(SM_CYSCREEN);
-
-	HBITMAP hBitmap = CreateCompatibleBitmap(hDCScreen, width, height);
 	BITMAP bmpScreen;
 
-	BITMAPFILEHEADER   bmfHeader;    
+	HGDIOBJ hObj = GetCurrentObject(hDCScreen, OBJ_BITMAP);
+	GetObject(hObj, sizeof(BITMAP), &bmpScreen);
+
+	width = bmpScreen.bmWidth;
+	height = bmpScreen.bmHeight;
+
+	HDC hDCMem = CreateCompatibleDC(hDCScreen);
+
+	HBITMAP hBitmap = CreateCompatibleBitmap(hDCScreen, width, height);
+
 	BITMAPINFOHEADER   bi;
 	 
 	bi.biSize = sizeof(BITMAPINFOHEADER);    
