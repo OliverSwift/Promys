@@ -4,6 +4,14 @@ function active(platform) {
 }
 
 function platform() {
+	if (document.location.search != '') {
+		active('windows');
+		active('macos');
+		active('ubuntu');
+		active('fedora');
+		return;
+	}
+
 	if(navigator.userAgent.indexOf('Linux') != -1) {
 		active('ubuntu');
 		active('fedora');
