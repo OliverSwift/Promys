@@ -2,7 +2,7 @@
   font-family: 'Gruppo';
   font-style: normal;
   font-weight: 400;
-  src: local('Gruppo'), url('fonts/Gruppo-Regular.ttf') format('truetype');
+  src: url(fonts/Gruppo-Regular.ttf) format('truetype');
 }
 
 @keyframes main-header-appear {
